@@ -1,0 +1,112 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  recipes   Recipe[] @relation("OwnedRecipes")
+  favorites Recipe[] @relation("FavoritedRecipes")
+}
+
+model Recipe {
+  id               String            @id @default(uuid())
+  title            String
+  prepTime         Int?
+  cookTime         Int?
+  ingredientGroups IngredientGroup[]
+  procedureGroups  ProcedureGroup[]
+  tags             Tag[]
+  notes            Note[]
+  author           User              @relation("OwnedRecipes", fields: [authorId], references: [id])
+  authorId         String
+  favoritedBy      User?             @relation("FavoritedRecipes", fields: [favoritedById], references: [id])
+  favoritedById    String?
+
+  @@unique([authorId, title])
+}
+
+model Tag {
+  id          String   @id @default(uuid())
+  description String   @unique
+  recipes     Recipe[]
+  tagGroup    String?
+}
+
+// enum TagGroup {
+//   DIETARY
+//   MEALTIME
+//   ROLE
+//   CUISINE
+//   PROTEIN
+// }
+
+model Note {
+  id          String  @id @default(uuid())
+  description String
+  Recipe      Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId    String?
+}
+
+model ProcedureGroup {
+  id             String          @id @default(uuid())
+  groupTitle     String          @default("")
+  description    String?
+  procedureSteps ProcedureStep[]
+  Recipe         Recipe          @relation(fields: [recipeId], references: [id])
+  recipeId       String
+
+  @@unique([groupTitle, recipeId])
+}
+
+model ProcedureStep {
+  id               String         @id @default(uuid())
+  description      String
+  timer            Int?
+  ProcedureGroup   ProcedureGroup @relation(fields: [procedureGroupId], references: [id])
+  procedureGroupId String
+}
+
+model IngredientGroup {
+  id          String       @id @default(uuid())
+  groupTitle  String       @default("")
+  description String?
+  ingredients Ingredient[]
+  Recipe      Recipe       @relation(fields: [recipeId], references: [id])
+  recipeId    String
+
+  @@unique([groupTitle, recipeId])
+}
+
+model Ingredient {
+  id                String          @id @default(uuid())
+  qty               Int?
+  description       String
+  uom               String?
+  unitId            String?
+  IngredientGroup   IngredientGroup @relation(fields: [ingredientGroupId], references: [id])
+  ingredientGroupId String
+}
+
+// enum Unit {
+//   OZ
+//   FLOZ
+//   LB
+//   G
+//   C
+//   TSP
+//   TBSP
+//   BUNCH
+//   CAN
+//   BAG
+//   CONTAINER
+//   OTHER
+// }

@@ -1,0 +1,15 @@
+[
+  {
+    "title": "Test recipe",
+    "ingredientGroups": [
+      {
+        "ingredients": [
+          {
+            "qty": 3,
+            "description": "some stuff"
+          }
+        ]
+      }
+    ]
+  }
+]
