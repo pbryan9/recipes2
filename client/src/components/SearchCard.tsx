@@ -1,20 +1,15 @@
-import { type FormEvent, type Dispatch, type SetStateAction } from 'react';
+import { type FormEvent, useContext } from 'react';
+import { RecipesContext } from '../utils/context/RecipesContextProvider';
 import LeftNavCard from './LeftNavCard';
 
-type SearchCardProps = {
-  searchTerm: string;
-  setSearchTerm: Dispatch<SetStateAction<string>>;
-};
+export default function SearchCard() {
+  const { dispatch, searchTerm } = useContext(RecipesContext);
 
-export default function SearchCard({
-  searchTerm,
-  setSearchTerm,
-}: SearchCardProps) {
   function submitHandler(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-
-    console.log('searchTerm:', searchTerm);
   }
+
+  if (!dispatch) return <h1>Waiting for dispatch</h1>;
 
   return (
     <LeftNavCard>
@@ -30,12 +25,21 @@ export default function SearchCard({
           id='recipe-search'
           className='rounded-md text-gray-800 px-4 py-1 w-4/5'
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) =>
+            dispatch({
+              type: 'set_filter',
+              payload: { searchTerm: e.target.value || '' },
+            })
+          }
         ></input>
         <button
           disabled={searchTerm === ''}
           type='button'
-          onClick={() => setSearchTerm('')}
+          onClick={() =>
+            dispatch({
+              type: 'clear_filter',
+            })
+          }
           className={`${searchTerm === '' ? 'hidden' : ''}`}
         >
           <div className='w-4 aspect-square bg-red-500' />

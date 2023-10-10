@@ -3,13 +3,14 @@ import SectionHeader from '../../components/SectionHeader';
 import StandardMainContainer from '../../components/StandardMainContainer';
 import SearchCard from '../../components/SearchCard';
 
-import useBrowseRecipes from '../../utils/hooks/useBrowseRecipes';
 import RecipeCard from '../../components/RecipeCard';
 import { FilledRecipe } from '../../../../api-server/db/recipes/getRecipeById';
+import { useContext } from 'react';
+import { RecipesContext } from '../../utils/context/RecipesContextProvider';
+import { RecipesState } from '../../utils/hooks/useRecipes';
 
 export default function BrowseRecipes() {
-  const { filteredRecipes, isLoading, searchTerm, setSearchTerm } =
-    useBrowseRecipes();
+  const recipesContext = useContext(RecipesContext);
 
   function presentFilteredResults(
     filteredRecipes: Record<string, FilledRecipe[]>
@@ -41,15 +42,19 @@ export default function BrowseRecipes() {
     return results;
   }
 
-  function presentRecipes(filteredRecipes: Record<string, FilledRecipe[]>) {
-    if (!filteredRecipes) return;
+  function presentRecipes(recipesState: RecipesState) {
+    if (!recipesState) return;
 
-    const { allRecipes } = filteredRecipes;
+    const {
+      allRecipes,
+      titleMatches,
+      ingredientMatches,
+      procedureMatches,
+      tagMatches,
+      searchTerm,
+    } = recipesState;
 
-    console.log('allrecipes', allRecipes);
-    console.log('filtered recipes', filteredRecipes);
-
-    if (allRecipes.length > 0) {
+    if (searchTerm === '') {
       return (
         <section className='border border-gray-400 rounded-md p-4 w-full flex flex-col gap-4'>
           <h2 className='text-3xl font-bold'>All Recipes</h2>
@@ -58,7 +63,13 @@ export default function BrowseRecipes() {
           ))}
         </section>
       );
-    } else return presentFilteredResults(filteredRecipes);
+    } else
+      return presentFilteredResults({
+        titleMatches,
+        ingredientMatches,
+        procedureMatches,
+        tagMatches,
+      });
   }
 
   return (
@@ -66,11 +77,11 @@ export default function BrowseRecipes() {
       <SectionHeader sectionTitle='Recipes' />
       <section className='min-h-[calc(100vh_-_80px_-_128px)] h-full flex justify-between items-start w-full'>
         <LeftNav>
-          <SearchCard {...{ searchTerm, setSearchTerm }} />
+          <SearchCard />
         </LeftNav>
         <StandardMainContainer>
           <div className='w-full flex flex-col gap-4'>
-            {isLoading ? <h1>LOADING</h1> : presentRecipes(filteredRecipes)}
+            {!recipesContext.isLoading && presentRecipes(recipesContext)}
           </div>
         </StandardMainContainer>
       </section>

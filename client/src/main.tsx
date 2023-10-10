@@ -5,6 +5,8 @@ import App from './App.tsx';
 import './index.css';
 import Home from './views/home/Home.tsx';
 import BrowseRecipes from './views/recipes/BrowseRecipes.tsx';
+import SingleRecipe from './views/recipes/SingleRecipe.tsx';
+import CreateRecipeView from './views/create-recipe/CreateRecipeView.tsx';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +20,14 @@ const router = createBrowserRouter([
       {
         path: '/recipes',
         element: <BrowseRecipes />,
+      },
+      {
+        path: '/recipes/:recipeId',
+        element: <SingleRecipe />,
+      },
+      {
+        path: '/recipes/create-new-recipe',
+        element: <CreateRecipeView />,
       },
     ],
   },
