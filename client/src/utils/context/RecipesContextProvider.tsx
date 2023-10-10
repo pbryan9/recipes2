@@ -1,4 +1,4 @@
-import React, { createContext, useEffect } from 'react';
+import React, { createContext } from 'react';
 import useRecipes, {
   type RecipesState,
   initialRecipesState,

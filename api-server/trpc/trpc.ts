@@ -1,6 +1,9 @@
 import { initTRPC } from '@trpc/server';
 import z from 'zod';
 import { getAllRecipes } from '../db/recipes/getAllRecipes';
+import getAllTags from '../db/tags/getAllTags';
+import createNewRecipe from '../db/recipes/createNewRecipe';
+import { newRecipeFormInputSchema } from '../validators/newRecipeFormValidator';
 
 /**
  * Initialization of tRPC backend
@@ -18,6 +21,12 @@ export const appRouter = t.router({
   getAllRecipes: publicProcedure.query(async () => {
     return await getAllRecipes();
   }),
+  createNewRecipe: publicProcedure
+    .input(newRecipeFormInputSchema)
+    .mutation(async ({ input }) => {
+      return await createNewRecipe(input);
+    }),
+  getAllTags: publicProcedure.query(async () => await getAllTags()),
   sayHello: publicProcedure.query(() => {
     return { message: 'Hello, world!!!!' };
   }),

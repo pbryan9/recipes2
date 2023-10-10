@@ -7,6 +7,7 @@ import { Outlet } from 'react-router-dom';
 import RecipesContextProvider from './utils/context/RecipesContextProvider';
 
 import Navbar from './components/Navbar';
+import ClerkProviderComponent from './utils/auth/ClerkProvider';
 
 function App() {
   const [queryClient] = useState(() => new QueryClient());
@@ -24,10 +25,12 @@ function App() {
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <RecipesContextProvider>
-          <div className='h-screen w-screen overflow-y-hidden'>
-            <Navbar />
-            <Outlet />
-          </div>
+          <ClerkProviderComponent>
+            <div className='h-screen w-screen overflow-y-hidden'>
+              <Navbar />
+              <Outlet />
+            </div>
+          </ClerkProviderComponent>
         </RecipesContextProvider>
       </QueryClientProvider>
     </trpc.Provider>

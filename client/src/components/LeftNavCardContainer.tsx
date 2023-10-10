@@ -1,7 +1,5 @@
-'use client';
-
-import Image from 'next/image';
 import React, { useState } from 'react';
+import chevronIcon from '../assets/icons/chevron.svg';
 
 const variantClasses = {
   none: 'bg-gray-700 text-2xl px-6 font-bold',
@@ -28,12 +26,12 @@ export default function LeftNavCardContainer({
         className={`category-card h-20 flex-shrink-0 w-full flex items-center justify-between border-b capitalize border-gray-400 cursor-pointer ${variantClasses[variant]}`}
       >
         {title}
-        <Image
+        <img
           className={`origin-center transition-transform duration-100 ${
             isOpen ? '' : '-rotate-90'
           }`}
           alt={`expand "${title}" container`}
-          src={'/icons/chevron.svg'}
+          src={chevronIcon}
           width={26}
           height={15}
         />

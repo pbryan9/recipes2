@@ -8,6 +8,8 @@ import BrowseRecipes from './views/recipes/BrowseRecipes.tsx';
 import SingleRecipe from './views/recipes/SingleRecipe.tsx';
 import CreateRecipeView from './views/create-recipe/CreateRecipeView.tsx';
 
+import { RedirectToSignIn, SignedIn, SignedOut } from '@clerk/clerk-react';
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -27,7 +29,16 @@ const router = createBrowserRouter([
       },
       {
         path: '/recipes/create-new-recipe',
-        element: <CreateRecipeView />,
+        element: (
+          <>
+            <SignedIn>
+              <CreateRecipeView />
+            </SignedIn>
+            <SignedOut>
+              <RedirectToSignIn />
+            </SignedOut>
+          </>
+        ),
       },
     ],
   },
