@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from 'react';
-import { trpc } from '../trpc';
+import { trpc, type RouterOutputs } from '../trpc';
 import {
   FilledRecipe,
   Ingredient,
@@ -14,20 +14,22 @@ export type RecipeActionType =
   | 'loading_complete'
   | 'error';
 
+type Recipe = RouterOutputs['recipes']['byRecipeId'];
+
 export type RecipeAction = {
   type: RecipeActionType;
   payload?: {
-    recipeArray?: FilledRecipe[];
+    recipeArray?: Recipe[];
     searchTerm?: string;
   };
 };
 
 export type RecipesState = {
-  allRecipes: FilledRecipe[];
-  ingredientMatches: FilledRecipe[];
-  tagMatches: FilledRecipe[];
-  titleMatches: FilledRecipe[];
-  procedureMatches: FilledRecipe[];
+  allRecipes: Recipe[];
+  ingredientMatches: Recipe[];
+  tagMatches: Recipe[];
+  titleMatches: Recipe[];
+  procedureMatches: Recipe[];
   searchTerm: string;
   isLoading: boolean;
   isError: boolean;
@@ -44,24 +46,24 @@ export const initialRecipesState: RecipesState = {
   isError: false,
 };
 
-export default function useBrowseRecipes() {
-  const utils = trpc.useContext();
+export default function useRecipes() {
+  const allRecipes = trpc.recipes.all.useQuery(undefined, {
+    staleTime: 1000 * 60 * 1,
+  });
+
+  const [recipesState, dispatch] = useReducer<typeof recipesReducer>(
+    recipesReducer,
+    initialRecipesState
+  );
 
   useEffect(() => {
-    fetchRecipes().then((data) => {
-      dispatch({ type: 'refresh', payload: { recipeArray: data } });
-    });
-  }, []);
-
-  async function fetchRecipes() {
-    dispatch({ type: 'loading_start' });
-
-    const allRecipes = await utils.getAllRecipes.fetch();
-
-    dispatch({ type: 'loading_complete' });
-
-    return allRecipes;
-  }
+    if (allRecipes.isLoading) dispatch({ type: 'loading_start' });
+    else if (allRecipes.error) {
+      dispatch({ type: 'error' });
+    } else {
+      dispatch({ type: 'refresh', payload: { recipeArray: allRecipes.data } });
+    }
+  }, [allRecipes.isLoading, allRecipes.dataUpdatedAt]);
 
   function recipesReducer(
     state: RecipesState,
@@ -71,7 +73,12 @@ export default function useBrowseRecipes() {
       case 'refresh':
         if (!action.payload?.recipeArray)
           throw new Error('Must provide new recipe array.');
-        return { ...state, allRecipes: action.payload.recipeArray };
+        return {
+          ...state,
+          isLoading: false,
+          isError: false,
+          allRecipes: action.payload.recipeArray,
+        };
 
       case 'set_filter':
         if (action.payload?.searchTerm === undefined)
@@ -97,23 +104,22 @@ export default function useBrowseRecipes() {
         if (!state.isLoading) return state;
         return { ...state, isLoading: false };
 
+      case 'error':
+        if (!state.isLoading) return state;
+        return { ...state, isLoading: false, isError: true };
+
       default:
         throw new Error('Invalid action type');
     }
   }
 
-  const [recipesState, dispatch] = useReducer<typeof recipesReducer>(
-    recipesReducer,
-    initialRecipesState
-  );
-
   return { recipesState, dispatch };
 }
 
-function consolidateIngredients(recipe: FilledRecipe) {
+function consolidateIngredients(recipe: Recipe) {
   let res: Ingredient[] = [];
 
-  for (let group of recipe.ingredientGroups) {
+  for (let group of recipe?.ingredientGroups ?? []) {
     res = [...res, ...group.ingredients];
   }
 
@@ -131,9 +137,7 @@ function consolidateSteps(recipe: FilledRecipe) {
   return res;
 }
 
-function filterRecipes(keyword: string, allRecipes: FilledRecipe[]) {
-  const searchTerm = keyword.toLowerCase();
-
+function filterRecipes(keyword: string, allRecipes: Recipe[]) {
   const results: Pick<
     RecipesState,
     'ingredientMatches' | 'procedureMatches' | 'tagMatches' | 'titleMatches'
@@ -144,8 +148,14 @@ function filterRecipes(keyword: string, allRecipes: FilledRecipe[]) {
     procedureMatches: [],
   };
 
+  if (!keyword || !allRecipes || !allRecipes.length) return results;
+
+  const searchTerm = keyword.toLowerCase();
+
   for (let recipe of allRecipes) {
     // test for ingredient matches
+    if (!recipe) continue;
+
     let ingredients = consolidateIngredients(recipe);
 
     for (let ingredient of ingredients) {

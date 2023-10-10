@@ -1,38 +1,45 @@
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
+import { trpc } from '../../utils/trpc';
 
 import SectionHeader from '../../components/SectionHeader';
-
-import { RecipesContext } from '../../utils/context/RecipesContextProvider';
-import { useParams } from 'react-router-dom';
 import LeftNav from '../../components/LeftNav';
 import LeftNavCard from '../../components/LeftNavCard';
 import StandardMainContainer from '../../components/StandardMainContainer';
 
-type SingleRecipeProps = {};
-
-export default function SingleRecipe({}: SingleRecipeProps) {
+export default function SingleRecipe() {
+  const navigate = useNavigate();
+  const utils = trpc.useContext();
   const { recipeId } = useParams();
 
-  const recipesContext = useContext(RecipesContext);
+  const deleteRecipe = trpc.recipes.delete.useMutation({
+    onSuccess: (opt) => {
+      console.log('opt:', opt);
+      utils.recipes.all.invalidate();
+      utils.recipes.byRecipeId.invalidate({ recipeId });
+      utils.recipes.all.prefetch(undefined, { staleTime: 1000 * 60 * 1 });
+      navigate('/recipes');
+    },
+  });
 
-  function getRecipeFromContext(recipeId: string) {
-    if (!recipeId) return;
+  if (!recipeId) navigate('/recipes');
 
-    return recipesContext.allRecipes.find((recipe) => recipe.id === recipeId);
-  }
-
-  const recipe = useMemo(
-    () => getRecipeFromContext(recipeId || ''),
-    [recipeId]
+  const recipe = trpc.recipes.byRecipeId.useQuery(
+    { recipeId: recipeId! },
+    { staleTime: 1000 * 60 * 10 }
   );
+
+  if (recipe.isLoading) return <h1>Loading...</h1>;
+  if (recipe.isError) return <h1>Error</h1>;
 
   return (
     <>
-      <SectionHeader sectionTitle={recipe?.title || 'Viewing Recipe'} />
+      <SectionHeader sectionTitle={recipe.data?.title || 'Viewing Recipe'} />
       <section className='flex justify-between items-start h-[calc(100vh_-_80px_-_128px)] overflow-y-hidden w-full'>
         <LeftNav>
           <h2 className='text-4xl'>Ingredients</h2>
-          {recipe?.ingredientGroups.map((group) => (
+          {recipe.data?.ingredientGroups.map((group) => (
             <article
               key={group.id}
               className='w-full h-fit flex flex-col gap-0 mb-4'
@@ -49,9 +56,15 @@ export default function SingleRecipe({}: SingleRecipeProps) {
               ))}
             </article>
           ))}
+          <LeftNavCard
+            variant='danger'
+            onClick={() => deleteRecipe.mutate({ recipeId: recipeId! })}
+          >
+            {deleteRecipe.isLoading ? 'Deleting recipe...' : 'Delete Recipe'}
+          </LeftNavCard>
         </LeftNav>
         <StandardMainContainer>
-          {recipe?.procedureGroups.map((group, idx) => (
+          {recipe.data?.procedureGroups.map((group, idx) => (
             <article
               key={group.id}
               className='w-full h-fit flex flex-col justify-start items-center gap-4 mb-6 p-4 border border-gray-400 rounded-md'
@@ -61,7 +74,7 @@ export default function SingleRecipe({}: SingleRecipeProps) {
                   {group.groupTitle}
                 </h2>
               )}
-              {recipe?.procedureGroups[idx].procedureSteps.map((step) => (
+              {recipe.data?.procedureGroups[idx].procedureSteps.map((step) => (
                 <div
                   key={step.id}
                   className='text-xl w-full text-white bg-gray-800 flex justify-start items-center p-6 rounded-md'

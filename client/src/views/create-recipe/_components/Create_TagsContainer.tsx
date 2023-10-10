@@ -23,7 +23,9 @@ export default function CreateTagsContainer({
   }, []);
 
   async function fetchTags() {
-    const res = await utils.getAllTags.fetch();
+    const res = await utils.getAllTags.fetch(undefined, {
+      staleTime: 1000 * 60 * 10,
+    });
     setTags(arrangeTagsByGroup(res));
   }
 

@@ -26,7 +26,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <RecipesContextProvider>
           <ClerkProviderComponent>
-            <div className='h-screen w-screen overflow-y-hidden'>
+            <div className='h-screen w-screen overflow-y-hidden bg-gray-800 text-white'>
               <Navbar />
               <Outlet />
             </div>

@@ -3,17 +3,19 @@ import SectionHeader from '../../components/SectionHeader';
 import StandardMainContainer from '../../components/StandardMainContainer';
 import SearchCard from '../../components/SearchCard';
 
-import RecipeCard from '../../components/RecipeCard';
-import { FilledRecipe } from '../../../../api-server/db/recipes/getRecipeById';
 import { useContext } from 'react';
 import { RecipesContext } from '../../utils/context/RecipesContextProvider';
 import { RecipesState } from '../../utils/hooks/useRecipes';
+
+import RecipeCard from '../../components/RecipeCard';
+
+import type { RouterOutputs } from '../../utils/trpc';
 
 export default function BrowseRecipes() {
   const recipesContext = useContext(RecipesContext);
 
   function presentFilteredResults(
-    filteredRecipes: Record<string, FilledRecipe[]>
+    filteredRecipes: Record<string, RouterOutputs['recipes']['byRecipeId'][]>
   ) {
     const headingMap: Record<string, string> = {
       titleMatches: 'Title Matches',
@@ -33,7 +35,7 @@ export default function BrowseRecipes() {
           >
             <h2 className='text-3xl font-bold'>{headingMap[heading]}</h2>
             {filteredRecipes[heading]!.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
+              <RecipeCard key={recipe!.id} recipe={recipe!} />
             ))}
           </section>
         );
@@ -54,12 +56,14 @@ export default function BrowseRecipes() {
       searchTerm,
     } = recipesState;
 
+    if (!allRecipes.length) return;
+
     if (searchTerm === '') {
       return (
         <section className='border border-gray-400 rounded-md p-4 w-full flex flex-col gap-4'>
           <h2 className='text-3xl font-bold'>All Recipes</h2>
           {allRecipes.map((recipe) => (
-            <RecipeCard key={recipe.id} recipe={recipe} />
+            <RecipeCard key={recipe!.id} recipe={recipe!} />
           ))}
         </section>
       );
@@ -75,7 +79,7 @@ export default function BrowseRecipes() {
   return (
     <>
       <SectionHeader sectionTitle='Recipes' />
-      <section className='min-h-[calc(100vh_-_80px_-_128px)] h-full flex justify-between items-start w-full'>
+      <section className='h-[calc(100vh_-_80px_-_128px)] flex justify-between items-start w-full'>
         <LeftNav>
           <SearchCard />
         </LeftNav>

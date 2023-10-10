@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useUser } from '@clerk/clerk-react';
@@ -15,6 +16,9 @@ import { Tag } from '../../../../api-server/db/tags/getAllTags';
 import { trpc } from '../../utils/trpc';
 import GroupsListing from './_components/GroupsListing';
 import SelectedTags from './_components/SelectedTags';
+
+import { RecipesContext } from '../../utils/context/RecipesContextProvider';
+import { getQueryKey } from '@trpc/react-query';
 
 const defaultValues: FormInputs = {
   title: '',
@@ -52,9 +56,21 @@ const inputClasses = 'col-span-6 rounded-md h-full text-gray-900 px-4';
 const labelClasses = 'col-span-2';
 
 export default function CreateRecipeView() {
-  const mutation = trpc.createNewRecipe.useMutation();
-
+  const navigate = useNavigate();
+  const utils = trpc.useContext();
   const { user } = useUser();
+
+  const mutation = trpc.recipes.create.useMutation({
+    onSuccess: (data) => {
+      utils.recipes.all.invalidate();
+      if (data?.id)
+        utils.recipes.byRecipeId.prefetch(
+          { recipeId: data.id },
+          { staleTime: 1000 * 60 * 10 }
+        );
+      navigate(`/recipes/${data!.id}`);
+    },
+  });
 
   const [selectedTags, setSelectedTags] = useState<Map<string, Tag>>();
 
@@ -63,6 +79,7 @@ export default function CreateRecipeView() {
     resolver: zodResolver(newRecipeFormInputSchema),
   });
 
+  // package up the form submission to make it easier to pass to side nav
   const submitForm = handleSubmit(onSubmit);
 
   function resetForm() {
@@ -77,11 +94,7 @@ export default function CreateRecipeView() {
     else tempTags.set(tag.id, tag);
 
     setSelectedTags(tempTags);
-
-    console.log('new tags:', tempTags);
   }
-
-  console.log('mutation:', mutation);
 
   async function onSubmit(data: FormInputs) {
     data.author = user?.username || 'anonymous';
@@ -90,14 +103,7 @@ export default function CreateRecipeView() {
       data.tags = Array.from(selectedTags.values()) as typeof data.tags;
     }
 
-    mutation.mutateAsync(data).then((res) => console.log('mutation res:', res));
-
-    // const res = await fetch('/api/restricted/create-new-recipe', {
-    //   method: 'POST',
-    //   body: JSON.stringify(data),
-    // });
-
-    // console.log('fetch res:', res);
+    mutation.mutate(data);
   }
 
   return (
