@@ -4,11 +4,12 @@ import {
   FormInputs,
   uomValues,
 } from '../../../../../api-server/validators/newRecipeFormValidator';
+import { RouterInputs } from '../../../utils/trpc';
 
 type IngredientItemProps = {
   ingredientIndex: number;
   groupIndex: number;
-  register: UseFormRegister<FormInputs>;
+  register: UseFormRegister<RouterInputs['recipes']['create']>;
   removeMember: UseFieldArrayRemove;
 };
 

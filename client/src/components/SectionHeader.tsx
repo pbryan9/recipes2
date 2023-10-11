@@ -1,8 +1,10 @@
+import React from 'react';
+
 type SectionHeaderProps = {
-  sectionTitle: string;
+  children: React.ReactNode;
 };
 
-export default function SectionHeader({ sectionTitle }: SectionHeaderProps) {
+export default function SectionHeader({ children }: SectionHeaderProps) {
   return (
     <header className='w-full h-32 border-b border-gray-400 flex justify-between items-center px-6 overflow-hidden gap-6'>
       <section className='left-section'>
@@ -10,7 +12,7 @@ export default function SectionHeader({ sectionTitle }: SectionHeaderProps) {
       </section>
       <section className='right-section overflow-hidden'>
         <article className='timer text-[4rem] font-bold overflow-hidden text-ellipsis whitespace-nowrap'>
-          {sectionTitle}
+          {children}
         </article>
       </section>
     </header>

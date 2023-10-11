@@ -22,8 +22,12 @@ export default function CreateSideMenu({
   return (
     <LeftNav>
       <CreateTagsContainer {...{ toggleTag, selectedTags }} />
-      <LeftNavCard onClick={submitForm}>Save Recipe</LeftNavCard>
-      <LeftNavCard onClick={resetForm}>Clear Form</LeftNavCard>
+      <LeftNavCard variant='confirm' onClick={submitForm}>
+        Save Recipe
+      </LeftNavCard>
+      <LeftNavCard variant='danger' onClick={resetForm}>
+        Clear Form
+      </LeftNavCard>
     </LeftNav>
   );
 }

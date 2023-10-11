@@ -13,10 +13,11 @@ import type { GroupType } from './GroupsListing';
 import { FormInputs } from '../../../../../api-server/validators/newRecipeFormValidator';
 import IngredientItem from './IngredientItem';
 import ProcedureStepItem from './ProcedureStepItem';
+import { RouterInputs } from '../../../utils/trpc';
 
 type GroupContainerProps = {
-  control: Control<FormInputs, any>;
-  register: UseFormRegister<FormInputs>;
+  control: Control<RouterInputs['recipes']['create'], any>;
+  register: UseFormRegister<RouterInputs['recipes']['create']>;
   groupIndex: number;
   groupTitle: string;
   groupType: GroupType;

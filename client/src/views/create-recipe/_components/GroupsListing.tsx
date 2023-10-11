@@ -9,13 +9,13 @@ import GroupContainer from './GroupContainer';
 import ButtonContainer from './ButtonContainer';
 import Button from './Button';
 
-import type { FormInputs } from '../../../../../api-server/validators/newRecipeFormValidator';
+import { RouterInputs } from '../../../utils/trpc';
 
 export type GroupType = 'ingredientGroups' | 'procedureGroups';
 
 type GroupListingProps = {
-  control: Control<FormInputs, any>;
-  register: UseFormRegister<FormInputs>;
+  control: Control<RouterInputs['recipes']['create'], any>;
+  register: UseFormRegister<RouterInputs['recipes']['create']>;
   groupType: GroupType;
 };
 

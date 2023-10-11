@@ -1,21 +1,23 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useUser } from '@clerk/clerk-react';
 
 import { newRecipeFormInputSchema } from '../../../../api-server/validators/newRecipeFormValidator';
+import type { RouterInputs } from '../../utils/trpc';
 
 import SectionHeader from '../../components/SectionHeader';
 import StandardMainContainer from '../../components/StandardMainContainer';
 import CreateSideMenu from './_components/Create_SideMenu';
 import { Tag } from '../../../../api-server/db/tags/getAllTags';
-import { RouterInputs, trpc } from '../../utils/trpc';
+import { trpc } from '../../utils/trpc';
 import GroupsListing from './_components/GroupsListing';
 import SelectedTags from './_components/SelectedTags';
 
-const defaultValues: RouterInputs['recipes']['create'] = {
+const defaultValues: RouterInputs['recipes']['edit'] = {
   title: '',
+  recipeId: '',
   author: undefined,
   cookTime: '' as unknown as undefined,
   prepTime: '' as unknown as undefined,
@@ -50,13 +52,67 @@ const inputClasses = 'col-span-6 rounded-md h-full text-gray-900 px-4';
 const labelClasses = 'col-span-2';
 
 export default function CreateRecipeView() {
+  const { recipeId } = useParams();
+
   const navigate = useNavigate();
   const utils = trpc.useContext();
   const { user } = useUser();
 
-  const mutation = trpc.recipes.create.useMutation({
+  const [selectedTags, setSelectedTags] = useState<Map<string, Tag>>();
+
+  const recipe = trpc.recipes.byRecipeId.useQuery({ recipeId: recipeId! });
+
+  const defaultFormValues = {
+    author: recipe.data?.author.username,
+    cookTime: recipe.data?.cookTime || undefined,
+    prepTime: recipe.data?.prepTime || undefined,
+    title: recipe.data?.title,
+    tags: recipe.data?.tags.map((tag) => ({
+      id: tag.id,
+      description: tag.description,
+      tagGroup: tag.tagGroup || undefined,
+    })),
+    procedureGroups: recipe.data?.procedureGroups.map((group) => ({
+      groupTitle: group.groupTitle,
+      description: group.description || undefined,
+      procedureSteps: group.procedureSteps.map((step) => ({
+        description: step.description || undefined,
+        timer: step.timer || undefined,
+      })),
+    })),
+    ingredientGroups: recipe.data?.ingredientGroups.map((group) => ({
+      description: group.description || undefined,
+      groupTitle: group.groupTitle,
+      ingredients: group.ingredients.map(({ description, qty, uom }) => ({
+        description: description,
+        qty: qty || undefined,
+        uom: (uom || '') as any,
+      })),
+    })),
+  };
+
+  useEffect(() => {
+    if (!recipe.isLoading && !recipe.isError) {
+      setSelectedTags(new Map(recipe.data?.tags.map((tag) => [tag.id, tag])));
+      reset(defaultFormValues);
+    }
+  }, [recipe.isLoading, recipe.isError]);
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<RouterInputs['recipes']['create']>({
+    defaultValues: defaultFormValues || defaultValues,
+    resolver: zodResolver(newRecipeFormInputSchema),
+  });
+
+  const mutation = trpc.recipes.edit.useMutation({
     onSuccess: (data) => {
       utils.recipes.all.invalidate(undefined, { exact: true });
+      utils.recipes.byRecipeId.invalidate({ recipeId });
       if (data?.id)
         utils.recipes.byRecipeId.prefetch(
           { recipeId: data.id },
@@ -64,19 +120,8 @@ export default function CreateRecipeView() {
         );
       navigate(`/recipes/${data!.id}`);
     },
-    meta: {},
   });
 
-  const [selectedTags, setSelectedTags] = useState<Map<string, Tag>>();
-
-  const { register, handleSubmit, control, reset } = useForm<
-    RouterInputs['recipes']['create']
-  >({
-    defaultValues,
-    resolver: zodResolver(newRecipeFormInputSchema),
-  });
-
-  // package up the form submission to make it easier to pass to side nav
   const submitForm = handleSubmit(onSubmit);
 
   function resetForm() {
@@ -100,12 +145,12 @@ export default function CreateRecipeView() {
       data.tags = Array.from(selectedTags.values()) as typeof data.tags;
     }
 
-    mutation.mutate(data);
+    mutation.mutate({ ...data, recipeId: recipeId! });
   }
 
   return (
     <>
-      <SectionHeader>Add New Recipe</SectionHeader>
+      <SectionHeader>{`Editing ${recipe.data?.title}`}</SectionHeader>
       <section className='flex justify-between items-start h-[calc(100vh_-_80px_-_128px)] overflow-y-hidden w-full'>
         <CreateSideMenu
           {...{ resetForm, submitForm, toggleTag, selectedTags }}

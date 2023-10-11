@@ -1,11 +1,12 @@
 import type { UseFieldArrayRemove, UseFormRegister } from 'react-hook-form';
 import Button from './Button';
 import { FormInputs } from '../../../../../api-server/validators/newRecipeFormValidator';
+import { RouterInputs } from '../../../utils/trpc';
 
 type ProcedureStepItemProps = {
   procedureIndex: number;
   groupIndex: number;
-  register: UseFormRegister<FormInputs>;
+  register: UseFormRegister<RouterInputs['recipes']['create']>;
   removeMember: UseFieldArrayRemove;
 };
 

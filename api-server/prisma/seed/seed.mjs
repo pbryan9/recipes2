@@ -3,18 +3,18 @@ import mockUserData from './mock/mockUsers.json' assert { type: 'json' };
 
 const uomValues = [
   '',
-  'OZ',
-  'FLOZ',
-  'LB',
-  'G',
-  'C',
-  'TSP',
-  'TBSP',
-  'BUNCH',
-  'CAN',
-  'BAG',
-  'CONTAINER',
-  'OTHER',
+  'oz',
+  'fl. oz',
+  'lb',
+  'grams',
+  'cup',
+  'tsp',
+  'tbsp',
+  'bunch',
+  'can',
+  'box',
+  'bag',
+  'thing',
 ];
 
 const tags = [
@@ -46,10 +46,6 @@ const tags = [
     description: 'mains',
     tagGroup: 'role',
   },
-  // {
-  //   description: '',
-  //   tagGroup: '',
-  // },
 ];
 
 const prisma = new PrismaClient();

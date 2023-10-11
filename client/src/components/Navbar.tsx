@@ -1,4 +1,4 @@
-// import { UserButton } from '@clerk/nextjs';
+import { UserButton } from '@clerk/clerk-react';
 import { Link } from 'react-router-dom';
 
 export default function Navbar() {
@@ -10,8 +10,7 @@ export default function Navbar() {
         </Link>
       </div>
       <div className='text-3xl font-bold'>
-        {/* <UserButton afterSignOutUrl='/' /> */}
-        user button goes here
+        <UserButton afterSignOutUrl='/' />
       </div>
     </nav>
   );

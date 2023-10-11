@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { trpc } from '../../utils/trpc';
 
@@ -34,7 +34,17 @@ export default function SingleRecipe() {
 
   return (
     <>
-      <SectionHeader sectionTitle={recipe.data?.title || 'Viewing Recipe'} />
+      <SectionHeader>
+        <div className='flex flex-col items-end justify-center'>
+          {recipe.data?.title || 'Viewing Recipe'}
+          <Link
+            className='text-sm -translate-y-full'
+            to={`/recipes/${recipeId}/edit`}
+          >
+            Edit
+          </Link>
+        </div>
+      </SectionHeader>
       <section className='flex justify-between items-start h-[calc(100vh_-_80px_-_128px)] overflow-y-hidden w-full'>
         <LeftNav>
           <h2 className='text-4xl'>Ingredients</h2>
@@ -55,6 +65,9 @@ export default function SingleRecipe() {
               ))}
             </article>
           ))}
+          <Link to={`/recipes/${recipeId}/edit`}>
+            <LeftNavCard variant='caution'>Edit Recipe</LeftNavCard>
+          </Link>
           <LeftNavCard
             variant='danger'
             onClick={() => deleteRecipe.mutate({ recipeId: recipeId! })}

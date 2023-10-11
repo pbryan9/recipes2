@@ -49,6 +49,7 @@ export const initialRecipesState: RecipesState = {
 export default function useRecipes() {
   const allRecipes = trpc.recipes.all.useQuery(undefined, {
     staleTime: 1000 * 60 * 1,
+    trpc: { context: { user: 'test' } },
   });
 
   const [recipesState, dispatch] = useReducer<typeof recipesReducer>(
