@@ -1,8 +1,5 @@
 import prisma from '../prismaSingleton';
-import {
-  type FormInputs,
-  newRecipeFormInputSchema,
-} from '../../validators/newRecipeFormValidator';
+import { type FormInputs } from '../../validators/newRecipeFormValidator';
 
 export default async function createNewRecipe(formInputs: FormInputs) {
   // * note: zod validation is called by tRPC before invoking this function - we can assume clean data here
@@ -38,14 +35,8 @@ export default async function createNewRecipe(formInputs: FormInputs) {
         cookTime: formInputs.cookTime,
         prepTime: formInputs.prepTime,
         author: {
-          connectOrCreate: {
-            // TODO: derive user ID or username
-            where: {
-              username: formInputs.author,
-            },
-            create: {
-              username: formInputs.author || 'anonymous',
-            },
+          connect: {
+            username: formInputs.author,
           },
         },
         tags: {},

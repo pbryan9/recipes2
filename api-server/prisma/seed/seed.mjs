@@ -97,7 +97,7 @@ export async function seedRecipes() {
 
   await prisma.user.update({
     where: {
-      username: 'steffy',
+      username: 'pattyb',
     },
     data: {
       recipes: {

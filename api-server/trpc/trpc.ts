@@ -11,6 +11,10 @@ import editRecipe from '../db/recipes/editRecipe';
 import 'dotenv/config';
 
 import z from 'zod';
+import newUserFormSchema from '../validators/newUserFormValidator';
+import createUser from '../db/users/createUser';
+import authenticateUserValidator from '../validators/authenticateUserValidator';
+import authenticateUser from '../db/users/authenticateUser';
 
 /**
  * Initialization of tRPC backend
@@ -34,7 +38,6 @@ const t = initTRPC.context<TRPCContext>().create();
 
 export const publicProcedure = t.procedure;
 export const protectedProcedure = t.procedure;
-// export const protectedProcedure = t.procedure.use(isAuthed);
 
 export const appRouter = t.router({
   recipes: t.router({
@@ -62,6 +65,18 @@ export const appRouter = t.router({
       .input(z.object({ recipeId: z.string().uuid() }))
       .mutation(async ({ input }) => {
         return await deleteRecipe(input.recipeId);
+      }),
+  }),
+  users: t.router({
+    create: publicProcedure
+      .input(newUserFormSchema)
+      .mutation(async ({ input }) => {
+        return await createUser(input);
+      }),
+    authenticateUser: publicProcedure
+      .input(authenticateUserValidator)
+      .mutation(async ({ input }) => {
+        return await authenticateUser(input);
       }),
   }),
   getAllTags: publicProcedure.query(async () => await getAllTags()),

@@ -1,4 +1,3 @@
-import { RedirectToSignIn, SignedIn, SignedOut } from '@clerk/clerk-react';
 import { createBrowserRouter } from 'react-router-dom';
 
 /**
@@ -34,29 +33,11 @@ export default createBrowserRouter([
       },
       {
         path: '/recipes/:recipeId/edit',
-        element: (
-          <>
-            <SignedIn>
-              <EditRecipeView />
-            </SignedIn>
-            <SignedOut>
-              <RedirectToSignIn />
-            </SignedOut>
-          </>
-        ),
+        element: <EditRecipeView />,
       },
       {
         path: '/recipes/create-new-recipe',
-        element: (
-          <>
-            <SignedIn>
-              <CreateRecipeView />
-            </SignedIn>
-            <SignedOut>
-              <RedirectToSignIn />
-            </SignedOut>
-          </>
-        ),
+        element: <CreateRecipeView />,
       },
     ],
   },
