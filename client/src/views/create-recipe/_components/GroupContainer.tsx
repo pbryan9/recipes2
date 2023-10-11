@@ -13,7 +13,7 @@ import type { GroupType } from './GroupsListing';
 import { FormInputs } from '../../../../../api-server/validators/newRecipeFormValidator';
 import IngredientItem from './IngredientItem';
 import ProcedureStepItem from './ProcedureStepItem';
-import { RouterInputs } from '../../../utils/trpc';
+import { RouterInputs } from '../../../utils/trpc/trpc';
 
 type GroupContainerProps = {
   control: Control<RouterInputs['recipes']['create'], any>;

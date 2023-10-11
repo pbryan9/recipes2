@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from 'react';
-import { trpc, type RouterOutputs } from '../trpc';
+import { trpc, type RouterOutputs } from '../trpc/trpc';
 import {
   FilledRecipe,
   Ingredient,

@@ -4,7 +4,7 @@ import {
   FormInputs,
   uomValues,
 } from '../../../../../api-server/validators/newRecipeFormValidator';
-import { RouterInputs } from '../../../utils/trpc';
+import { RouterInputs } from '../../../utils/trpc/trpc';
 
 type IngredientItemProps = {
   ingredientIndex: number;

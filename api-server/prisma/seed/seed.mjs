@@ -51,8 +51,9 @@ const tags = [
 const prisma = new PrismaClient();
 
 export async function seed() {
-  await Promise.all([seedUsers(), seedTags()]);
-  await seedRecipes();
+  // await Promise.all([seedUsers(), seedTags()]);
+  await seedTags();
+  // await seedRecipes();
 }
 
 async function seedUnits() {

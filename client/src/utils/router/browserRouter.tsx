@@ -9,6 +9,8 @@ import BrowseRecipes from '../../views/recipes/BrowseRecipes';
 import SingleRecipe from '../../views/recipes/SingleRecipe';
 import CreateRecipeView from '../../views/create-recipe/CreateRecipeView';
 import EditRecipeView from '../../views/create-recipe/EditRecipeView';
+import SignInView from '../../views/sign-in/SignInView';
+import SignUpView from '../../views/sign-up/SignUpView';
 
 /**
  * ROUTES
@@ -38,6 +40,14 @@ export default createBrowserRouter([
       {
         path: '/recipes/create-new-recipe',
         element: <CreateRecipeView />,
+      },
+      {
+        path: '/sign-in',
+        element: <SignInView />,
+      },
+      {
+        path: '/sign-up',
+        element: <SignUpView />,
       },
     ],
   },

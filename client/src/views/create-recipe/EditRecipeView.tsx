@@ -2,18 +2,18 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useUser } from '@clerk/clerk-react';
 
 import { newRecipeFormInputSchema } from '../../../../api-server/validators/newRecipeFormValidator';
-import type { RouterInputs } from '../../utils/trpc';
+import type { RouterInputs } from '../../utils/trpc/trpc';
 
 import SectionHeader from '../../components/SectionHeader';
 import StandardMainContainer from '../../components/StandardMainContainer';
 import CreateSideMenu from './_components/Create_SideMenu';
 import { Tag } from '../../../../api-server/db/tags/getAllTags';
-import { trpc } from '../../utils/trpc';
+import { trpc } from '../../utils/trpc/trpc';
 import GroupsListing from './_components/GroupsListing';
 import SelectedTags from './_components/SelectedTags';
+import useUser from '../../utils/hooks/useUser';
 
 const defaultValues: RouterInputs['recipes']['edit'] = {
   title: '',
@@ -51,16 +51,26 @@ const defaultValues: RouterInputs['recipes']['edit'] = {
 const inputClasses = 'col-span-6 rounded-md h-full text-gray-900 px-4';
 const labelClasses = 'col-span-2';
 
-export default function CreateRecipeView() {
+export default function EditRecipeView() {
   const { recipeId } = useParams();
 
   const navigate = useNavigate();
+  const { isLoggedIn, username } = useUser();
+
   const utils = trpc.useContext();
-  const { user } = useUser();
 
   const [selectedTags, setSelectedTags] = useState<Map<string, Tag>>();
 
   const recipe = trpc.recipes.byRecipeId.useQuery({ recipeId: recipeId! });
+
+  useEffect(() => {
+    // check to make sure we're the owner of this recipe; if not get out
+    if (!isLoggedIn) navigate(`/recipes/${recipeId}`);
+
+    const recipeAuthor = recipe.data?.author.username;
+    if (recipeAuthor && recipeAuthor !== username)
+      navigate(`/recipes/${recipeId}`);
+  }, [isLoggedIn, username, recipe.data?.author.username]);
 
   const defaultFormValues = {
     author: recipe.data?.author.username,
@@ -139,7 +149,8 @@ export default function CreateRecipeView() {
   }
 
   async function onSubmit(data: RouterInputs['recipes']['create']) {
-    data.author = user?.username || 'anonymous';
+    // TODO: fix this
+    data.author = username!;
 
     if (selectedTags?.size && selectedTags.size > 0) {
       data.tags = Array.from(selectedTags.values()) as typeof data.tags;

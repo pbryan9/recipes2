@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import 'dotenv/config';
 
 import jwt from 'jsonwebtoken';
+import generateJwt from './generateJwt';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) throw new Error('MISSING JWT SECRET');
@@ -15,7 +16,6 @@ export default async function authenticateUser(input: AuthenticateUserInput) {
   });
   if (!user) throw new Error('Authentication error: username does not exist.');
 
-  // compare passwords; throw error if mismatched
   const comparePasswordResult = await bcrypt.compare(
     input.password,
     user.password
@@ -24,10 +24,5 @@ export default async function authenticateUser(input: AuthenticateUserInput) {
     throw new Error('Authentication error: password does not match.');
 
   // return JWT containing partial user info
-  const payload = {
-    userid: user.id,
-  };
-  const token = jwt.sign(payload, JWT_SECRET!);
-
-  return token;
+  return generateJwt(user.id);
 }

@@ -1,20 +1,21 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { trpc } from '../../utils/trpc';
+import { trpc } from '../../utils/trpc/trpc';
 
 import SectionHeader from '../../components/SectionHeader';
 import LeftNav from '../../components/LeftNav';
 import LeftNavCard from '../../components/LeftNavCard';
 import StandardMainContainer from '../../components/StandardMainContainer';
+import useUser from '../../utils/hooks/useUser';
 
 export default function SingleRecipe() {
   const navigate = useNavigate();
   const utils = trpc.useContext();
   const { recipeId } = useParams();
+  const { isLoggedIn, username } = useUser();
 
   const deleteRecipe = trpc.recipes.delete.useMutation({
-    onSuccess: (opt) => {
-      console.log('opt:', opt);
+    onSuccess: () => {
       utils.recipes.all.invalidate();
       utils.recipes.byRecipeId.invalidate({ recipeId });
       utils.recipes.all.prefetch(undefined, { staleTime: 1000 * 60 * 1 });
@@ -32,17 +33,21 @@ export default function SingleRecipe() {
   if (recipe.isLoading) return <h1>Loading...</h1>;
   if (recipe.isError) return <h1>Error</h1>;
 
+  const isAuthor = isLoggedIn && username === recipe.data!.author.username;
+
   return (
     <>
       <SectionHeader>
         <div className='flex flex-col items-end justify-center'>
           {recipe.data?.title || 'Viewing Recipe'}
-          <Link
-            className='text-sm -translate-y-full'
-            to={`/recipes/${recipeId}/edit`}
-          >
-            Edit
-          </Link>
+          {isAuthor && (
+            <Link
+              className='text-sm -translate-y-full'
+              to={`/recipes/${recipeId}/edit`}
+            >
+              Edit
+            </Link>
+          )}
         </div>
       </SectionHeader>
       <section className='flex justify-between items-start h-[calc(100vh_-_80px_-_128px)] overflow-y-hidden w-full'>
@@ -65,15 +70,21 @@ export default function SingleRecipe() {
               ))}
             </article>
           ))}
-          <Link to={`/recipes/${recipeId}/edit`}>
-            <LeftNavCard variant='caution'>Edit Recipe</LeftNavCard>
-          </Link>
-          <LeftNavCard
-            variant='danger'
-            onClick={() => deleteRecipe.mutate({ recipeId: recipeId! })}
-          >
-            {deleteRecipe.isLoading ? 'Deleting recipe...' : 'Delete Recipe'}
-          </LeftNavCard>
+          {isAuthor && (
+            <>
+              <Link to={`/recipes/${recipeId}/edit`}>
+                <LeftNavCard variant='caution'>Edit Recipe</LeftNavCard>
+              </Link>
+              <LeftNavCard
+                variant='danger'
+                onClick={() => deleteRecipe.mutate({ recipeId: recipeId! })}
+              >
+                {deleteRecipe.isLoading
+                  ? 'Deleting recipe...'
+                  : 'Delete Recipe'}
+              </LeftNavCard>
+            </>
+          )}
         </LeftNav>
         <StandardMainContainer>
           {recipe.data?.procedureGroups.map((group, idx) => (

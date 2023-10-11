@@ -150,10 +150,7 @@ export default async function editRecipe(
     transactionQueries.push(updateRecipe);
 
     // execute transaction
-    const transactionResult = await prisma.$transaction(transactionQueries);
-
-    console.log('transaction result:');
-    console.dir(transactionResult, { depth: 5 });
+    await prisma.$transaction(transactionQueries);
 
     const editedRecipe = await prisma.recipe.findUnique({
       where: { id: formInputs.recipeId },

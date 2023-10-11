@@ -23,12 +23,6 @@ export default function RecipesContextProvider({
 }: RecipesContextProviderProps) {
   const { recipesState, dispatch } = useRecipes();
 
-  // useEffect(() => {
-  //   // ! debug logs
-  //   console.log('search term:', recipesState.searchTerm);
-  //   console.log('recipes state:', recipesState);
-  // }, [recipesState.isLoading, recipesState.searchTerm]);
-
   return (
     <RecipesContext.Provider value={{ ...recipesState, dispatch }}>
       {children}

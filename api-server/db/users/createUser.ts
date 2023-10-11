@@ -4,6 +4,7 @@ import type { NewUserInput } from '../../validators/newUserFormValidator';
 import 'dotenv/config';
 
 import bcrypt from 'bcrypt';
+import generateJwt from './generateJwt';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -23,7 +24,10 @@ export default async function createUser(newUserInput: NewUserInput) {
   // store user in db
   const newUser = await prisma.user.create({
     data: { username, password: hashedPassword },
+    select: { id: true, username: true },
   });
 
-  return newUser;
+  // generate token
+  const token = generateJwt(newUser.id);
+  return { user: newUser, token };
 }

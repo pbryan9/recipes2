@@ -1,4 +1,4 @@
-import { type inferAsyncReturnType, initTRPC } from '@trpc/server';
+import { type inferAsyncReturnType, initTRPC, TRPCError } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { getAllRecipes } from '../db/recipes/getAllRecipes';
 import getAllTags from '../db/tags/getAllTags';
@@ -15,6 +15,7 @@ import newUserFormSchema from '../validators/newUserFormValidator';
 import createUser from '../db/users/createUser';
 import authenticateUserValidator from '../validators/authenticateUserValidator';
 import authenticateUser from '../db/users/authenticateUser';
+import verifyToken from '../db/users/verifyToken';
 
 /**
  * Initialization of tRPC backend
@@ -25,7 +26,9 @@ export const createContext = async ({
   req,
   res,
 }: trpcExpress.CreateExpressContextOptions) => {
-  return { req, res, session: null };
+  const token = req.headers.authorization?.split(' ').at(-1);
+
+  return { req, res, token };
 };
 
 type TRPCContext = inferAsyncReturnType<typeof createContext>;
@@ -36,8 +39,22 @@ const t = initTRPC.context<TRPCContext>().create();
  * that can be used throughout the router
  */
 
+const isAuthed = t.middleware(async (opts) => {
+  const token = opts.ctx.token;
+
+  if (!token) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+  try {
+    const authRes = await verifyToken(token);
+    return opts.next({ ctx: { user: authRes } });
+  } catch (err) {
+    console.log(err);
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+});
+
 export const publicProcedure = t.procedure;
-export const protectedProcedure = t.procedure;
+export const protectedProcedure = t.procedure.use(isAuthed);
 
 export const appRouter = t.router({
   recipes: t.router({
@@ -78,6 +95,9 @@ export const appRouter = t.router({
       .mutation(async ({ input }) => {
         return await authenticateUser(input);
       }),
+    validateToken: protectedProcedure.query(({ ctx }) => {
+      return ctx.user.username;
+    }),
   }),
   getAllTags: publicProcedure.query(async () => await getAllTags()),
 });

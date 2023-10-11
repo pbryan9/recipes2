@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useUser } from '@clerk/clerk-react';
 
 import { newRecipeFormInputSchema } from '../../../../api-server/validators/newRecipeFormValidator';
 
@@ -10,9 +9,10 @@ import SectionHeader from '../../components/SectionHeader';
 import StandardMainContainer from '../../components/StandardMainContainer';
 import CreateSideMenu from './_components/Create_SideMenu';
 import { Tag } from '../../../../api-server/db/tags/getAllTags';
-import { RouterInputs, trpc } from '../../utils/trpc';
+import { RouterInputs, trpc } from '../../utils/trpc/trpc';
 import GroupsListing from './_components/GroupsListing';
 import SelectedTags from './_components/SelectedTags';
+import useUser from '../../utils/hooks/useUser';
 
 const defaultValues: RouterInputs['recipes']['create'] = {
   title: '',
@@ -52,11 +52,16 @@ const labelClasses = 'col-span-2';
 export default function CreateRecipeView() {
   const navigate = useNavigate();
   const utils = trpc.useContext();
-  const { user } = useUser();
+  const { isLoggedIn, username } = useUser();
+
+  useEffect(() => {
+    // cannot create recipes if not logged in
+    if (!isLoggedIn) navigate('/sign-in');
+  }, [isLoggedIn]);
 
   const mutation = trpc.recipes.create.useMutation({
     onSuccess: (data) => {
-      utils.recipes.all.invalidate(undefined, { exact: true });
+      utils.recipes.all.invalidate();
       if (data?.id)
         utils.recipes.byRecipeId.prefetch(
           { recipeId: data.id },
@@ -94,7 +99,7 @@ export default function CreateRecipeView() {
   }
 
   async function onSubmit(data: RouterInputs['recipes']['create']) {
-    data.author = user?.username || 'anonymous';
+    data.author = username!;
 
     if (selectedTags?.size && selectedTags.size > 0) {
       data.tags = Array.from(selectedTags.values()) as typeof data.tags;

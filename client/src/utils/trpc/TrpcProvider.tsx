@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { trpc } from '../trpc';
+import { trpc } from './trpc';
 import { httpBatchLink } from '@trpc/react-query';
 
 export default function TrpcProvider({
@@ -18,6 +18,12 @@ export default function TrpcProvider({
           url,
           fetch(url, options) {
             return fetch(url, { ...options, credentials: 'include' });
+          },
+          headers() {
+            const token = localStorage.getItem('token');
+            if (!token) return {};
+
+            return { Authorization: `Bearer ${token}` };
           },
         }),
       ],

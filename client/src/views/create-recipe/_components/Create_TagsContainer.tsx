@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { type Tag } from '../../../../../api-server/db/tags/getAllTags';
 import LeftNavCardContainer from '../../../components/LeftNavCardContainer';
 import LeftNavCard from '../../../components/LeftNavCard';
-import { trpc } from '../../../utils/trpc';
+import { trpc } from '../../../utils/trpc/trpc';
 
 type CreateTagsContainerProps = {
   toggleTag: (tag: Tag) => void;

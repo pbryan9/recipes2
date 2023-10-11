@@ -9,10 +9,15 @@ import { RecipesState } from '../../utils/hooks/useRecipes';
 
 import RecipeCard from '../../components/RecipeCard';
 
-import type { RouterOutputs } from '../../utils/trpc';
+import type { RouterOutputs } from '../../utils/trpc/trpc';
+import useUser from '../../utils/hooks/useUser';
+import LeftNavCard from '../../components/LeftNavCard';
+import { useNavigate } from 'react-router-dom';
 
 export default function BrowseRecipes() {
+  const navigate = useNavigate();
   const recipesContext = useContext(RecipesContext);
+  const { isLoggedIn } = useUser();
 
   function presentFilteredResults(
     filteredRecipes: Record<string, RouterOutputs['recipes']['byRecipeId'][]>
@@ -78,10 +83,18 @@ export default function BrowseRecipes() {
 
   return (
     <>
-      <SectionHeader sectionTitle='Recipes' />
+      <SectionHeader>Recipes</SectionHeader>
       <section className='h-[calc(100vh_-_80px_-_128px)] flex justify-between items-start w-full'>
         <LeftNav>
           <SearchCard />
+          {isLoggedIn && (
+            <LeftNavCard
+              variant='confirm'
+              onClick={() => navigate('/recipes/create-new-recipe')}
+            >
+              Create New Recipe
+            </LeftNavCard>
+          )}
         </LeftNav>
         <StandardMainContainer>
           <div className='w-full flex flex-col gap-4'>

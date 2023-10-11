@@ -3,21 +3,21 @@ import { Outlet } from 'react-router-dom';
 import RecipesContextProvider from './utils/context/RecipesContextProvider';
 
 import Navbar from './components/Navbar';
-import ClerkProviderComponent from './utils/auth/ClerkProvider';
 import TrpcProvider from './utils/trpc/TrpcProvider';
+import UserContextProvider from './utils/context/UserContextProvider';
 
 function App() {
   return (
-    <ClerkProviderComponent>
-      <TrpcProvider>
+    <TrpcProvider>
+      <UserContextProvider>
         <RecipesContextProvider>
           <div className='h-screen w-screen overflow-y-hidden bg-gray-800 text-white'>
             <Navbar />
             <Outlet />
           </div>
         </RecipesContextProvider>
-      </TrpcProvider>
-    </ClerkProviderComponent>
+      </UserContextProvider>
+    </TrpcProvider>
   );
 }
 

@@ -9,7 +9,7 @@ import GroupContainer from './GroupContainer';
 import ButtonContainer from './ButtonContainer';
 import Button from './Button';
 
-import { RouterInputs } from '../../../utils/trpc';
+import { RouterInputs } from '../../../utils/trpc/trpc';
 
 export type GroupType = 'ingredientGroups' | 'procedureGroups';
 

@@ -1,4 +1,3 @@
-import { UserButton } from '@clerk/clerk-react';
 import { Link } from 'react-router-dom';
 
 export default function Navbar() {
@@ -8,9 +7,6 @@ export default function Navbar() {
         <Link to='/' className=''>
           Recipe Box
         </Link>
-      </div>
-      <div className='text-3xl font-bold'>
-        <UserButton afterSignOutUrl='/' />
       </div>
     </nav>
   );

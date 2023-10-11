@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import cookieParser from 'cookie-parser';
+import morgan from 'morgan';
 import 'dotenv/config';
 
 import { trpcMiddleware } from './trpc/trpc';
@@ -10,8 +10,8 @@ const { API_PORT, ALLOWED_ORIGINS } = process.env;
 const allowedOrigins = ALLOWED_ORIGINS?.split('|');
 
 const app = express();
+app.use(morgan('dev'));
 app.use(cors({ origin: allowedOrigins, credentials: true }));
-app.use(cookieParser());
 
 app.use('/api', trpcMiddleware);
 
