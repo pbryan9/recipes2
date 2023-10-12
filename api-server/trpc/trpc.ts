@@ -88,6 +88,7 @@ export const appRouter = t.router({
     create: publicProcedure
       .input(newUserFormSchema)
       .mutation(async ({ input }) => {
+        console.log('attempting user create');
         return await createUser(input);
       }),
     authenticateUser: publicProcedure
