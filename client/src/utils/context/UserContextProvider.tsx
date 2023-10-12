@@ -74,6 +74,10 @@ export default function UserContextProvider({
     newUserMutation.mutate(input);
   }
 
+  // useEffect(() => {
+
+  // }, [])
+
   // on initial render, check for token
   const user = trpc.users.validateToken.useQuery(undefined, {
     enabled: !userContext.isLoggedIn && !!localStorage.getItem('token'),

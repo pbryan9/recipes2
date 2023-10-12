@@ -121,7 +121,7 @@ export default function EditRecipeView() {
 
   const mutation = trpc.recipes.edit.useMutation({
     onSuccess: (data) => {
-      utils.recipes.all.invalidate(undefined, { exact: true });
+      utils.recipes.all.invalidate();
       utils.recipes.byRecipeId.invalidate({ recipeId });
       if (data?.id)
         utils.recipes.byRecipeId.prefetch(

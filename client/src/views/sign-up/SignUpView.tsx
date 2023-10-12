@@ -1,13 +1,15 @@
 import { useNavigate } from 'react-router-dom';
-import useUser from '../../utils/hooks/useUser';
 import { useEffect } from 'react';
-import StandardMainContainer from '../../components/StandardMainContainer';
-import SectionHeader from '../../components/SectionHeader';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
 import newUserFormSchema, {
   type NewUserInput,
 } from '../../../../api-server/validators/newUserFormValidator';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import useUser from '../../utils/hooks/useUser';
+
+import StandardMainContainer from '../../components/StandardMainContainer';
+import SectionHeader from '../../components/SectionHeader';
 
 const defaultValues: NewUserInput = {
   username: '',
@@ -23,7 +25,11 @@ export default function SignUpView() {
     if (isLoggedIn) navigate('/');
   }, [isLoggedIn]);
 
-  const { register, handleSubmit } = useForm<NewUserInput>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<NewUserInput>({
     defaultValues,
     resolver: zodResolver(newUserFormSchema),
   });
@@ -31,6 +37,8 @@ export default function SignUpView() {
   function onSubmit(input: NewUserInput) {
     createUser!(input);
   }
+
+  console.log('errors:', errors);
 
   return (
     <>
@@ -50,6 +58,11 @@ export default function SignUpView() {
               type='text'
               {...register('username')}
             ></input>
+            {errors.username?.message && (
+              <p className='col-span-full place-self-end'>
+                {errors.username.message}
+              </p>
+            )}
             <label className='col-span-2' htmlFor='sign-up-password'>
               Password:
             </label>
@@ -59,6 +72,9 @@ export default function SignUpView() {
               type='password'
               {...register('password')}
             ></input>
+            {errors.password?.message && (
+              <p className='col-span-full'>{errors.password.message}</p>
+            )}
             <label className='col-span-2' htmlFor='sign-up-cfm-password'>
               Re-enter Password:
             </label>
@@ -68,6 +84,9 @@ export default function SignUpView() {
               type='password'
               {...register('confirmPassword')}
             ></input>
+            {errors.confirmPassword?.message && (
+              <p className='col-span-full'>{errors.confirmPassword.message}</p>
+            )}
             <button
               className='border border-gray-400 rounded-md py-2 px-4'
               type='submit'
