@@ -3,7 +3,6 @@ import prisma from '../prismaSingleton';
 import bcrypt from 'bcrypt';
 import 'dotenv/config';
 
-import jwt from 'jsonwebtoken';
 import generateJwt from './generateJwt';
 
 const JWT_SECRET = process.env.JWT_SECRET;

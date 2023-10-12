@@ -1,6 +1,5 @@
 import type { UseFieldArrayRemove, UseFormRegister } from 'react-hook-form';
 import Button from './Button';
-import { FormInputs } from '../../../../../api-server/validators/newRecipeFormValidator';
 import { RouterInputs } from '../../../utils/trpc/trpc';
 
 type ProcedureStepItemProps = {
@@ -40,7 +39,7 @@ export default function ProcedureStepItem({
   );
 }
 
-function createTimer() {
-  // TODO:
-  console.log('still have to finish this part');
-}
+// function createTimer() {
+//   // TODO:
+//   console.log('still have to finish this part');
+// }

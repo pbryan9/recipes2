@@ -32,7 +32,7 @@ export default async function deleteRecipe(recipeId: string) {
 
   const deleteRecipe = prisma.recipe.delete({ where: { id: recipeId } });
 
-  const transaction = await prisma.$transaction([
+  await prisma.$transaction([
     deleteIngredients,
     deleteIngredientGroups,
     deleteProcedures,

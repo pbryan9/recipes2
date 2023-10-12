@@ -1,5 +1,4 @@
 import prisma from '../prismaSingleton';
-import { inferRouterInputs } from '@trpc/server';
 import type { NewUserInput } from '../../validators/newUserFormValidator';
 import 'dotenv/config';
 

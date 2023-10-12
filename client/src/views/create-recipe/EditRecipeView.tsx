@@ -108,13 +108,9 @@ export default function EditRecipeView() {
     }
   }, [recipe.isLoading, recipe.isError]);
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    reset,
-    formState: { errors },
-  } = useForm<RouterInputs['recipes']['create']>({
+  const { register, handleSubmit, control, reset } = useForm<
+    RouterInputs['recipes']['create']
+  >({
     defaultValues: defaultFormValues || defaultValues,
     resolver: zodResolver(newRecipeFormInputSchema),
   });

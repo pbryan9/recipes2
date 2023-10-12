@@ -1,8 +1,5 @@
 import prisma from '../prismaSingleton';
-import {
-  type FormInputs,
-  newRecipeFormInputSchema,
-} from '../../validators/newRecipeFormValidator';
+import { type FormInputs } from '../../validators/newRecipeFormValidator';
 
 export default async function editRecipe(
   formInputs: FormInputs & { recipeId: string }

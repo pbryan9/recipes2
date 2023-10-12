@@ -1,9 +1,6 @@
 import type { UseFieldArrayRemove, UseFormRegister } from 'react-hook-form';
 import Button from './Button';
-import {
-  FormInputs,
-  uomValues,
-} from '../../../../../api-server/validators/newRecipeFormValidator';
+import { uomValues } from '../../../../../api-server/validators/newRecipeFormValidator';
 import { RouterInputs } from '../../../utils/trpc/trpc';
 
 type IngredientItemProps = {
