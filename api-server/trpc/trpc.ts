@@ -16,6 +16,8 @@ import createUser from '../db/users/createUser';
 import authenticateUserValidator from '../validators/authenticateUserValidator';
 import authenticateUser from '../db/users/authenticateUser';
 import verifyToken from '../db/users/verifyToken';
+import newTagFormValidator from '../validators/newTagFormValidator';
+import createNewTag from '../db/tags/createNewTag';
 
 /**
  * Initialization of tRPC backend
@@ -99,7 +101,14 @@ export const appRouter = t.router({
       return ctx.user.username;
     }),
   }),
-  getAllTags: publicProcedure.query(async () => await getAllTags()),
+  tags: t.router({
+    all: publicProcedure.query(async () => await getAllTags()),
+    create: protectedProcedure
+      .input(newTagFormValidator)
+      .mutation(async ({ input }) => {
+        return await createNewTag(input);
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

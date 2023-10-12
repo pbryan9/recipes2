@@ -3,6 +3,7 @@ import React from 'react';
 const variantClasses = {
   none: 'bg-gray-700 text-2xl px-6 font-bold',
   'sub-item': 'bg-gray-300 text-xl pl-8 pr-6 text-gray-800',
+  'sub-confirm': 'bg-green-300 text-xl pl-8 pr-6 text-gray-800',
   'sub-sub-item': 'bg-gray-200 text-lg pl-10 pr-6 text-gray-700',
   confirm: 'bg-green-400 text-2xl px-6 font-bold',
   danger: 'bg-red-400 text-2xl px-6 font-bold',

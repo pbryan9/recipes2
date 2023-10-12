@@ -4,6 +4,7 @@ import { type Tag } from '../../../../../api-server/db/tags/getAllTags';
 import LeftNavCardContainer from '../../../components/LeftNavCardContainer';
 import LeftNavCard from '../../../components/LeftNavCard';
 import { trpc } from '../../../utils/trpc/trpc';
+import CreateNewTag from './CreateNewTag';
 
 type CreateTagsContainerProps = {
   toggleTag: (tag: Tag) => void;
@@ -14,23 +15,22 @@ export default function CreateTagsContainer({
   toggleTag,
   selectedTags,
 }: CreateTagsContainerProps) {
-  const utils = trpc.useContext();
-
   const [tags, setTags] = useState<[string, Tag[]][] | null>(null);
 
-  useEffect(() => {
-    fetchTags();
-  }, []);
+  const tagQuery = trpc.tags.all.useQuery(undefined, {
+    staleTime: 1000 * 60 * 10,
+  });
 
-  async function fetchTags() {
-    const res = await utils.getAllTags.fetch(undefined, {
-      staleTime: 1000 * 60 * 10,
-    });
-    setTags(arrangeTagsByGroup(res));
-  }
+  useEffect(() => {
+    if (!tagQuery.isFetching) {
+      setTags(arrangeTagsByGroup(tagQuery.data!));
+    }
+  }, [tagQuery.isFetching]);
 
   function arrangeTagsByGroup(tags: Tag[]) {
     const groupedTagsMap = new Map<string, typeof tags>();
+
+    groupedTagsMap.set('all', []);
 
     tags.forEach((tag) => {
       let groupName = tag.tagGroup || 'Uncategorized';
@@ -38,11 +38,19 @@ export default function CreateTagsContainer({
       if (groupedTagsMap.has(groupName)) {
         groupedTagsMap.get(groupName)?.push(tag);
       } else groupedTagsMap.set(groupName, [tag]);
+
+      groupedTagsMap.get('all')?.push(tag);
     });
 
-    const groupedTags = Array.from(groupedTagsMap.entries());
+    // sort each group alphabetically
+    const groups = Array.from(groupedTagsMap.entries());
+    for (let [_, tags] of groups) {
+      tags.sort((a, b) =>
+        a.description.toLowerCase() > b.description.toLowerCase() ? 1 : -1
+      );
+    }
 
-    return groupedTags;
+    return groups;
   }
 
   return (
@@ -68,6 +76,7 @@ export default function CreateTagsContainer({
             </LeftNavCardContainer>
           );
         })}
+      <CreateNewTag toggleTag={toggleTag} />
     </LeftNavCardContainer>
   );
 }
