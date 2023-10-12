@@ -18,7 +18,6 @@ export default async function createUser(newUserInput: NewUserInput) {
     throw new Error('Error creating new user: username already exists.');
 
   // hash password
-  console.log('hashing password');
   const hashedPassword = await bcrypt.hash(password, 13);
 
   // store user in db
