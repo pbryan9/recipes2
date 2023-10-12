@@ -42,21 +42,53 @@ export default function UserContextProvider({
     },
   });
 
-  useEffect(() => {
-    setUserContext((prev) => ({ ...prev, login, logout, createUser }));
-  }, []);
-
   const utils = trpc.useContext();
 
   function login({ username, password }: AuthenticateUserInput) {
     authenticateUser.mutate({ username, password });
   }
 
+  function createUser(input: NewUserInput) {
+    if (userContext.isLoggedIn) return;
+    newUserMutation.mutate(input);
+  }
+
   function logout() {
+    // * remember to add any new functions here so they're not removed on logout
     localStorage.removeItem('token');
     utils.users.invalidate();
-    setUserContext(initialUserState);
+    setUserContext((prev) => ({
+      ...initialUserState,
+      login: prev.login,
+      logout: prev.logout,
+      createUser: prev.createUser,
+    }));
   }
+
+  /**
+   *
+   * Set up user management functions
+   * (and re-set them if ever they become undefined for some reason)
+   *
+   */
+
+  useEffect(() => {
+    if (!userContext.login) {
+      setUserContext((prev) => ({ ...prev, login }));
+    }
+  }, [userContext.login]);
+
+  useEffect(() => {
+    if (!userContext.logout) {
+      setUserContext((prev) => ({ ...prev, logout }));
+    }
+  }, [userContext.logout]);
+
+  useEffect(() => {
+    if (!userContext.createUser) {
+      setUserContext((prev) => ({ ...prev, createUser }));
+    }
+  }, [userContext.createUser]);
 
   const newUserMutation = trpc.users.create.useMutation({
     onSuccess(res) {
@@ -68,15 +100,6 @@ export default function UserContextProvider({
       }));
     },
   });
-
-  function createUser(input: NewUserInput) {
-    if (userContext.isLoggedIn) return;
-    newUserMutation.mutate(input);
-  }
-
-  // useEffect(() => {
-
-  // }, [])
 
   // on initial render, check for token
   const user = trpc.users.validateToken.useQuery(undefined, {
