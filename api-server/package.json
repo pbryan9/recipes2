@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node-dev index.ts"
+    "start-dev-api": "ts-node-dev index.ts",
+    "start-prod-api": "ts-node index.ts"
   },
   "prisma": {
     "seed": "node prisma/seed/seed.mjs"
