@@ -10,7 +10,6 @@ import type {
   UseFieldArrayRemove,
 } from 'react-hook-form';
 import type { GroupType } from './GroupsListing';
-import { FormInputs } from '../../../../../api-server/validators/newRecipeFormValidator';
 import IngredientItem from './IngredientItem';
 import ProcedureStepItem from './ProcedureStepItem';
 import { RouterInputs } from '../../../utils/trpc/trpc';
