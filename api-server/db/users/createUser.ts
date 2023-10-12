@@ -1,9 +1,8 @@
+import bcrypt from 'bcrypt';
 import prisma from '../prismaSingleton';
-import { inferRouterInputs } from '@trpc/server';
 import type { NewUserInput } from '../../validators/newUserFormValidator';
 import 'dotenv/config';
 
-import bcrypt from 'bcrypt';
 import generateJwt from './generateJwt';
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -19,6 +18,7 @@ export default async function createUser(newUserInput: NewUserInput) {
     throw new Error('Error creating new user: username already exists.');
 
   // hash password
+  console.log('hashing password');
   const hashedPassword = await bcrypt.hash(password, 13);
 
   // store user in db
