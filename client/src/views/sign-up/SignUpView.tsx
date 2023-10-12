@@ -38,8 +38,6 @@ export default function SignUpView() {
     createUser!(input);
   }
 
-  console.log('errors:', errors);
-
   return (
     <>
       <SectionHeader>Sign Up</SectionHeader>
