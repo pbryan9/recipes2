@@ -108,7 +108,6 @@ export default function UserContextProvider({
 
   useEffect(() => {
     if (!user.isLoading && !user.isError) {
-      console.log('auto logged-in');
       setUserContext((prev) => ({
         ...prev,
         isLoggedIn: true,
