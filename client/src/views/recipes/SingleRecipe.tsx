@@ -1,12 +1,12 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { trpc } from '../../utils/trpc/trpc';
+import { trpc } from '../../lib/trpc/trpc';
 
 import SectionHeader from '../../components/SectionHeader';
 import LeftNav from '../../components/LeftNav';
 import LeftNavCard from '../../components/LeftNavCard';
 import StandardMainContainer from '../../components/StandardMainContainer';
-import useUser from '../../utils/hooks/useUser';
+import useUser from '../../lib/hooks/useUser';
 
 export default function SingleRecipe() {
   const navigate = useNavigate();

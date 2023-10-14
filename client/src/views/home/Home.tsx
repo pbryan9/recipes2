@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import useUser from '../../utils/hooks/useUser';
+import useUser from '../../lib/hooks/useUser';
 
 export default function Home() {
   const { isLoggedIn, logout } = useUser();

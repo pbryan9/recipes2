@@ -9,7 +9,7 @@ import authenticateUserValidator, {
 import SectionHeader from '../../components/SectionHeader';
 import StandardMainContainer from '../../components/StandardMainContainer';
 import { useContext, useEffect } from 'react';
-import { UserContext } from '../../utils/context/UserContextProvider';
+import { UserContext } from '../../lib/context/UserContextProvider';
 
 const defaultValues: AuthenticateUserInput = {
   username: '',

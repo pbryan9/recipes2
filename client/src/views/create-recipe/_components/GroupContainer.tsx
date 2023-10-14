@@ -12,7 +12,7 @@ import type {
 import type { GroupType } from './GroupsListing';
 import IngredientItem from './IngredientItem';
 import ProcedureStepItem from './ProcedureStepItem';
-import { RouterInputs } from '../../../utils/trpc/trpc';
+import { RouterInputs } from '../../../lib/trpc/trpc';
 
 type GroupContainerProps = {
   control: Control<RouterInputs['recipes']['create'], any>;

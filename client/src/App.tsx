@@ -1,10 +1,10 @@
 import { Outlet } from 'react-router-dom';
 
-import RecipesContextProvider from './utils/context/RecipesContextProvider';
+import RecipesContextProvider from './lib/context/RecipesContextProvider';
 
 import Navbar from './components/Navbar';
-import TrpcProvider from './utils/trpc/TrpcProvider';
-import UserContextProvider from './utils/context/UserContextProvider';
+import TrpcProvider from './lib/trpc/TrpcProvider';
+import UserContextProvider from './lib/context/UserContextProvider';
 
 function App() {
   return (

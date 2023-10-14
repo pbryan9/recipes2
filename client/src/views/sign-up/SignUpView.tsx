@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import newUserFormSchema, {
   type NewUserInput,
 } from '../../../../api-server/validators/newUserFormValidator';
-import useUser from '../../utils/hooks/useUser';
+import useUser from '../../lib/hooks/useUser';
 
 import StandardMainContainer from '../../components/StandardMainContainer';
 import SectionHeader from '../../components/SectionHeader';

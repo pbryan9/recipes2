@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import TagBadge from './TagBadge';
-import { trpc, type RouterOutputs } from '../utils/trpc/trpc';
+import { trpc, type RouterOutputs } from '../lib/trpc/trpc';
 
 type RecipeCardProps = {
   recipe: RouterOutputs['recipes']['byRecipeId'];

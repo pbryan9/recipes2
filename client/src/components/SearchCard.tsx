@@ -1,5 +1,5 @@
 import { type FormEvent, useContext } from 'react';
-import { RecipesContext } from '../utils/context/RecipesContextProvider';
+import { RecipesContext } from '../lib/context/RecipesContextProvider';
 import LeftNavCard from './LeftNavCard';
 
 export default function SearchCard() {

@@ -6,7 +6,7 @@ import newTagFormValidator, {
   NewTagInput,
 } from '../../../../../api-server/validators/newTagFormValidator';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { trpc } from '../../../utils/trpc/trpc';
+import { trpc } from '../../../lib/trpc/trpc';
 import { Tag } from '../../../../../api-server/db/tags/getAllTags';
 
 const defaultValues = {

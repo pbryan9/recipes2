@@ -4,16 +4,16 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { newRecipeFormInputSchema } from '../../../../api-server/validators/newRecipeFormValidator';
-import type { RouterInputs } from '../../utils/trpc/trpc';
+import type { RouterInputs } from '../../lib/trpc/trpc';
 
 import SectionHeader from '../../components/SectionHeader';
 import StandardMainContainer from '../../components/StandardMainContainer';
 import CreateSideMenu from './_components/Create_SideMenu';
 import { Tag } from '../../../../api-server/db/tags/getAllTags';
-import { trpc } from '../../utils/trpc/trpc';
+import { trpc } from '../../lib/trpc/trpc';
 import GroupsListing from './_components/GroupsListing';
 import SelectedTags from './_components/SelectedTags';
-import useUser from '../../utils/hooks/useUser';
+import useUser from '../../lib/hooks/useUser';
 
 const defaultValues: RouterInputs['recipes']['edit'] = {
   title: '',

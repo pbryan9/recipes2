@@ -4,13 +4,13 @@ import StandardMainContainer from '../../components/StandardMainContainer';
 import SearchCard from '../../components/SearchCard';
 
 import { useContext } from 'react';
-import { RecipesContext } from '../../utils/context/RecipesContextProvider';
-import { RecipesState } from '../../utils/hooks/useRecipes';
+import { RecipesContext } from '../../lib/context/RecipesContextProvider';
+import { RecipesState } from '../../lib/hooks/useRecipes';
 
 import RecipeCard from '../../components/RecipeCard';
 
-import type { RouterOutputs } from '../../utils/trpc/trpc';
-import useUser from '../../utils/hooks/useUser';
+import type { RouterOutputs } from '../../lib/trpc/trpc';
+import useUser from '../../lib/hooks/useUser';
 import LeftNavCard from '../../components/LeftNavCard';
 import { useNavigate } from 'react-router-dom';
 

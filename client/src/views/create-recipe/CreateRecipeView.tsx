@@ -9,10 +9,10 @@ import SectionHeader from '../../components/SectionHeader';
 import StandardMainContainer from '../../components/StandardMainContainer';
 import CreateSideMenu from './_components/Create_SideMenu';
 import { Tag } from '../../../../api-server/db/tags/getAllTags';
-import { RouterInputs, trpc } from '../../utils/trpc/trpc';
+import { RouterInputs, trpc } from '../../lib/trpc/trpc';
 import GroupsListing from './_components/GroupsListing';
 import SelectedTags from './_components/SelectedTags';
-import useUser from '../../utils/hooks/useUser';
+import useUser from '../../lib/hooks/useUser';
 
 const defaultValues: RouterInputs['recipes']['create'] = {
   title: '',

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { type Tag } from '../../../../../api-server/db/tags/getAllTags';
 import LeftNavCardContainer from '../../../components/LeftNavCardContainer';
 import LeftNavCard from '../../../components/LeftNavCard';
-import { trpc } from '../../../utils/trpc/trpc';
+import { trpc } from '../../../lib/trpc/trpc';
 import CreateNewTag from './CreateNewTag';
 
 type CreateTagsContainerProps = {
