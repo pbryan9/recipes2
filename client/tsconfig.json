@@ -14,12 +14,6 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* shadcn/ui alias */
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./*"]
-    },
-
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
