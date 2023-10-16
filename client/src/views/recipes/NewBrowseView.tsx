@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FilledRecipe } from '../../../../api-server/db/recipes/getRecipeById';
-import { trpc } from '../../lib/trpc/trpc';
 import IngredientsSection from './IngredientsSection';
-import RecipeSectionHeader from './RecipeSectionHeader';
 import RecipeSummaryCard from './RecipeSummaryCard';
 import SearchCard from './SearchCard';
 import ProcedureSection from './ProcedureSection';

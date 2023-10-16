@@ -6,9 +6,7 @@ type RecipeSummaryCard = {
 };
 
 // TODO: add star icon
-// TODO: click to update main pane
 // TODO: selected card should be highlighted
-// TODO: hovered card should be highlighted
 
 export default function RecipeSummaryCard({
   recipe,
@@ -17,7 +15,7 @@ export default function RecipeSummaryCard({
   return (
     <article
       onClick={onClick}
-      className='rounded-sm shadow-level1 pl-4 gap-4 pr-6 flex items-center w-full h-[72px] shrink-0 bg-surface-container hover:bg-white/5 cursor-pointer'
+      className='rounded-sm pl-4 gap-4 pr-6 flex items-center w-full h-[72px] shrink-0 bg-surface-container hover:bg-white/5 cursor-pointer'
     >
       <div className='w-10 aspect-square rounded-full flex items-center justify-center primary-container on-primary-container-text title-large shrink-0'>
         {recipe.author.username[0].toUpperCase()}

@@ -1,3 +1,4 @@
+import CreateRecipeIcon from '../../assets/icons/CreateRecipeIcon';
 import RecipePotIcon from '../../assets/icons/RecipePotIcon';
 import NavRailButton from './NavRailButton';
 
@@ -10,9 +11,9 @@ export default function NavRail() {
         onClick={() => console.log('recipes clicked')}
       />
       <NavRailButton
-        icon={<RecipePotIcon />}
-        label='Recipes'
-        onClick={() => console.log('recipes clicked')}
+        icon={<CreateRecipeIcon />}
+        label='New'
+        onClick={() => console.log('new recipes clicked')}
       />
       <NavRailButton
         icon={<RecipePotIcon />}
