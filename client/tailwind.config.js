@@ -28,9 +28,12 @@ export const theme = {
     colors: {
       'on-surface': 'var(--md-sys-color-on-surface)',
       'surface-container': 'var(--md-sys-color-surface-container)',
-      'surface-container-high': 'var(--md-sys-color-surface-container-highest)',
+      'surface-container-low': 'var(--md-sys-color-surface-container-low)',
+      'surface-container-high': 'var(--md-sys-color-surface-container-high)',
       'background-dark': 'var(--md-sys-color-background-dark)',
       'on-bg-dark': 'var(--md-sys-color-on-background-dark)',
+      'secondary-container': 'var(--md-sys-color-secondary-container)',
+      outline: 'var(--md-sys-color-outline)',
       /**
        *
        * Everything below comes from shadcn/ui

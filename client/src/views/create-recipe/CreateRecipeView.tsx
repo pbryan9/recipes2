@@ -109,9 +109,12 @@ export default function CreateRecipeView() {
   }
 
   return (
-    <>
-      <SectionHeader>Add New Recipe</SectionHeader>
-      <section className='flex justify-between items-start h-[calc(100vh_-_80px_-_128px)] overflow-y-hidden w-full'>
+    <div className='flex flex-col w-full h-full'>
+      <header className='w-full flex justify-between items-center'>
+        <h1 className='display-medium'>New Recipe</h1>
+        <button>Save</button>
+      </header>
+      <main className='flex justify-stretch items-start w-full gap-6'>
         <CreateSideMenu
           {...{ resetForm, submitForm, toggleTag, selectedTags }}
         />
@@ -174,7 +177,7 @@ export default function CreateRecipeView() {
             </section>
           </form>
         </StandardMainContainer>
-      </section>
-    </>
+      </main>
+    </div>
   );
 }

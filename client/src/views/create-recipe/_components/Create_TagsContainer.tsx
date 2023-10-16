@@ -1,31 +1,28 @@
 import { useEffect, useState } from 'react';
 
 import { type Tag } from '../../../../../api-server/db/tags/getAllTags';
-import LeftNavCardContainer from '../../../components/LeftNavCardContainer';
-import LeftNavCard from '../../../components/LeftNavCard';
 import { trpc } from '../../../lib/trpc/trpc';
-import CreateNewTag from './CreateNewTag';
+// import CreateNewTag from './CreateNewTag';
+import TagChip from './TagChip';
+import CollapseIcon from '../../../assets/icons/CollapseIcon';
+import ExpandIcon from '../../../assets/icons/ExpandIcon';
 
 type CreateTagsContainerProps = {
   toggleTag: (tag: Tag) => void;
   selectedTags?: Map<string, Tag>;
 };
 
+// TODO: create new tag
+
 export default function CreateTagsContainer({
   toggleTag,
   selectedTags,
 }: CreateTagsContainerProps) {
-  const [tags, setTags] = useState<[string, Tag[]][] | null>(null);
+  const [expanded, setExpanded] = useState(true);
 
   const tagQuery = trpc.tags.all.useQuery(undefined, {
     staleTime: 1000 * 60 * 10,
   });
-
-  useEffect(() => {
-    if (!tagQuery.isFetching) {
-      setTags(arrangeTagsByGroup(tagQuery.data!));
-    }
-  }, [tagQuery.isFetching]);
 
   function arrangeTagsByGroup(tags: Tag[]) {
     const groupedTagsMap = new Map<string, typeof tags>();
@@ -54,29 +51,25 @@ export default function CreateTagsContainer({
   }
 
   return (
-    <LeftNavCardContainer title='Add Tags'>
-      {tags?.length &&
-        tags.map(([groupTitle, tags]) => {
-          return (
-            <LeftNavCardContainer
-              key={groupTitle}
-              variant='sub-container'
-              title={`${groupTitle.toLowerCase()} tags`}
-            >
-              {tags.map((tag) => (
-                <LeftNavCard
-                  onClick={() => toggleTag(tag)}
-                  key={tag.id}
-                  variant='sub-sub-item'
-                  selected={selectedTags?.has(tag.id)}
-                >
-                  {tag.description.toLowerCase()}
-                </LeftNavCard>
-              ))}
-            </LeftNavCardContainer>
-          );
-        })}
-      <CreateNewTag toggleTag={toggleTag} />
-    </LeftNavCardContainer>
+    <article className='flex flex-col items-center w-full'>
+      <header className='title-large h-14 w-full px-4 flex items-center gap-4 bg-surface-container-high rounded-full shadow-md'>
+        <button onClick={() => setExpanded((prev) => !prev)}>
+          {expanded ? <CollapseIcon /> : <ExpandIcon />}
+        </button>
+        Tags
+      </header>
+      <section
+        className={`w-full flex flex-wrap items-start justify-start gap-2 p-6 shadow-sm rounded-[12px] bg-surface-container-low ${
+          expanded ? '' : 'hidden'
+        }`}
+      >
+        {tagQuery.data?.map((tag) => (
+          <TagChip
+            key={tag.id}
+            {...{ tag, toggleTag, selected: selectedTags?.has(tag.id) }}
+          />
+        ))}
+      </section>
+    </article>
   );
 }
