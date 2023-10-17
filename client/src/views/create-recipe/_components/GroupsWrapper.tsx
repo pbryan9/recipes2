@@ -4,6 +4,8 @@ import {
   type Control,
   type UseFormRegister,
   UseFormGetFieldState,
+  UseFormSetFocus,
+  FieldErrors,
 } from 'react-hook-form';
 
 import GroupContainer from './GroupContainer';
@@ -21,9 +23,8 @@ type GroupsWrapperProps = {
   control: Control<FormInput, any>;
   register: UseFormRegister<FormInput>;
   groupType: GroupType;
-  dirtyFields: any;
-  errors: any;
-  setFocus: any;
+  setFocus: UseFormSetFocus<FormInput>;
+  errors: FieldErrors<FormInput>;
   getFieldState: UseFormGetFieldState<FormInput>;
 };
 
@@ -31,7 +32,6 @@ export default function GroupsWrapper({
   control,
   register,
   groupType,
-  dirtyFields,
   errors,
   setFocus,
   getFieldState,
@@ -49,7 +49,6 @@ export default function GroupsWrapper({
     <React.Fragment key={id}>
       <FormInput
         {...{
-          dirtyFields,
           errors,
           fieldLabel: 'Group label',
           supportingText:
@@ -62,16 +61,7 @@ export default function GroupsWrapper({
           getFieldState,
         }}
       />
-      {/* <label htmlFor={`group-${groupIndex}-title`} className='col-span-2'>
-            Group Label
-          </label>
-          <input
-            {...register(getGroupTitleRegistrationString(groupIndex))}
-            type='text'
-            placeholder='e.g., the dry team'
-            className='col-span-5 h-full rounded-md px-4 text-gray-900'
-            id={`group-${groupIndex}-title`}
-          ></input> */}
+
       <GroupContainer
         {...{
           control,
@@ -80,7 +70,6 @@ export default function GroupsWrapper({
           removeGroup,
           groupTitle,
           groupType,
-          dirtyFields,
           errors,
           setFocus,
           getFieldState,

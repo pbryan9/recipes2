@@ -1,10 +1,10 @@
 import type {
+  FieldErrors,
   UseFieldArrayRemove,
   UseFormGetFieldState,
   UseFormRegister,
+  UseFormSetFocus,
 } from 'react-hook-form';
-import Button from './Button';
-import { FormInputs } from '../../../../../api-server/validators/newRecipeFormValidator';
 import { RouterInputs } from '../../../lib/trpc/trpc';
 import TrashIcon from '../../../assets/icons/TrashIcon';
 import FormInput from './FormInput';
@@ -16,9 +16,8 @@ type ProcedureStepItemProps = {
   groupIndex: number;
   register: UseFormRegister<FormInput>;
   removeMember: UseFieldArrayRemove;
-  dirtyFields: any;
-  errors: any;
-  setFocus: any;
+  setFocus: UseFormSetFocus<FormInput>;
+  errors: FieldErrors<FormInput>;
   getFieldState: UseFormGetFieldState<FormInput>;
 };
 
@@ -27,7 +26,6 @@ export default function ProcedureStepItem({
   groupIndex,
   register,
   removeMember,
-  dirtyFields,
   errors,
   setFocus,
   getFieldState,
@@ -40,7 +38,7 @@ export default function ProcedureStepItem({
         <FormInput
           fieldLabel='Description*'
           fieldName={`${registrationPath}.description`}
-          {...{ dirtyFields, errors, register, setFocus, getFieldState }}
+          {...{ errors, register, setFocus, getFieldState }}
         />
       </div>
       <div className='procedure-buttons flex justify-center items-center self-start'>
@@ -56,7 +54,7 @@ export default function ProcedureStepItem({
   );
 }
 
-function createTimer() {
-  // TODO:
-  console.log('still have to finish this part');
-}
+// function createTimer() {
+//   // TODO:
+//   console.log('still have to finish this part');
+// }

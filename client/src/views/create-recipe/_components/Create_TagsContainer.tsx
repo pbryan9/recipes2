@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { type Tag } from '../../../../../api-server/db/tags/getAllTags';
 import { trpc } from '../../../lib/trpc/trpc';
@@ -24,32 +24,6 @@ export default function CreateTagsContainer({
     staleTime: 1000 * 60 * 10,
   });
 
-  function arrangeTagsByGroup(tags: Tag[]) {
-    const groupedTagsMap = new Map<string, typeof tags>();
-
-    groupedTagsMap.set('all', []);
-
-    tags.forEach((tag) => {
-      let groupName = tag.tagGroup || 'Uncategorized';
-
-      if (groupedTagsMap.has(groupName)) {
-        groupedTagsMap.get(groupName)?.push(tag);
-      } else groupedTagsMap.set(groupName, [tag]);
-
-      groupedTagsMap.get('all')?.push(tag);
-    });
-
-    // sort each group alphabetically
-    const groups = Array.from(groupedTagsMap.entries());
-    for (let [_, tags] of groups) {
-      tags.sort((a, b) =>
-        a.description.toLowerCase() > b.description.toLowerCase() ? 1 : -1
-      );
-    }
-
-    return groups;
-  }
-
   return (
     <article className='flex flex-col items-center w-full h-full'>
       <header className='title-large h-14 w-full px-4 flex items-center gap-4 bg-surface-container-high rounded-full shadow-md'>
@@ -73,3 +47,29 @@ export default function CreateTagsContainer({
     </article>
   );
 }
+
+// function arrangeTagsByGroup(tags: Tag[]) {
+//   const groupedTagsMap = new Map<string, typeof tags>();
+
+//   groupedTagsMap.set('all', []);
+
+//   tags.forEach((tag) => {
+//     let groupName = tag.tagGroup || 'Uncategorized';
+
+//     if (groupedTagsMap.has(groupName)) {
+//       groupedTagsMap.get(groupName)?.push(tag);
+//     } else groupedTagsMap.set(groupName, [tag]);
+
+//     groupedTagsMap.get('all')?.push(tag);
+//   });
+
+//   // sort each group alphabetically
+//   const groups = Array.from(groupedTagsMap.entries());
+//   for (let [_, tags] of groups) {
+//     tags.sort((a, b) =>
+//       a.description.toLowerCase() > b.description.toLowerCase() ? 1 : -1
+//     );
+//   }
+
+//   return groups;
+// }

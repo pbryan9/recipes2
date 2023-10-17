@@ -3,16 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import {
-  FormInputs,
-  newRecipeFormInputSchema,
-} from '../../../../api-server/validators/newRecipeFormValidator';
+import { newRecipeFormInputSchema } from '../../../../api-server/validators/newRecipeFormValidator';
 
 import FormLeftPane from './_components/FormLeftPane';
 import { Tag } from '../../../../api-server/db/tags/getAllTags';
 import { RouterInputs, trpc } from '../../lib/trpc/trpc';
-import GroupsWrapper from './_components/GroupsWrapper';
-import SelectedTags from './_components/SelectedTags';
 import useUser from '../../lib/hooks/useUser';
 import FormInput from './_components/FormInput';
 import IngredientsSection from './_components/IngredientsSection';
@@ -52,9 +47,6 @@ const defaultValues: RouterInputs['recipes']['create'] = {
   ],
 };
 
-const inputClasses = 'col-span-6 rounded-md h-full text-gray-900 px-4';
-const labelClasses = 'col-span-2';
-
 export default function CreateRecipeView() {
   const navigate = useNavigate();
   const utils = trpc.useContext();
@@ -87,7 +79,7 @@ export default function CreateRecipeView() {
     reset,
     setFocus,
     getFieldState,
-    formState: { dirtyFields, errors },
+    formState: { errors },
   } = useForm<RouterInputs['recipes']['create']>({
     defaultValues,
     resolver: zodResolver(newRecipeFormInputSchema),
@@ -142,7 +134,6 @@ export default function CreateRecipeView() {
                 fieldName: 'title',
                 fieldLabel: 'Recipe title*',
                 setFocus,
-                dirtyFields,
                 errors,
                 register,
                 getFieldState,
@@ -157,7 +148,6 @@ export default function CreateRecipeView() {
                   supportingText: 'HH:MM',
                   inputWidth: 'small',
                   setFocus,
-                  dirtyFields,
                   errors,
                   register,
                   getFieldState,
@@ -171,7 +161,6 @@ export default function CreateRecipeView() {
                   supportingText: 'HH:MM',
                   inputWidth: 'small',
                   setFocus,
-                  dirtyFields,
                   errors,
                   register,
                   getFieldState,
@@ -182,7 +171,6 @@ export default function CreateRecipeView() {
             <IngredientsSection
               {...{
                 control,
-                dirtyFields,
                 errors,
                 register,
                 setFocus,
@@ -193,7 +181,6 @@ export default function CreateRecipeView() {
             <ProcedureSection
               {...{
                 control,
-                dirtyFields,
                 errors,
                 register,
                 setFocus,

@@ -1,13 +1,10 @@
 import type {
+  FieldErrors,
   UseFieldArrayRemove,
   UseFormGetFieldState,
   UseFormRegister,
+  UseFormSetFocus,
 } from 'react-hook-form';
-import Button from './Button';
-import {
-  FormInputs,
-  uomValues,
-} from '../../../../../api-server/validators/newRecipeFormValidator';
 import { RouterInputs } from '../../../lib/trpc/trpc';
 import FormInput from './FormInput';
 import TrashIcon from '../../../assets/icons/TrashIcon';
@@ -19,9 +16,8 @@ type IngredientItemProps = {
   groupIndex: number;
   register: UseFormRegister<FormInput>;
   removeMember: UseFieldArrayRemove;
-  dirtyFields: any;
-  errors: any;
-  setFocus: any;
+  setFocus: UseFormSetFocus<FormInput>;
+  errors: FieldErrors<FormInput>;
   getFieldState: UseFormGetFieldState<FormInput>;
 };
 
@@ -30,7 +26,6 @@ export default function IngredientItem({
   groupIndex,
   register,
   removeMember,
-  dirtyFields,
   errors,
   setFocus,
   getFieldState,
@@ -46,7 +41,7 @@ export default function IngredientItem({
           variant='cluster'
           clusterInputPosition='left'
           inputWidth='small'
-          {...{ dirtyFields, errors, register, setFocus, getFieldState }}
+          {...{ errors, register, setFocus, getFieldState }}
         />
         <FormInput
           fieldLabel='Measure'
@@ -55,7 +50,7 @@ export default function IngredientItem({
           variant='cluster'
           clusterInputPosition='inner'
           inputWidth='small'
-          {...{ dirtyFields, errors, register, setFocus, getFieldState }}
+          {...{ errors, register, setFocus, getFieldState }}
         />
         <FormInput
           fieldLabel='Description*'
@@ -63,7 +58,7 @@ export default function IngredientItem({
           variant='cluster'
           clusterInputPosition='right'
           inputWidth='full'
-          {...{ dirtyFields, errors, register, setFocus, getFieldState }}
+          {...{ errors, register, setFocus, getFieldState }}
         />
       </div>
 

@@ -20,8 +20,6 @@ type FormInputProps = {
   supportingText?: string;
   inputWidth?: FormInputWidth;
   setFocus: UseFormSetFocus<FormInput>;
-  // TODO: any is cheating
-  dirtyFields: any;
   errors: FieldErrors<FormInput>;
   register: UseFormRegister<FormInput>;
   variant?: FormInputVariants;
@@ -34,7 +32,6 @@ export default function FormInput({
   fieldLabel,
   supportingText = '',
   setFocus,
-  dirtyFields,
   errors,
   register,
   variant = 'standard',
@@ -122,32 +119,6 @@ export default function FormInput({
       )}
     </div>
   );
-}
-
-function fieldIsDirty(fieldName: string, dirtyFields: any) {
-  // examine dirtyFields object for presence of fieldName
-  // fieldName may be compound (e.g. ingredientGroups.0.ingredients.0.description),
-  // hence all the effort to unpack
-
-  // TODO: 'any' is cheating
-
-  let fieldNameArray = fieldName.split('.');
-
-  if (fieldNameArray.length === 1) return dirtyFields[fieldName];
-
-  const dirtyFieldType = dirtyFields[fieldNameArray[0]];
-
-  if (!dirtyFieldType) return false;
-
-  const dirtyGroup = dirtyFieldType[fieldNameArray[1]];
-
-  if (!dirtyGroup) return false;
-
-  const dirtyField = dirtyGroup[fieldNameArray[2]];
-
-  if (!dirtyField) return false;
-
-  return true;
 }
 
 function accessErrors(

@@ -13,8 +13,6 @@ type FormInput = RouterInputs['recipes']['create'];
 type ProcedureSectionProps = {
   control: Control<FormInput>;
   setFocus: UseFormSetFocus<FormInput>;
-  // TODO: any is cheating
-  dirtyFields: any;
   errors: FieldErrors<FormInput>;
   register: UseFormRegister<FormInput>;
   getFieldState: UseFormGetFieldState<FormInput>;
@@ -22,7 +20,6 @@ type ProcedureSectionProps = {
 
 export default function ProcedureSection({
   control,
-  dirtyFields,
   errors,
   register,
   setFocus,
@@ -36,7 +33,7 @@ export default function ProcedureSection({
       <h2 className='title-large'>Procedure</h2>
       <GroupsWrapper
         groupType='procedureGroups'
-        {...{ register, control, dirtyFields, errors, setFocus, getFieldState }}
+        {...{ register, control, errors, setFocus, getFieldState }}
       />
     </section>
   );

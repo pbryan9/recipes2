@@ -8,10 +8,10 @@ import type { RouterInputs } from '../../lib/trpc/trpc';
 
 import SectionHeader from '../../components/SectionHeader';
 import StandardMainContainer from '../../components/StandardMainContainer';
-import CreateSideMenu from './_components/Create_SideMenu';
+import CreateSideMenu from './_components/FormLeftPane';
 import { Tag } from '../../../../api-server/db/tags/getAllTags';
 import { trpc } from '../../lib/trpc/trpc';
-import GroupsListing from './_components/GroupsListing';
+import GroupsListing from './_components/GroupsWrapper';
 import SelectedTags from './_components/SelectedTags';
 import useUser from '../../lib/hooks/useUser';
 

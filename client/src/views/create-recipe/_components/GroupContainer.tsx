@@ -1,14 +1,13 @@
 import { useEffect } from 'react';
 import { useFieldArray } from 'react-hook-form';
 
-import Button from './Button';
-import ButtonContainer from './ButtonContainer';
-
 import type {
   Control,
   UseFormRegister,
   UseFieldArrayRemove,
   UseFormGetFieldState,
+  UseFormSetFocus,
+  FieldErrors,
 } from 'react-hook-form';
 import type { GroupType } from './GroupsWrapper';
 import IngredientItem from './IngredientItem';
@@ -26,9 +25,8 @@ type GroupContainerProps = {
   groupTitle: string;
   groupType: GroupType;
   removeGroup: UseFieldArrayRemove;
-  dirtyFields: any;
-  errors: any;
-  setFocus: any;
+  setFocus: UseFormSetFocus<FormInput>;
+  errors: FieldErrors<FormInput>;
   getFieldState: UseFormGetFieldState<FormInput>;
 };
 
@@ -38,7 +36,6 @@ export default function GroupContainer({
   groupIndex,
   removeGroup,
   groupType,
-  dirtyFields,
   errors,
   setFocus,
   getFieldState,
@@ -63,7 +60,6 @@ export default function GroupContainer({
             groupIndex,
             register,
             removeMember,
-            dirtyFields,
             errors,
             setFocus,
             getFieldState,
@@ -80,7 +76,6 @@ export default function GroupContainer({
             groupIndex,
             register,
             removeMember,
-            dirtyFields,
             errors,
             setFocus,
             getFieldState,

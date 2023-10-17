@@ -13,8 +13,6 @@ type FormInput = RouterInputs['recipes']['create'];
 type IngredientsSectionProps = {
   control: Control<FormInput>;
   setFocus: UseFormSetFocus<FormInput>;
-  // TODO: any is cheating
-  dirtyFields: any;
   errors: FieldErrors<FormInput>;
   register: UseFormRegister<FormInput>;
   getFieldState: UseFormGetFieldState<FormInput>;
@@ -22,7 +20,6 @@ type IngredientsSectionProps = {
 
 export default function IngredientsSection({
   control,
-  dirtyFields,
   errors,
   register,
   setFocus,
@@ -36,7 +33,7 @@ export default function IngredientsSection({
       <h2 className='title-large'>Ingredients</h2>
       <GroupsWrapper
         groupType='ingredientGroups'
-        {...{ register, control, dirtyFields, errors, setFocus, getFieldState }}
+        {...{ register, control, errors, setFocus, getFieldState }}
       />
     </section>
   );
