@@ -26,14 +26,21 @@ export const theme = {
       level2: '4px 4px 4px 0 rgba(0, 0, 0, 0.25)',
     },
     colors: {
+      primary: 'var(--md-sys-color-primary)',
       'on-surface': 'var(--md-sys-color-on-surface)',
+      'on-surface-variant': 'var(--md-sys-color-on-surface-variant)',
+      'on-secondary-container': 'var(--md-sys-color-on-secondary-container)',
       'surface-container': 'var(--md-sys-color-surface-container)',
       'surface-container-low': 'var(--md-sys-color-surface-container-low)',
       'surface-container-high': 'var(--md-sys-color-surface-container-high)',
+      'surface-container-highest':
+        'var(--md-sys-color-surface-container-highest)',
       'background-dark': 'var(--md-sys-color-background-dark)',
       'on-bg-dark': 'var(--md-sys-color-on-background-dark)',
       'secondary-container': 'var(--md-sys-color-secondary-container)',
       outline: 'var(--md-sys-color-outline)',
+      'outline-variant': 'var(--md-sys-color-outline-variant)',
+      error: 'var(--md-sys-color-error)',
       /**
        *
        * Everything below comes from shadcn/ui
@@ -44,10 +51,6 @@ export const theme = {
       ring: 'hsl(var(--ring))',
       background: 'hsl(var(--background))',
       foreground: 'hsl(var(--foreground))',
-      primary: {
-        DEFAULT: 'hsl(var(--primary))',
-        foreground: 'hsl(var(--primary-foreground))',
-      },
       secondary: {
         DEFAULT: 'hsl(var(--secondary))',
         foreground: 'hsl(var(--secondary-foreground))',
