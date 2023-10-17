@@ -3,16 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { newRecipeFormInputSchema } from '../../../../api-server/validators/newRecipeFormValidator';
+import {
+  FormInputs,
+  newRecipeFormInputSchema,
+} from '../../../../api-server/validators/newRecipeFormValidator';
 
-import SectionHeader from '../../components/SectionHeader';
-import StandardMainContainer from '../../components/StandardMainContainer';
-import CreateSideMenu from './_components/Create_SideMenu';
+import FormLeftPane from './_components/FormLeftPane';
 import { Tag } from '../../../../api-server/db/tags/getAllTags';
 import { RouterInputs, trpc } from '../../lib/trpc/trpc';
-import GroupsListing from './_components/GroupsListing';
+import GroupsWrapper from './_components/GroupsWrapper';
 import SelectedTags from './_components/SelectedTags';
 import useUser from '../../lib/hooks/useUser';
+import FormInput from './_components/FormInput';
+import IngredientsSection from './_components/IngredientsSection';
+import ProcedureSection from './_components/ProcedureSection';
+import Button from './_components/Button';
+import SaveIcon from '../../assets/icons/SaveIcon';
 
 const defaultValues: RouterInputs['recipes']['create'] = {
   title: '',
@@ -74,12 +80,22 @@ export default function CreateRecipeView() {
 
   const [selectedTags, setSelectedTags] = useState<Map<string, Tag>>();
 
-  const { register, handleSubmit, control, reset } = useForm<
-    RouterInputs['recipes']['create']
-  >({
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    setFocus,
+    getFieldState,
+    formState: { dirtyFields, errors },
+  } = useForm<RouterInputs['recipes']['create']>({
     defaultValues,
     resolver: zodResolver(newRecipeFormInputSchema),
   });
+
+  useEffect(() => {
+    console.log({ errors });
+  }, [errors]);
 
   // package up the form submission to make it easier to pass to side nav
   const submitForm = handleSubmit(onSubmit);
@@ -109,74 +125,86 @@ export default function CreateRecipeView() {
   }
 
   return (
-    <div className='flex flex-col w-full h-full'>
-      <header className='w-full flex justify-between items-center'>
+    <div className='flex flex-col w-full h-full pb-6'>
+      <header className='w-full flex justify-between items-center h-fit shrink-0'>
         <h1 className='display-medium'>New Recipe</h1>
-        <button>Save</button>
+        <Button icon={<SaveIcon />} onClick={handleSubmit(onSubmit)}>
+          Save
+        </Button>
       </header>
-      <main className='flex justify-stretch items-start w-full gap-6'>
-        <CreateSideMenu
-          {...{ resetForm, submitForm, toggleTag, selectedTags }}
-        />
-        <StandardMainContainer>
-          <form className='flex flex-col items-start text-2xl font-bold gap-y-4 w-full h-fit min-h-full'>
-            <section className='col-span-8 grid grid-cols-8 auto-rows-[56px] gap-y-4 self-start w-full items-center'>
-              <label htmlFor='title' className={labelClasses + ' text-4xl'}>
-                Recipe Title
-              </label>
-              <input
-                type='text'
-                id='title'
-                {...register('title')}
-                className={inputClasses}
-              />
-              {selectedTags && selectedTags.size > 0 && (
-                <SelectedTags
-                  removeSelectedTag={toggleTag}
-                  selectedTags={selectedTags}
-                />
-              )}
-              <label htmlFor='prepTime' className={labelClasses}>
-                Prep Time
-              </label>
-              <input
-                type='text'
-                id='prepTime'
-                {...register('prepTime')}
-                className={inputClasses}
-              />
-              <label htmlFor='cookTime' className={labelClasses}>
-                Cook Time
-              </label>
-              <input
-                type='text'
-                id='cookTime'
-                {...register('cookTime')}
-                className={inputClasses}
-              />
-            </section>
+      <main className='flex justify-stretch items-start w-full gap-6 h-full overflow-hidden'>
+        <FormLeftPane {...{ resetForm, submitForm, toggleTag, selectedTags }} />
+        <article className='w-full shrink flex flex-col gap-6 bg-surface-container shadow-sm rounded-[12px] p-6 h-fit max-h-full overflow-y-auto'>
+          <form className='w-full flex flex-col justify-start gap-6 h-fit'>
+            <h2 className='title-large'>Basic Info</h2>
+            <FormInput
+              {...{
+                fieldName: 'title',
+                fieldLabel: 'Recipe title*',
+                setFocus,
+                dirtyFields,
+                errors,
+                register,
+                getFieldState,
+              }}
+            />
 
-            <section
-              id='ingredients-section'
-              className='col-span-8 grid grid-cols-8 auto-rows-[56px] gap-y-4 self-start w-full items-center border border-gray-400 rounded-md p-4'
-            >
-              <h2 className='col-span-full text-4xl'>Ingredients</h2>
-              <GroupsListing
-                {...{ control, register, groupType: 'ingredientGroups' }}
+            <div className='flex gap-6'>
+              <FormInput
+                {...{
+                  fieldName: 'prepTime',
+                  fieldLabel: 'Prep time',
+                  supportingText: 'HH:MM',
+                  inputWidth: 'small',
+                  setFocus,
+                  dirtyFields,
+                  errors,
+                  register,
+                  getFieldState,
+                }}
               />
-            </section>
 
-            <section
-              id='procedure-section'
-              className='col-span-8 grid grid-cols-8 auto-rows-[56px] gap-y-4 self-start w-full items-center border border-gray-400 rounded-md p-4'
-            >
-              <h2 className='col-span-full text-4xl'>Procedure</h2>
-              <GroupsListing
-                {...{ control, register, groupType: 'procedureGroups' }}
+              <FormInput
+                {...{
+                  fieldName: 'cookTime',
+                  fieldLabel: 'Cook time',
+                  supportingText: 'HH:MM',
+                  inputWidth: 'small',
+                  setFocus,
+                  dirtyFields,
+                  errors,
+                  register,
+                  getFieldState,
+                }}
               />
-            </section>
+            </div>
+
+            <IngredientsSection
+              {...{
+                control,
+                dirtyFields,
+                errors,
+                register,
+                setFocus,
+                getFieldState,
+              }}
+            />
+
+            <ProcedureSection
+              {...{
+                control,
+                dirtyFields,
+                errors,
+                register,
+                setFocus,
+                getFieldState,
+              }}
+            />
+            <Button icon={<SaveIcon />} onClick={handleSubmit(onSubmit)}>
+              Save
+            </Button>
           </form>
-        </StandardMainContainer>
+        </article>
       </main>
     </div>
   );

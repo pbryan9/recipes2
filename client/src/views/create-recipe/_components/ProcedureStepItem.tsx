@@ -1,13 +1,25 @@
-import type { UseFieldArrayRemove, UseFormRegister } from 'react-hook-form';
+import type {
+  UseFieldArrayRemove,
+  UseFormGetFieldState,
+  UseFormRegister,
+} from 'react-hook-form';
 import Button from './Button';
 import { FormInputs } from '../../../../../api-server/validators/newRecipeFormValidator';
 import { RouterInputs } from '../../../lib/trpc/trpc';
+import TrashIcon from '../../../assets/icons/TrashIcon';
+import FormInput from './FormInput';
+
+type FormInput = RouterInputs['recipes']['create'];
 
 type ProcedureStepItemProps = {
   procedureIndex: number;
   groupIndex: number;
-  register: UseFormRegister<RouterInputs['recipes']['create']>;
+  register: UseFormRegister<FormInput>;
   removeMember: UseFieldArrayRemove;
+  dirtyFields: any;
+  errors: any;
+  setFocus: any;
+  getFieldState: UseFormGetFieldState<FormInput>;
 };
 
 export default function ProcedureStepItem({
@@ -15,26 +27,30 @@ export default function ProcedureStepItem({
   groupIndex,
   register,
   removeMember,
+  dirtyFields,
+  errors,
+  setFocus,
+  getFieldState,
 }: ProcedureStepItemProps) {
   const registrationPath = `procedureGroups.${groupIndex}.procedureSteps.${procedureIndex}`;
 
   return (
-    <div className='procedure-step grid grid-cols-8 col-span-full h-full'>
-      <input
-        {...register(
-          `${registrationPath}.description` as 'procedureGroups.0.procedureSteps.0.description'
-        )}
-        type='text'
-        className='col-span-7 rounded-md text-gray-900 px-4'
-      />
-      <div className='ingredient-buttons col-span-1 flex justify-center gap-4 items-center'>
-        <Button border='none' onClick={() => removeMember(procedureIndex)}>
-          <div className='w-6 aspect-square bg-white'></div>
-        </Button>
-        {/* // TODO: implement timer feature */}
-        {/* <Button border='none' onClick={createTimer}>
-          <div className='w-6 aspect-square bg-gray-400'></div>
-        </Button> */}
+    <div className='procedure-step w-full h-full flex items-center gap-4'>
+      <div className='w-full flex shrink gap-0'>
+        <FormInput
+          fieldLabel='Description*'
+          fieldName={`${registrationPath}.description`}
+          {...{ dirtyFields, errors, register, setFocus, getFieldState }}
+        />
+      </div>
+      <div className='procedure-buttons flex justify-center items-center self-start'>
+        <button
+          type='button'
+          className={`h-14 aspect-square flex items-center justify-center`}
+          onClick={() => removeMember(procedureIndex)}
+        >
+          <TrashIcon />
+        </button>
       </div>
     </div>
   );

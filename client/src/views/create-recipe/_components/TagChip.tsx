@@ -1,4 +1,3 @@
-import React from 'react';
 import { Tag } from '../../../../../api-server/db/tags/getAllTags';
 import CheckIcon from '../../../assets/icons/CheckIcon';
 

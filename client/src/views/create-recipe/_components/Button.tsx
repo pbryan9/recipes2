@@ -1,25 +1,26 @@
+import React, { ComponentProps } from 'react';
+
 type ButtonProps = {
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
-  border?: 'none';
   disabled?: boolean;
   type?: 'button' | 'submit';
+  icon?: React.ReactNode;
   children: React.ReactNode;
 };
 
 export default function Button({
-  onClick,
-  border = undefined,
-  disabled = false,
   type = 'button',
+  icon = undefined,
   children,
-}: ButtonProps) {
+  ...delegated
+}: ComponentProps<'button'> & ButtonProps) {
   return (
     <button
-      {...{ type, disabled, onClick }}
-      className={`col-span-2  text-center rounded-md text-base h-full ${
-        border !== 'none' && 'border border-gray-400'
+      {...{ ...delegated, type }}
+      className={`w-fit rounded-full flex items-center gap-2 pr-6 h-10 label-large bg-secondary-container text-on-secondary-container ${
+        icon ? 'pl-4' : 'pl-6'
       }`}
     >
+      {icon}
       {children}
     </button>
   );

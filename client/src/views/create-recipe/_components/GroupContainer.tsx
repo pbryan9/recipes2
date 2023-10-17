@@ -8,19 +8,28 @@ import type {
   Control,
   UseFormRegister,
   UseFieldArrayRemove,
+  UseFormGetFieldState,
 } from 'react-hook-form';
-import type { GroupType } from './GroupsListing';
+import type { GroupType } from './GroupsWrapper';
 import IngredientItem from './IngredientItem';
 import ProcedureStepItem from './ProcedureStepItem';
 import { RouterInputs } from '../../../lib/trpc/trpc';
+import PlusIcon from '../../../assets/icons/PlusIcon';
+import TrashIcon from '../../../assets/icons/TrashIcon';
+
+type FormInput = RouterInputs['recipes']['create'];
 
 type GroupContainerProps = {
-  control: Control<RouterInputs['recipes']['create'], any>;
-  register: UseFormRegister<RouterInputs['recipes']['create']>;
+  control: Control<FormInput, any>;
+  register: UseFormRegister<FormInput>;
   groupIndex: number;
   groupTitle: string;
   groupType: GroupType;
   removeGroup: UseFieldArrayRemove;
+  dirtyFields: any;
+  errors: any;
+  setFocus: any;
+  getFieldState: UseFormGetFieldState<FormInput>;
 };
 
 export default function GroupContainer({
@@ -29,6 +38,10 @@ export default function GroupContainer({
   groupIndex,
   removeGroup,
   groupType,
+  dirtyFields,
+  errors,
+  setFocus,
+  getFieldState,
 }: GroupContainerProps) {
   // set up field array
   const {
@@ -50,6 +63,10 @@ export default function GroupContainer({
             groupIndex,
             register,
             removeMember,
+            dirtyFields,
+            errors,
+            setFocus,
+            getFieldState,
           }}
         />
       );
@@ -58,14 +75,23 @@ export default function GroupContainer({
       return (
         <ProcedureStepItem
           key={field.id}
-          {...{ procedureIndex: index, groupIndex, register, removeMember }}
+          {...{
+            procedureIndex: index,
+            groupIndex,
+            register,
+            removeMember,
+            dirtyFields,
+            errors,
+            setFocus,
+            getFieldState,
+          }}
         />
       );
   });
 
   const addButtonCaptions = {
-    ingredientGroups: 'Add Ingredients',
-    procedureGroups: 'Add Steps',
+    ingredientGroups: 'Add ingredients',
+    procedureGroups: 'Add steps',
   };
 
   useEffect(() => {
@@ -76,15 +102,26 @@ export default function GroupContainer({
   return (
     <>
       {groupMembers}
-      <ButtonContainer>
-        <Button onClick={() => append({ description: '' })}>
+
+      <div className='w-full flex justify-end gap-4 border-b border-b-outline-variant pb-6 last-of-type:border-b-0'>
+        <button
+          type='button'
+          onClick={() => append({ description: '' })}
+          className='rounded-full flex items-center gap-2 pl-4 pr-6 h-10 label-large bg-secondary-container text-on-secondary-container'
+        >
+          <PlusIcon size={18} />
           {addButtonCaptions[groupType]}
-        </Button>
-        <Button onClick={() => removeGroup(groupIndex)}>
-          Remove This Group
-        </Button>
-      </ButtonContainer>
-      <div className='col-span-full mx-auto w-3/4 border-b border-gray-400' />
+        </button>
+
+        <button
+          type='button'
+          onClick={() => removeGroup(groupIndex)}
+          className='rounded-full flex items-center gap-2 pl-4 pr-6 h-10 label-large bg-transparent text-primary border border-outline'
+        >
+          <TrashIcon size={18} color='#B5D269' />
+          Remove group
+        </button>
+      </div>
     </>
   );
 

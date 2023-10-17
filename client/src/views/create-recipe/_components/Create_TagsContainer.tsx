@@ -51,7 +51,7 @@ export default function CreateTagsContainer({
   }
 
   return (
-    <article className='flex flex-col items-center w-full'>
+    <article className='flex flex-col items-center w-full h-full'>
       <header className='title-large h-14 w-full px-4 flex items-center gap-4 bg-surface-container-high rounded-full shadow-md'>
         <button onClick={() => setExpanded((prev) => !prev)}>
           {expanded ? <CollapseIcon /> : <ExpandIcon />}
