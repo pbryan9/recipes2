@@ -82,7 +82,7 @@ export default function CreateRecipeView() {
     resolver: zodResolver(newRecipeFormInputSchema),
   });
 
-  const { handleSubmit, reset } = methods;
+  const { handleSubmit, reset, watch } = methods;
 
   // package up the form submission to make it easier to pass to left pane
   const submitForm = handleSubmit(onSubmit);
@@ -114,7 +114,7 @@ export default function CreateRecipeView() {
   return (
     <div className='flex flex-col w-full h-full pb-6'>
       <header className='w-full flex justify-between items-center h-fit shrink-0'>
-        <h1 className='display-medium'>New Recipe</h1>
+        <h1 className='display-medium'>{watch('title') || 'New Recipe'}</h1>
         <Button icon={<SaveIcon />} onClick={handleSubmit(onSubmit)}>
           Save
         </Button>
