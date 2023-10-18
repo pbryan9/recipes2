@@ -5,7 +5,6 @@ import { createBrowserRouter } from 'react-router-dom';
  */
 import App from '../../App';
 import Home from '../../views/home/Home';
-import BrowseRecipes from '../../views/recipes/BrowseRecipes';
 import SingleRecipe from '../../views/recipes/SingleRecipe';
 import CreateRecipeView from '../../views/create-recipe/CreateRecipeView';
 import EditRecipeView from '../../views/create-recipe/EditRecipeView';
@@ -25,10 +24,6 @@ export default createBrowserRouter([
       {
         path: '/',
         element: <Home />,
-      },
-      {
-        path: '/recipes-old',
-        element: <BrowseRecipes />,
       },
       {
         path: '/recipes',
