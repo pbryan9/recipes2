@@ -13,12 +13,14 @@ type ButtonProps = {
   icon?: React.ReactNode;
   variant?: keyof typeof buttonVariants;
   children?: React.ReactNode;
+  rotate?: boolean;
 };
 
 export default function Button({
   type = 'button',
   icon = undefined,
   variant = 'filled',
+  rotate = false,
   children,
   ...delegated
 }: ComponentProps<'button'> & ButtonProps) {
@@ -29,6 +31,7 @@ export default function Button({
         icon && children ? 'pl-4' : 'pl-6'
       }
         ${buttonVariants[variant]}
+        ${rotate ? 'rotate-90' : ''}
       `}
     >
       {icon}

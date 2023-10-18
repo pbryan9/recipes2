@@ -25,7 +25,7 @@ export default function BrowseRecipesView() {
   return (
     <div className='w-full flex items-start justify-stretch gap-6 overflow-y-hidden h-full'>
       <section
-        className={`shrink-0 transition-all ease-in-out duration-300 flex h-full overflow-auto flex-col items-center justify-start gap-6 print:hidden ${
+        className={`shrink-0 transition-all ease-in-out duration-300 flex h-full overflow-auto flex-col items-center justify-start gap-6 mt-6 print:hidden ${
           expanded ? 'shrink w-0' : 'w-[360px]'
         }`}
       >
@@ -48,6 +48,7 @@ export default function BrowseRecipesView() {
               <Button
                 icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
                 variant='text'
+                rotate={true}
                 onClick={() => setExpanded((prev) => !prev)}
               ></Button>
               <h1 className='display-large w-full text-on-surface whitespace-nowrap text-ellipsis overflow-x-hidden'>
