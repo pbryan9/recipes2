@@ -83,7 +83,6 @@ export default function RecipesContextProvider({
       !recipesQuery.isFetching &&
       !recipesQuery.isError
     ) {
-      console.log('updating recipes context');
       setRecipesContext((prev) => ({ ...prev, recipes: recipesQuery.data }));
     }
   }, [recipesQuery.isLoading, recipesQuery.isFetching]);

@@ -13,10 +13,15 @@ export default function RecipeSectionHeader({
   isExpanded,
 }: RecipeSectionHeaderProps) {
   return (
-    <header className='w-full rounded-full bg-surface-container-high px-6 h-14 flex justify-between items-center drop-shadow-level2 relative z-10'>
-      <h2 className='title-large text-on-surface'>{heading}</h2>
-      <button onClick={toggle}>
-        {isExpanded ? <CollapseIcon /> : <ExpandIcon />}
+    <header className='w-full h-14 rounded-full bg-surface-container-high drop-shadow-level2 relative z-10'>
+      <button
+        className='w-full h-full rounded-full px-6 flex justify-between items-center'
+        onClick={toggle}
+      >
+        <h2 className='title-large text-on-surface'>{heading}</h2>
+        <div className='print:hidden'>
+          {isExpanded ? <CollapseIcon /> : <ExpandIcon />}
+        </div>
       </button>
     </header>
   );
