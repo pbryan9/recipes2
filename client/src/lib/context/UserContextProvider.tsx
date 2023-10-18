@@ -6,6 +6,7 @@ import { NewUserInput } from '../../../../api-server/validators/newUserFormValid
 const initialUserState = {
   username: null,
   isLoggedIn: false,
+  isLoading: true,
   login: null,
   logout: null,
   createUser: null,
@@ -14,6 +15,7 @@ const initialUserState = {
 type UserContextType = {
   username: string | null;
   isLoggedIn: boolean;
+  isLoading: boolean;
   login:
     | (({ username, password }: { username: string; password: string }) => void)
     | null;
@@ -41,6 +43,10 @@ export default function UserContextProvider({
       }));
     },
   });
+
+  useEffect(() => {
+    setUserContext((prev) => ({ ...prev, isLoading: false }));
+  }, [authenticateUser.isLoading]);
 
   const utils = trpc.useContext();
 
