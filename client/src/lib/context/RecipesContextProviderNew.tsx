@@ -6,7 +6,7 @@ import {
 } from '../../../../api-server/db/recipes/getRecipeById';
 import { trpc } from '../trpc/trpc';
 
-type FilterResult = {
+export type FilterResult = {
   titleMatches: FilledRecipe[];
   authorMatches: FilledRecipe[];
   tagMatches: FilledRecipe[];
@@ -16,13 +16,15 @@ type FilterResult = {
 
 type RecipesContext = {
   recipes: FilledRecipe[];
+  filterIsActive: boolean;
   filterResults: FilterResult;
-  setFilter?: (searchTerm: string) => void;
-  clearFilter?: () => void;
+  setFilter: (searchTerm: string) => void;
+  clearFilter: () => void;
 };
 
 const initialRecipesContext: RecipesContext = {
   recipes: [],
+  filterIsActive: false,
   filterResults: {
     titleMatches: [],
     authorMatches: [],
@@ -30,8 +32,8 @@ const initialRecipesContext: RecipesContext = {
     ingredientMatches: [],
     procedureMatches: [],
   },
-  setFilter: undefined,
-  clearFilter: undefined,
+  setFilter: () => null,
+  clearFilter: () => null,
 };
 
 export const RecipesContext = createContext<RecipesContext>(
@@ -56,11 +58,7 @@ export default function RecipesContextProvider({
   });
 
   useEffect(() => {
-    // populate context functions
-
-    if (!recipesContext.clearFilter) {
-      recipesContext.clearFilter = () => setSearchTerm('');
-    }
+    recipesContext.clearFilter = () => setSearchTerm('');
 
     recipesContext.setFilter = (searchTerm: string) => {
       setSearchTerm(searchTerm);
@@ -69,10 +67,11 @@ export default function RecipesContextProvider({
 
   useEffect(() => {
     // update filter results either when search term changes or when a new recipes collection arrives
+    let filterIsActive = searchTerm !== '';
 
     const filterResults = filterRecipes(recipesQuery.data ?? [], searchTerm);
 
-    setRecipesContext((prev) => ({ ...prev, filterResults }));
+    setRecipesContext((prev) => ({ ...prev, filterResults, filterIsActive }));
   }, [searchTerm, recipesQuery.data]);
 
   useEffect(() => {
