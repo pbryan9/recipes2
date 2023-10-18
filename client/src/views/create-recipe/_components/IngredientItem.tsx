@@ -1,10 +1,4 @@
-import type {
-  FieldErrors,
-  UseFieldArrayRemove,
-  UseFormGetFieldState,
-  UseFormRegister,
-  UseFormSetFocus,
-} from 'react-hook-form';
+import type { UseFieldArrayRemove } from 'react-hook-form';
 import { RouterInputs } from '../../../lib/trpc/trpc';
 import FormInput from './FormInput';
 import TrashIcon from '../../../assets/icons/TrashIcon';
@@ -14,21 +8,13 @@ type FormInput = RouterInputs['recipes']['create'];
 type IngredientItemProps = {
   ingredientIndex: number;
   groupIndex: number;
-  register: UseFormRegister<FormInput>;
   removeMember: UseFieldArrayRemove;
-  setFocus: UseFormSetFocus<FormInput>;
-  errors: FieldErrors<FormInput>;
-  getFieldState: UseFormGetFieldState<FormInput>;
 };
 
 export default function IngredientItem({
   ingredientIndex,
   groupIndex,
-  register,
   removeMember,
-  errors,
-  setFocus,
-  getFieldState,
 }: IngredientItemProps) {
   const registrationPath = `ingredientGroups.${groupIndex}.ingredients.${ingredientIndex}`;
 
@@ -41,7 +27,6 @@ export default function IngredientItem({
           variant='cluster'
           clusterInputPosition='left'
           inputWidth='small'
-          {...{ errors, register, setFocus, getFieldState }}
         />
         <FormInput
           fieldLabel='Measure'
@@ -50,7 +35,6 @@ export default function IngredientItem({
           variant='cluster'
           clusterInputPosition='inner'
           inputWidth='small'
-          {...{ errors, register, setFocus, getFieldState }}
         />
         <FormInput
           fieldLabel='Description*'
@@ -58,7 +42,6 @@ export default function IngredientItem({
           variant='cluster'
           clusterInputPosition='right'
           inputWidth='full'
-          {...{ errors, register, setFocus, getFieldState }}
         />
       </div>
 

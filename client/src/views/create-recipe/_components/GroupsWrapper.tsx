@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  useFieldArray,
-  type Control,
-  type UseFormRegister,
-  UseFormGetFieldState,
-  UseFormSetFocus,
-  FieldErrors,
-} from 'react-hook-form';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import GroupContainer from './GroupContainer';
 import Button from './Button';
@@ -20,22 +13,12 @@ export type GroupType = 'ingredientGroups' | 'procedureGroups';
 type FormInput = RouterInputs['recipes']['create'];
 
 type GroupsWrapperProps = {
-  control: Control<FormInput, any>;
-  register: UseFormRegister<FormInput>;
   groupType: GroupType;
-  setFocus: UseFormSetFocus<FormInput>;
-  errors: FieldErrors<FormInput>;
-  getFieldState: UseFormGetFieldState<FormInput>;
 };
 
-export default function GroupsWrapper({
-  control,
-  register,
-  groupType,
-  errors,
-  setFocus,
-  getFieldState,
-}: GroupsWrapperProps) {
+export default function GroupsWrapper({ groupType }: GroupsWrapperProps) {
+  const { control } = useFormContext<FormInput>();
+
   const {
     fields,
     append,
@@ -49,30 +32,21 @@ export default function GroupsWrapper({
     <React.Fragment key={id}>
       <FormInput
         {...{
-          errors,
           fieldLabel: 'Group label',
           supportingText:
             fields.length > 1
               ? 'Required when using multiple groups'
               : 'Optional when using only using one group',
           fieldName: getGroupTitleRegistrationString(groupIndex),
-          register,
-          setFocus,
-          getFieldState,
         }}
       />
 
       <GroupContainer
         {...{
-          control,
           groupIndex,
-          register,
-          removeGroup,
           groupTitle,
           groupType,
-          errors,
-          setFocus,
-          getFieldState,
+          removeGroup,
         }}
         key={id}
       />

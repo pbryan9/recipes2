@@ -3,6 +3,7 @@ import CreateTagsContainer from './Create_TagsContainer';
 import { Tag } from '../../../../../api-server/db/tags/getAllTags';
 import Button from './Button';
 import SaveIcon from '../../../assets/icons/SaveIcon';
+import TrashIcon from '../../../assets/icons/TrashIcon';
 
 type FormLeftPaneProps = {
   toggleTag: (tag: Tag) => void;
@@ -18,18 +19,28 @@ type FormLeftPaneProps = {
 export default function FormLeftPane({
   toggleTag,
   selectedTags,
-  submitForm, // resetForm,
+  submitForm,
+  resetForm,
 }: FormLeftPaneProps) {
   return (
     <section className='w-[360px] shrink-0 p-6 flex flex-col gap-6 justify-start items-center bg-surface-container rounded-[12px] shadow-sm h-fit max-h-full overflow-y-auto'>
       <CreateTagsContainer {...{ toggleTag, selectedTags }} />
-      <Button
-        icon={<SaveIcon />}
-        onClick={submitForm}
-        style={{ alignSelf: 'start' }}
-      >
-        Save
-      </Button>
+      <div className='flex gap-4 w-full justify-center'>
+        <Button
+          icon={<SaveIcon />}
+          onClick={submitForm}
+          style={{ alignSelf: 'start' }}
+        >
+          Save
+        </Button>
+        <Button
+          icon={<TrashIcon color='#FFB4AB' />}
+          variant='danger'
+          onClick={() => resetForm()}
+        >
+          Clear Form
+        </Button>
+      </div>
     </section>
   );
 }

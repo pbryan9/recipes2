@@ -3,6 +3,7 @@ import {
   type FieldErrors,
   type UseFormRegister,
   type UseFormSetFocus,
+  useFormContext,
 } from 'react-hook-form';
 import { RouterInputs } from '../../../lib/trpc/trpc';
 
@@ -17,34 +18,38 @@ type FormInputWidth = 'small' | 'medium' | 'large' | 'full';
 type FormInputProps = {
   fieldName: string;
   fieldLabel: string;
+  // getFieldState: UseFormGetFieldState<FormInput>;
+  // setFocus: UseFormSetFocus<FormInput>;
+  // errors: FieldErrors<FormInput>;
+  // register: UseFormRegister<FormInput>;
+
   supportingText?: string;
   inputWidth?: FormInputWidth;
-  setFocus: UseFormSetFocus<FormInput>;
-  errors: FieldErrors<FormInput>;
-  register: UseFormRegister<FormInput>;
   variant?: FormInputVariants;
   clusterInputPosition?: ClusterInputPosition;
-  getFieldState: UseFormGetFieldState<FormInput>;
 };
 
 export default function FormInput({
   fieldName,
   fieldLabel,
+
   supportingText = '',
-  setFocus,
-  errors,
-  register,
   variant = 'standard',
   inputWidth = 'full',
   clusterInputPosition = undefined,
-  getFieldState,
 }: FormInputProps) {
   if (variant === 'cluster' && !clusterInputPosition)
     throw new Error(
       'Must provide clusterInputPosition when using cluster variant'
     );
 
-  const { isDirty, invalid } = getFieldState(fieldName as keyof FormInput);
+  const { formState, getFieldState, setFocus, register } = useFormContext();
+  const { errors } = formState;
+
+  const { isDirty, invalid } = getFieldState(
+    fieldName as keyof FormInput,
+    formState
+  );
 
   let errMsg = invalid
     ? accessErrors(fieldName as keyof FormInput, errors)
@@ -62,12 +67,6 @@ export default function FormInput({
     left: 'rounded-tl-[5px]',
     right: 'rounded-tr-[5px]',
   };
-
-  let fieldState = getFieldState(fieldName as keyof FormInput);
-
-  if (Object.values(fieldState).some((value) => value)) {
-    console.log({ fieldName, fieldState });
-  }
 
   return (
     <div

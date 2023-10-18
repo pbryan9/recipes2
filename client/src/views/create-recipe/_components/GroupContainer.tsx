@@ -1,46 +1,29 @@
 import { useEffect } from 'react';
-import { useFieldArray } from 'react-hook-form';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 
-import type {
-  Control,
-  UseFormRegister,
-  UseFieldArrayRemove,
-  UseFormGetFieldState,
-  UseFormSetFocus,
-  FieldErrors,
-} from 'react-hook-form';
+import type { UseFieldArrayRemove } from 'react-hook-form';
 import type { GroupType } from './GroupsWrapper';
 import IngredientItem from './IngredientItem';
 import ProcedureStepItem from './ProcedureStepItem';
-import { RouterInputs } from '../../../lib/trpc/trpc';
 import PlusIcon from '../../../assets/icons/PlusIcon';
 import TrashIcon from '../../../assets/icons/TrashIcon';
-
-type FormInput = RouterInputs['recipes']['create'];
+import Button from './Button';
 
 type GroupContainerProps = {
-  control: Control<FormInput, any>;
-  register: UseFormRegister<FormInput>;
   groupIndex: number;
   groupTitle: string;
   groupType: GroupType;
   removeGroup: UseFieldArrayRemove;
-  setFocus: UseFormSetFocus<FormInput>;
-  errors: FieldErrors<FormInput>;
-  getFieldState: UseFormGetFieldState<FormInput>;
 };
 
 export default function GroupContainer({
-  control,
-  register,
   groupIndex,
   removeGroup,
   groupType,
-  errors,
-  setFocus,
-  getFieldState,
 }: GroupContainerProps) {
   // set up field array
+  const { control } = useFormContext();
+
   const {
     fields,
     remove: removeMember,
@@ -58,11 +41,11 @@ export default function GroupContainer({
           {...{
             ingredientIndex: index,
             groupIndex,
-            register,
             removeMember,
-            errors,
-            setFocus,
-            getFieldState,
+            // getFieldState,
+            // setFocus,
+            // errors,
+            // register,
           }}
         />
       );
@@ -74,11 +57,7 @@ export default function GroupContainer({
           {...{
             procedureIndex: index,
             groupIndex,
-            register,
             removeMember,
-            errors,
-            setFocus,
-            getFieldState,
           }}
         />
       );
@@ -108,14 +87,15 @@ export default function GroupContainer({
           {addButtonCaptions[groupType]}
         </button>
 
-        <button
+        <Button
           type='button'
+          icon={<TrashIcon size={18} color='#FFB4AB' />}
+          variant='danger'
           onClick={() => removeGroup(groupIndex)}
-          className='rounded-full flex items-center gap-2 pl-4 pr-6 h-10 label-large bg-transparent text-primary border border-outline'
+          // className='rounded-full flex items-center gap-2 pl-4 pr-6 h-10 label-large bg-transparent text-primary border border-outline'
         >
-          <TrashIcon size={18} color='#B5D269' />
           Remove group
-        </button>
+        </Button>
       </div>
     </>
   );

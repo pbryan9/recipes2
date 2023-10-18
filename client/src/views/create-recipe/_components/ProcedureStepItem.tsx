@@ -1,11 +1,5 @@
-import type {
-  FieldErrors,
-  UseFieldArrayRemove,
-  UseFormGetFieldState,
-  UseFormRegister,
-  UseFormSetFocus,
-} from 'react-hook-form';
-import { RouterInputs } from '../../../lib/trpc/trpc';
+import type { UseFieldArrayRemove } from 'react-hook-form';
+import type { RouterInputs } from '../../../lib/trpc/trpc';
 import TrashIcon from '../../../assets/icons/TrashIcon';
 import FormInput from './FormInput';
 
@@ -14,21 +8,13 @@ type FormInput = RouterInputs['recipes']['create'];
 type ProcedureStepItemProps = {
   procedureIndex: number;
   groupIndex: number;
-  register: UseFormRegister<FormInput>;
   removeMember: UseFieldArrayRemove;
-  setFocus: UseFormSetFocus<FormInput>;
-  errors: FieldErrors<FormInput>;
-  getFieldState: UseFormGetFieldState<FormInput>;
 };
 
 export default function ProcedureStepItem({
   procedureIndex,
   groupIndex,
-  register,
   removeMember,
-  errors,
-  setFocus,
-  getFieldState,
 }: ProcedureStepItemProps) {
   const registrationPath = `procedureGroups.${groupIndex}.procedureSteps.${procedureIndex}`;
 
@@ -38,7 +24,7 @@ export default function ProcedureStepItem({
         <FormInput
           fieldLabel='Description*'
           fieldName={`${registrationPath}.description`}
-          {...{ errors, register, setFocus, getFieldState }}
+          // {...{ getFieldState, setFocus, errors, register }}
         />
       </div>
       <div className='procedure-buttons flex justify-center items-center self-start'>

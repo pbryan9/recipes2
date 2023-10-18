@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { newRecipeFormInputSchema } from '../../../../api-server/validators/newRecipeFormValidator';
@@ -15,7 +15,9 @@ import ProcedureSection from './_components/ProcedureSection';
 import Button from './_components/Button';
 import SaveIcon from '../../assets/icons/SaveIcon';
 
-const defaultValues: RouterInputs['recipes']['create'] = {
+type FormInput = RouterInputs['recipes']['create'];
+
+const defaultValues: FormInput = {
   title: '',
   author: undefined,
   cookTime: '' as unknown as undefined,
@@ -50,16 +52,19 @@ const defaultValues: RouterInputs['recipes']['create'] = {
 export default function CreateRecipeView() {
   const navigate = useNavigate();
   const utils = trpc.useContext();
-  const { isLoggedIn, username } = useUser();
+  const { isLoggedIn, isLoading, username } = useUser();
 
   useEffect(() => {
     // cannot create recipes if not logged in
-    if (!isLoggedIn) navigate('/sign-in');
+
+    // TODO: come back & test this for not-logged-in state
+    if (!isLoggedIn && !isLoading) navigate('/sign-in');
   }, [isLoggedIn]);
 
   const mutation = trpc.recipes.create.useMutation({
     onSuccess: (data) => {
       utils.recipes.all.invalidate();
+      console.log(data);
       if (data?.id)
         utils.recipes.byRecipeId.prefetch(
           { recipeId: data.id },
@@ -72,24 +77,14 @@ export default function CreateRecipeView() {
 
   const [selectedTags, setSelectedTags] = useState<Map<string, Tag>>();
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    reset,
-    setFocus,
-    getFieldState,
-    formState: { errors },
-  } = useForm<RouterInputs['recipes']['create']>({
+  const methods = useForm<FormInput>({
     defaultValues,
     resolver: zodResolver(newRecipeFormInputSchema),
   });
 
-  useEffect(() => {
-    console.log({ errors });
-  }, [errors]);
+  const { handleSubmit, reset } = methods;
 
-  // package up the form submission to make it easier to pass to side nav
+  // package up the form submission to make it easier to pass to left pane
   const submitForm = handleSubmit(onSubmit);
 
   function resetForm() {
@@ -106,7 +101,7 @@ export default function CreateRecipeView() {
     setSelectedTags(tempTags);
   }
 
-  async function onSubmit(data: RouterInputs['recipes']['create']) {
+  async function onSubmit(data: FormInput) {
     data.author = username!;
 
     if (selectedTags?.size && selectedTags.size > 0) {
@@ -127,70 +122,44 @@ export default function CreateRecipeView() {
       <main className='flex justify-stretch items-start w-full gap-6 h-full overflow-hidden'>
         <FormLeftPane {...{ resetForm, submitForm, toggleTag, selectedTags }} />
         <article className='w-full shrink flex flex-col gap-6 bg-surface-container shadow-sm rounded-[12px] p-6 h-fit max-h-full overflow-y-auto'>
-          <form className='w-full flex flex-col justify-start gap-6 h-fit'>
-            <h2 className='title-large'>Basic Info</h2>
-            <FormInput
-              {...{
-                fieldName: 'title',
-                fieldLabel: 'Recipe title*',
-                setFocus,
-                errors,
-                register,
-                getFieldState,
-              }}
-            />
-
-            <div className='flex gap-6'>
+          <FormProvider {...methods}>
+            <form className='w-full flex flex-col justify-start gap-6 h-fit'>
+              <h2 className='title-large'>Basic Info</h2>
               <FormInput
                 {...{
-                  fieldName: 'prepTime',
-                  fieldLabel: 'Prep time',
-                  supportingText: 'HH:MM',
-                  inputWidth: 'small',
-                  setFocus,
-                  errors,
-                  register,
-                  getFieldState,
+                  fieldName: 'title',
+                  fieldLabel: 'Recipe title*',
                 }}
               />
 
-              <FormInput
-                {...{
-                  fieldName: 'cookTime',
-                  fieldLabel: 'Cook time',
-                  supportingText: 'HH:MM',
-                  inputWidth: 'small',
-                  setFocus,
-                  errors,
-                  register,
-                  getFieldState,
-                }}
-              />
-            </div>
+              <div className='flex gap-6'>
+                <FormInput
+                  {...{
+                    fieldName: 'prepTime',
+                    fieldLabel: 'Prep time',
+                    supportingText: 'HH:MM',
+                    inputWidth: 'small',
+                  }}
+                />
 
-            <IngredientsSection
-              {...{
-                control,
-                errors,
-                register,
-                setFocus,
-                getFieldState,
-              }}
-            />
+                <FormInput
+                  {...{
+                    fieldName: 'cookTime',
+                    fieldLabel: 'Cook time',
+                    supportingText: 'HH:MM',
+                    inputWidth: 'small',
+                  }}
+                />
+              </div>
 
-            <ProcedureSection
-              {...{
-                control,
-                errors,
-                register,
-                setFocus,
-                getFieldState,
-              }}
-            />
-            <Button icon={<SaveIcon />} onClick={handleSubmit(onSubmit)}>
-              Save
-            </Button>
-          </form>
+              <IngredientsSection />
+
+              <ProcedureSection />
+              <Button icon={<SaveIcon />} onClick={handleSubmit(onSubmit)}>
+                Save
+              </Button>
+            </form>
+          </FormProvider>
         </article>
       </main>
     </div>
