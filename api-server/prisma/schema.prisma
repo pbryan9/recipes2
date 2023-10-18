@@ -21,8 +21,8 @@ model User {
 model Recipe {
   id               String            @id @default(uuid())
   title            String
-  prepTime         Int?
-  cookTime         Int?
+  prepTime         String?
+  cookTime         String?
   ingredientGroups IngredientGroup[]
   procedureGroups  ProcedureGroup[]
   tags             Tag[]
