@@ -33,14 +33,14 @@ export default function CreateTagsContainer({
         Tags
       </header>
       <section
-        className={`w-full relative -top-7 z-0 shadow-sm rounded-[12px] transition-all bg-surface-container-low grid ${
+        className={`w-full relative -top-7 z-0 shadow-sm rounded-[12px] transition-all duration-500 bg-surface-container-low grid ${
           expanded
             ? 'grid-rows-[1fr]'
             : 'grid-rows-[0fr] -top-14 bg-transparent'
         }`}
       >
         <div
-          className={`flex flex-wrap items-start justify-start w-full gap-2 p-6 pt-14 overflow-hidden  ${
+          className={`flex flex-wrap items-start justify-start w-full gap-2 p-6 pt-14 overflow-hidden transition-all duration-200 ${
             expanded ? '' : 'py-0'
           }`}
         >
