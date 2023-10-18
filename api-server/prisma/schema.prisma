@@ -89,7 +89,7 @@ model IngredientGroup {
 
 model Ingredient {
   id                String          @id @default(uuid())
-  qty               Int?
+  qty               String?
   description       String
   uom               String?
   unitId            String?

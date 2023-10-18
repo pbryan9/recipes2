@@ -1,21 +1,20 @@
 import z from 'zod';
-// import { stringToNumber } from '../helpers/numberToString';
 
-const uomValues = [
-  '',
-  'OZ',
-  'FLOZ',
-  'LB',
-  'G',
-  'C',
-  'TSP',
-  'TBSP',
-  'BUNCH',
-  'CAN',
-  'BAG',
-  'CONTAINER',
-  'OTHER',
-] as const;
+// const uomValues = [
+//   '',
+//   'OZ',
+//   'FLOZ',
+//   'LB',
+//   'G',
+//   'C',
+//   'TSP',
+//   'TBSP',
+//   'BUNCH',
+//   'CAN',
+//   'BAG',
+//   'CONTAINER',
+//   'OTHER',
+// ] as const;
 
 const ingredientGroupSchema = z
   .object({
@@ -23,9 +22,8 @@ const ingredientGroupSchema = z
     description: z.string().optional(),
     ingredients: z
       .object({
-        // qty: z.number().positive().optional(),
-        qty: z.coerce.number().nullable().optional(),
-        uom: z.enum(uomValues).optional(),
+        qty: z.string().optional(),
+        uom: z.string().optional(),
         description: z
           .string()
           .min(1, { message: 'Description cannot be blank.' }),
@@ -65,11 +63,21 @@ const newRecipeFormInputSchema = z
   .object({
     title: z.string().min(1, { message: 'Recipe must have a title.' }),
     author: z.string().min(1, { message: 'Username is missing.' }).optional(),
-    prepTime: z.coerce.number().optional(),
-    cookTime: z.coerce.number().optional(),
+    prepTime: z.string().optional(),
+    cookTime: z.string().optional(),
+    // prepTime: z.coerce.number().optional(),
+    // cookTime: z.coerce.number().optional(),
     ingredientGroups: ingredientGroupSchema,
     procedureGroups: procedureGroupSchema,
     tags: tagsSchema,
+  })
+  .refine(({ prepTime }) => refineTime(prepTime), {
+    message: 'Invalid format (HH:MM)',
+    path: ['prepTime'],
+  })
+  .refine(({ cookTime }) => refineTime(cookTime), {
+    message: 'Invalid format (HH:MM)',
+    path: ['cookTime'],
   })
   .refine(({ ingredientGroups }) => refineGroupTitle(ingredientGroups), {
     message: 'Ingredient group labels must be unique.',
@@ -79,6 +87,14 @@ const newRecipeFormInputSchema = z
     message: 'Procedure group labels must be unique.',
     path: ['procedureGroups.0.groupTitle'],
   });
+
+function refineTime(prepTime?: string) {
+  if (!prepTime || prepTime === '') return true;
+
+  let check = prepTime.match(/(^(\d+:)?\d\d$)|(^\d?\d$)/gm);
+  // console.log({ check });
+  return check ?? false;
+}
 
 function refineGroupTitle(group: IngredientGroup | ProcedureGroup) {
   if (group.length === 1) return true;
@@ -94,7 +110,7 @@ function refineGroupTitle(group: IngredientGroup | ProcedureGroup) {
   return true;
 }
 
-export { newRecipeFormInputSchema, uomValues };
+export { newRecipeFormInputSchema };
 export type FormInputs = z.infer<typeof newRecipeFormInputSchema>;
 type IngredientGroup = z.infer<typeof ingredientGroupSchema>;
 type ProcedureGroup = z.infer<typeof procedureGroupSchema>;
