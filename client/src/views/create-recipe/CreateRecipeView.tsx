@@ -70,9 +70,8 @@ export default function CreateRecipeView() {
           { recipeId: data.id },
           { staleTime: 1000 * 60 * 10 }
         );
-      navigate(`/recipes/${data!.id}`);
+      navigate(`/recipes?selectedRecipeId=${data!.id}`);
     },
-    meta: {},
   });
 
   const [selectedTags, setSelectedTags] = useState<Map<string, Tag>>();
