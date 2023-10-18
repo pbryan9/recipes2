@@ -41,6 +41,7 @@ export const theme = {
       outline: 'var(--md-sys-color-outline)',
       'outline-variant': 'var(--md-sys-color-outline-variant)',
       error: 'var(--md-sys-color-error)',
+      'on-error': 'var(--md-sys-color-on-error)',
       /**
        *
        * Everything below comes from shadcn/ui
