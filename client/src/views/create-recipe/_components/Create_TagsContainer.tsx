@@ -26,13 +26,33 @@ export default function CreateTagsContainer({
 
   return (
     <article className='flex flex-col items-center w-full h-full'>
-      <header className='title-large h-14 w-full px-4 flex items-center gap-4 bg-surface-container-high rounded-full shadow-md'>
+      <header className='title-large z-10 h-14 w-full px-4 flex items-center gap-4 bg-surface-container-high rounded-full shadow-md'>
         <button onClick={() => setExpanded((prev) => !prev)}>
           {expanded ? <CollapseIcon /> : <ExpandIcon />}
         </button>
         Tags
       </header>
       <section
+        className={`w-full relative -top-7 z-0 shadow-sm rounded-[12px] transition-all bg-surface-container-low grid ${
+          expanded
+            ? 'grid-rows-[1fr]'
+            : 'grid-rows-[0fr] -top-14 bg-transparent'
+        }`}
+      >
+        <div
+          className={`flex flex-wrap items-start justify-start w-full gap-2 p-6 pt-14 overflow-hidden  ${
+            expanded ? '' : 'py-0'
+          }`}
+        >
+          {tagQuery.data?.map((tag) => (
+            <TagChip
+              key={tag.id}
+              {...{ tag, toggleTag, selected: selectedTags?.has(tag.id) }}
+            />
+          ))}
+        </div>
+      </section>
+      {/* <section
         className={`w-full flex flex-wrap items-start justify-start gap-2 p-6 shadow-sm rounded-[12px] bg-surface-container-low ${
           expanded ? '' : 'hidden'
         }`}
@@ -43,7 +63,7 @@ export default function CreateTagsContainer({
             {...{ tag, toggleTag, selected: selectedTags?.has(tag.id) }}
           />
         ))}
-      </section>
+      </section> */}
     </article>
   );
 }
