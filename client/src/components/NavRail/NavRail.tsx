@@ -8,7 +8,7 @@ export default function NavRail() {
   const navigate = useNavigate();
 
   return (
-    <nav className='w-20 mt-20 left-0 top-20 flex flex-col items-center gap-3 on-background-text shrink-0'>
+    <nav className='w-20 mt-20 left-0 top-20 flex flex-col items-center gap-3 on-background-text shrink-0 print:hidden'>
       <NavRailButton
         icon={<RecipePotIcon />}
         label='Recipes'
