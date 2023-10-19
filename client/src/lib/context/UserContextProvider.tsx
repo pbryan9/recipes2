@@ -3,24 +3,30 @@ import { AuthenticateUserInput } from '../../../../api-server/validators/authent
 import { trpc } from '../trpc/trpc';
 import { NewUserInput } from '../../../../api-server/validators/newUserFormValidator';
 
-const initialUserState = {
+const initialUserState: UserContextType = {
   username: null,
   isLoggedIn: false,
   isLoading: true,
+  favorites: [],
   login: null,
   logout: null,
   createUser: null,
+  addToFavorites: () => null,
+  removeFromFavorites: () => null,
 };
 
 type UserContextType = {
   username: string | null;
   isLoggedIn: boolean;
   isLoading: boolean;
+  favorites: string[];
   login:
     | (({ username, password }: { username: string; password: string }) => void)
     | null;
   logout: (() => void) | null;
   createUser: ((input: NewUserInput) => void) | null;
+  addToFavorites: (recipeId: string) => void;
+  removeFromFavorites: (recipeId: string) => void;
 };
 
 export const UserContext = createContext<UserContextType>(initialUserState);
@@ -32,6 +38,28 @@ export default function UserContextProvider({
 }) {
   const [userContext, setUserContext] =
     useState<UserContextType>(initialUserState);
+  const utils = trpc.useContext();
+
+  // on initial render, check for token
+  const tokenCheck = trpc.users.validateToken.useQuery(undefined, {
+    enabled: !userContext.isLoggedIn && !!localStorage.getItem('token'),
+  });
+
+  const userInfo = trpc.users.getUserInfo.useQuery(undefined, {
+    enabled: userContext.isLoggedIn,
+    staleTime: 1000 * 60 * 1,
+  });
+
+  const newUserMutation = trpc.users.create.useMutation({
+    onSuccess(res) {
+      localStorage.setItem('token', res.token);
+      setUserContext((prev) => ({
+        ...prev,
+        isLoggedIn: true,
+        username: res.user.username,
+      }));
+    },
+  });
 
   const authenticateUser = trpc.users.authenticateUser.useMutation({
     onSuccess(data, ctx) {
@@ -44,11 +72,28 @@ export default function UserContextProvider({
     },
   });
 
+  const addToFavoritesMutation = trpc.users.addToFavorites.useMutation({
+    onSuccess(_, { recipeId }) {
+      setUserContext((prev) => ({
+        ...prev,
+        favorites: [...prev.favorites, recipeId],
+      }));
+      utils.users.getUserInfo.invalidate();
+      utils.users.getUserInfo.refetch();
+    },
+  });
+
+  const removeFromFavoritesMutation =
+    trpc.users.removeFromFavorites.useMutation({
+      onSuccess() {
+        utils.users.getUserInfo.invalidate();
+        utils.users.getUserInfo.refetch();
+      },
+    });
+
   useEffect(() => {
     setUserContext((prev) => ({ ...prev, isLoading: false }));
   }, [authenticateUser.isLoading]);
-
-  const utils = trpc.useContext();
 
   function login({ username, password }: AuthenticateUserInput) {
     authenticateUser.mutate({ username, password });
@@ -68,59 +113,83 @@ export default function UserContextProvider({
       login: prev.login,
       logout: prev.logout,
       createUser: prev.createUser,
+      addToFavorites: prev.addToFavorites,
+      removeFromFavorites: prev.removeFromFavorites,
     }));
+  }
+
+  function addToFavorites(recipeId: string) {
+    // optimistically add recipe to favorites
+    setUserContext((prev) => ({
+      ...prev,
+      favorites: [...prev.favorites, recipeId],
+    }));
+    addToFavoritesMutation.mutate({ recipeId });
+  }
+
+  function removeFromFavorites(recipeId: string) {
+    // optimistically remove recipe from favorites
+    setUserContext((prev) => ({
+      ...prev,
+      favorites: prev.favorites.filter((id) => id !== recipeId),
+    }));
+    removeFromFavoritesMutation.mutate({ recipeId });
   }
 
   /**
    *
    * Set up user management functions
-   * (and re-set them if ever they become undefined for some reason)
+   * ~~(and re-set them if ever they become undefined for some reason)~~
    *
    */
 
   useEffect(() => {
-    if (!userContext.login) {
-      setUserContext((prev) => ({ ...prev, login }));
-    }
-  }, [userContext.login]);
+    setUserContext((prev) => ({
+      ...prev,
+      login,
+      logout,
+      createUser,
+      addToFavorites,
+      removeFromFavorites,
+    }));
+  }, []);
+
+  // useEffect(() => {
+  //   if (!userContext.login) {
+  //     setUserContext((prev) => ({ ...prev, login }));
+  //   }
+  // }, [userContext.login]);
+
+  // useEffect(() => {
+  //   if (!userContext.logout) {
+  //     setUserContext((prev) => ({ ...prev, logout }));
+  //   }
+  // }, [userContext.logout]);
+
+  // useEffect(() => {
+  //   if (!userContext.createUser) {
+  //     setUserContext((prev) => ({ ...prev, createUser }));
+  //   }
+  // }, [userContext.createUser]);
 
   useEffect(() => {
-    if (!userContext.logout) {
-      setUserContext((prev) => ({ ...prev, logout }));
-    }
-  }, [userContext.logout]);
-
-  useEffect(() => {
-    if (!userContext.createUser) {
-      setUserContext((prev) => ({ ...prev, createUser }));
-    }
-  }, [userContext.createUser]);
-
-  const newUserMutation = trpc.users.create.useMutation({
-    onSuccess(res) {
-      localStorage.setItem('token', res.token);
+    if (!tokenCheck.isLoading && !tokenCheck.isError) {
       setUserContext((prev) => ({
         ...prev,
         isLoggedIn: true,
-        username: res.user.username,
-      }));
-    },
-  });
-
-  // on initial render, check for token
-  const user = trpc.users.validateToken.useQuery(undefined, {
-    enabled: !userContext.isLoggedIn && !!localStorage.getItem('token'),
-  });
-
-  useEffect(() => {
-    if (!user.isLoading && !user.isError) {
-      setUserContext((prev) => ({
-        ...prev,
-        isLoggedIn: true,
-        username: user.data!,
+        username: tokenCheck.data!,
       }));
     }
-  }, [user.data]);
+  }, [tokenCheck.data]);
+
+  useEffect(() => {
+    if (userInfo.isSuccess) {
+      setUserContext((prev) => ({
+        ...prev,
+        favorites: userInfo.data.favorites.map(({ id }) => id),
+      }));
+    }
+  }, [userInfo.isSuccess, userInfo.isLoading]);
 
   return (
     <UserContext.Provider value={{ ...userContext }}>

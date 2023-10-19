@@ -9,6 +9,7 @@ export default async function verifyToken(token: string) {
   const response: {
     isVerified: boolean;
     username?: string;
+    userId?: string;
     error?: string;
   } = {
     isVerified: false,
@@ -33,6 +34,7 @@ export default async function verifyToken(token: string) {
   }
 
   response.username = user.username;
+  response.userId = userId;
   response.isVerified = true;
 
   return response;

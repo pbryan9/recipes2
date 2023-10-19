@@ -18,6 +18,10 @@ import authenticateUser from '../db/users/authenticateUser';
 import verifyToken from '../db/users/verifyToken';
 import newTagFormValidator from '../validators/newTagFormValidator';
 import createNewTag from '../db/tags/createNewTag';
+import addToFavoritesValidator from '../validators/addToFavoritesValidator';
+import addToFavorites from '../db/users/addToFavorites';
+import removeFromFavorites from '../db/users/removeFromFavorites';
+import getUserInfo from '../db/users/getUserInfo';
 
 /**
  * Initialization of tRPC backend
@@ -100,6 +104,33 @@ export const appRouter = t.router({
     validateToken: protectedProcedure.query(({ ctx }) => {
       return ctx.user.username;
     }),
+    getUserInfo: protectedProcedure.query(
+      async ({
+        ctx: {
+          user: { userId },
+        },
+      }) => {
+        return await getUserInfo(userId!);
+      }
+    ),
+    addToFavorites: protectedProcedure.input(addToFavoritesValidator).mutation(
+      ({
+        input: { recipeId },
+        ctx: {
+          user: { userId },
+        },
+      }) => addToFavorites({ recipeId }, userId!)
+    ),
+    removeFromFavorites: protectedProcedure
+      .input(addToFavoritesValidator)
+      .mutation(
+        ({
+          input: { recipeId },
+          ctx: {
+            user: { userId },
+          },
+        }) => removeFromFavorites({ recipeId }, userId!)
+      ),
   }),
   tags: t.router({
     all: publicProcedure.query(async () => await getAllTags()),
