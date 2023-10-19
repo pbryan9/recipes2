@@ -29,11 +29,20 @@ model Recipe {
   notes            Note[]
   author           User              @relation("OwnedRecipes", fields: [authorId], references: [id])
   authorId         String
-  favoritedBy      User?             @relation("FavoritedRecipes", fields: [favoritedById], references: [id])
-  favoritedById    String?
+  favoritedBy      User[]            @relation("FavoritedRecipes")
+  // favorites        Favorites[]
 
   @@unique([authorId, title])
 }
+
+// model Favorites {
+//   user     User   @relation(fields: [userId], references: [id])
+//   recipe   Recipe @relation(fields: [recipeId], references: [id])
+//   userId   String
+//   recipeId String
+
+//   @@id([userId, recipeId])
+// }
 
 model Tag {
   id          String   @id @default(uuid())
