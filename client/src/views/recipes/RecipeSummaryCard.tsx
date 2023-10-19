@@ -1,6 +1,5 @@
 import { type FilledRecipe } from '../../../../api-server/db/recipes/getRecipeById';
-import StarIcon_Filled from '../../assets/icons/StarIcon_Filled';
-import useUser from '../../lib/hooks/useUser';
+import FavoritesButton from '../../components/FavoritesButton';
 
 type RecipeSummaryCardProps = {
   recipe: FilledRecipe;
@@ -8,17 +7,11 @@ type RecipeSummaryCardProps = {
   isSelected?: boolean;
 };
 
-// TODO: selected card should be highlighted
-
 export default function RecipeSummaryCard({
   recipe,
   onClick,
   isSelected = false,
 }: RecipeSummaryCardProps) {
-  const { favorites } = useUser();
-
-  const isFavorited = favorites.includes(recipe.id);
-
   return (
     <article
       onClick={onClick}
@@ -41,7 +34,7 @@ export default function RecipeSummaryCard({
           )}
         </div>
       </div>
-      {isFavorited && <StarIcon_Filled />}
+      <FavoritesButton recipeId={recipe.id} />
     </article>
   );
 }

@@ -19,11 +19,6 @@ export default function NavRail() {
         label='New'
         onClick={() => navigate('/recipes/create-new-recipe')}
       />
-      {/* <NavRailButton
-        icon={<RecipePotIcon />}
-        label='Recipes'
-        onClick={() => console.log('recipes clicked')}
-      /> */}
     </nav>
   );
 }

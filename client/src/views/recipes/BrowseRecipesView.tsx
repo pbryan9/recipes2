@@ -5,7 +5,7 @@ import SearchCard from './SearchCard';
 import ProcedureSection from './ProcedureSection';
 import useRecipes from '../../lib/hooks/useRecipesNew';
 import React, { useState } from 'react';
-import Button from '../create-recipe/_components/Button';
+import Button from '../../components/Button';
 import CollapseIcon from '../../assets/icons/CollapseIcon';
 import ExpandIcon from '../../assets/icons/ExpandIcon';
 import { FilterResult } from '../../lib/context/RecipesContextProviderNew';
@@ -23,6 +23,9 @@ export default function BrowseRecipesView() {
   const selectedRecipeId = searchParams.get('selectedRecipeId');
   const activeRecipe =
     recipes?.find(({ id }) => id === selectedRecipeId) || null;
+
+  const isFavorited =
+    isLoggedIn && activeRecipe && favorites.includes(activeRecipe.id);
 
   document.title = activeRecipe?.title || 'Browsing Recipes';
 
@@ -68,20 +71,26 @@ export default function BrowseRecipesView() {
                 </h1>
               </div>
               {isLoggedIn && (
+                // <FavoritesButton recipeId={activeRecipe.id} />
                 <Button
                   onClick={() =>
-                    favorites.includes(activeRecipe.id)
+                    isFavorited
                       ? removeFromFavorites(activeRecipe.id)
                       : addToFavorites(activeRecipe.id)
                   }
                   variant='text'
                   icon={
                     favorites.includes(activeRecipe.id) ? (
-                      <StarIcon_Filled />
+                      <StarIcon_Filled size={40} />
                     ) : (
-                      <StarIcon_Hollow />
+                      <StarIcon_Hollow size={24} />
                     )
                   }
+                  style={{
+                    transform: `scale(${isFavorited ? 1.2 : 1})`,
+                    translate: isFavorited ? '10%' : 'none',
+                    transition: 'transform 200ms',
+                  }}
                 />
               )}
             </header>
