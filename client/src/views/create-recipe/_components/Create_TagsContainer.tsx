@@ -26,12 +26,15 @@ export default function CreateTagsContainer({
 
   return (
     <article className='flex flex-col items-center w-full h-full'>
-      <header className='title-large z-10 h-14 w-full px-4 flex items-center gap-4 bg-surface-container-high rounded-full shadow-md'>
-        <button onClick={() => setExpanded((prev) => !prev)}>
+      <button
+        className='z-10 w-full'
+        onClick={() => setExpanded((prev) => !prev)}
+      >
+        <header className='title-large h-14 w-full px-4 flex items-center gap-4 bg-surface-container-high rounded-full shadow-md'>
           {expanded ? <CollapseIcon /> : <ExpandIcon />}
-        </button>
-        Tags
-      </header>
+          Tags
+        </header>
+      </button>
       <section
         className={`w-full relative -top-7 z-0 shadow-sm rounded-[12px] transition-all duration-500 bg-surface-container-low grid ${
           expanded
