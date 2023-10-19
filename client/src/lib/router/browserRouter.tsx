@@ -6,7 +6,6 @@ import { createBrowserRouter } from 'react-router-dom';
 import App from '../../App';
 import Home from '../../views/home/Home';
 import CreateRecipeView from '../../views/create-recipe/CreateRecipeView';
-import EditRecipeView from '../../views/create-recipe/EditRecipeView';
 import SignInView from '../../views/sign-in/SignInView';
 import SignUpView from '../../views/sign-up/SignUpView';
 import BrowseRecipesView from '../../views/recipes/BrowseRecipesView';
@@ -29,8 +28,8 @@ export default createBrowserRouter([
         element: <BrowseRecipesView />,
       },
       {
-        path: '/recipes/:recipeId/edit',
-        element: <EditRecipeView />,
+        path: '/recipes/edit',
+        element: <CreateRecipeView />,
       },
       {
         path: '/recipes/create-new-recipe',
