@@ -18,12 +18,12 @@ import z from 'zod';
 
 const ingredientGroupSchema = z
   .object({
-    groupTitle: z.string(),
+    groupTitle: z.string().nullable(),
     description: z.string().optional(),
     ingredients: z
       .object({
-        qty: z.string().optional(),
-        uom: z.string().optional(),
+        qty: z.string().nullable().optional(),
+        uom: z.string().nullable().optional(),
         description: z
           .string()
           .min(1, { message: 'Description cannot be blank.' }),
@@ -36,7 +36,7 @@ const ingredientGroupSchema = z
 
 const procedureGroupSchema = z
   .object({
-    groupTitle: z.string(),
+    groupTitle: z.string().nullable(),
     description: z.string().optional(),
     procedureSteps: z
       .object({
@@ -53,7 +53,7 @@ const procedureGroupSchema = z
 const tagsSchema = z
   .object({
     description: z.string(),
-    tagGroup: z.string().optional(),
+    tagGroup: z.string().nullable().optional(),
     id: z.string().optional(),
   })
   .array()
@@ -63,8 +63,8 @@ const newRecipeFormInputSchema = z
   .object({
     title: z.string().min(1, { message: 'Recipe must have a title.' }),
     author: z.string().min(1, { message: 'Username is missing.' }).optional(),
-    prepTime: z.string().optional(),
-    cookTime: z.string().optional(),
+    prepTime: z.string().nullable().optional(),
+    cookTime: z.string().nullable().optional(),
     // prepTime: z.coerce.number().optional(),
     // cookTime: z.coerce.number().optional(),
     ingredientGroups: ingredientGroupSchema,
@@ -88,7 +88,7 @@ const newRecipeFormInputSchema = z
     path: ['procedureGroups.0.groupTitle'],
   });
 
-function refineTime(prepTime?: string) {
+function refineTime(prepTime?: string | null) {
   if (!prepTime || prepTime === '') return true;
 
   let check = prepTime.match(/(^(\d+:)?\d\d$)|(^\d?\d$)/gm);

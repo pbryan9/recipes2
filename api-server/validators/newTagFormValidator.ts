@@ -4,7 +4,7 @@ const newTagFormValidator = z.object({
   tagName: z
     .string()
     .min(3, { message: 'Tag name must contain at least 3 characters.' }),
-  tagGroup: z.string().optional(),
+  tagGroup: z.string().nullable().optional(),
 });
 
 export default newTagFormValidator;
