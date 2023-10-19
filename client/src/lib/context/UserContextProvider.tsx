@@ -3,41 +3,44 @@ import { AuthenticateUserInput } from '../../../../api-server/validators/authent
 import { trpc } from '../trpc/trpc';
 import { NewUserInput } from '../../../../api-server/validators/newUserFormValidator';
 
-const initialUserState: UserContextType = {
+const initialUserState: UserContext = {
   username: null,
   isLoggedIn: false,
   isLoading: true,
   favorites: [],
-  login: null,
-  logout: null,
-  createUser: null,
+  login: () => null,
+  logout: () => null,
+  createUser: () => null,
   addToFavorites: () => null,
   removeFromFavorites: () => null,
 };
 
-type UserContextType = {
+type UserContext = {
   username: string | null;
   isLoggedIn: boolean;
   isLoading: boolean;
   favorites: string[];
-  login:
-    | (({ username, password }: { username: string; password: string }) => void)
-    | null;
-  logout: (() => void) | null;
-  createUser: ((input: NewUserInput) => void) | null;
+  login: ({
+    username,
+    password,
+  }: {
+    username: string;
+    password: string;
+  }) => void;
+  logout: () => void;
+  createUser: (input: NewUserInput) => void;
   addToFavorites: (recipeId: string) => void;
   removeFromFavorites: (recipeId: string) => void;
 };
 
-export const UserContext = createContext<UserContextType>(initialUserState);
+export const UserContext = createContext<UserContext>(initialUserState);
 
 export default function UserContextProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [userContext, setUserContext] =
-    useState<UserContextType>(initialUserState);
+  const [userContext, setUserContext] = useState<UserContext>(initialUserState);
   const utils = trpc.useContext();
 
   // on initial render, check for token
@@ -107,6 +110,7 @@ export default function UserContextProvider({
   function logout() {
     // * remember to add any new functions here so they're not removed on logout
     localStorage.removeItem('token');
+    utils.users.getUserInfo.cancel();
     utils.users.invalidate();
     setUserContext((prev) => ({
       ...initialUserState,
