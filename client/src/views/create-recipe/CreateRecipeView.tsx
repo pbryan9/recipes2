@@ -105,12 +105,7 @@ export default function CreateRecipeView() {
     resolver: zodResolver(newRecipeFormInputSchema),
   });
 
-  const {
-    handleSubmit,
-    reset,
-    watch,
-    formState: { errors },
-  } = methods;
+  const { handleSubmit, reset, watch } = methods;
 
   useEffect(() => {
     if (recipe?.id) {
