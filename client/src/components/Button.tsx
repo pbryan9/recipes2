@@ -27,7 +27,7 @@ export default function Button({
   return (
     <button
       {...{ ...delegated, type }}
-      className={`w-fit rounded-full flex items-center gap-2 pr-6 h-10 label-large print:hidden ${
+      className={`w-fit basis-auto rounded-full flex items-center gap-2 pr-6 h-10 label-large print:hidden ${
         icon && children ? 'pl-4' : 'pl-6'
       }
         ${buttonVariants[variant]}

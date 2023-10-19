@@ -1,10 +1,4 @@
-import {
-  UseFormGetFieldState,
-  type FieldErrors,
-  type UseFormRegister,
-  type UseFormSetFocus,
-  useFormContext,
-} from 'react-hook-form';
+import { type FieldErrors, useFormContext } from 'react-hook-form';
 import { RouterInputs } from '../../../lib/trpc/trpc';
 
 type FormInput = RouterInputs['recipes']['create'];
@@ -18,10 +12,6 @@ type FormInputWidth = 'small' | 'medium' | 'large' | 'full';
 type FormInputProps = {
   fieldName: string;
   fieldLabel: string;
-  // getFieldState: UseFormGetFieldState<FormInput>;
-  // setFocus: UseFormSetFocus<FormInput>;
-  // errors: FieldErrors<FormInput>;
-  // register: UseFormRegister<FormInput>;
 
   supportingText?: string;
   inputWidth?: FormInputWidth;
@@ -43,13 +33,13 @@ export default function FormInput({
       'Must provide clusterInputPosition when using cluster variant'
     );
 
-  const { formState, getFieldState, setFocus, register } = useFormContext();
+  const { formState, getFieldState, setFocus, register, watch } =
+    useFormContext();
   const { errors } = formState;
 
-  const { isDirty, invalid } = getFieldState(
-    fieldName as keyof FormInput,
-    formState
-  );
+  const { invalid } = getFieldState(fieldName as keyof FormInput, formState);
+
+  let fieldValue = watch(fieldName);
 
   let errMsg = invalid
     ? accessErrors(fieldName as keyof FormInput, errors)
@@ -77,7 +67,7 @@ export default function FormInput({
           setFocus(fieldName as keyof FormInput);
         }}
         className={`input-group cursor-text relative h-14 flex justify-start ${
-          isDirty ? 'items-end' : 'items-center'
+          fieldValue ? 'items-end' : 'items-center'
         } ${
           variant === 'cluster'
             ? radiusLookup[clusterInputPosition!]
@@ -91,7 +81,7 @@ export default function FormInput({
         <label
           htmlFor={fieldName}
           className={`left-4 leading-none absolute cursor-text ${
-            isDirty
+            fieldValue
               ? `body-small ${
                   invalid ? 'text-error' : 'text-primary'
                 } absolute top-2`

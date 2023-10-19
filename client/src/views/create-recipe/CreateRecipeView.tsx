@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -14,81 +14,125 @@ import IngredientsSection from './_components/IngredientsSection';
 import ProcedureSection from './_components/ProcedureSection';
 import Button from '../../components/Button';
 import SaveIcon from '../../assets/icons/SaveIcon';
+import useRecipes from '../../lib/hooks/useRecipes';
 
 type FormInput = RouterInputs['recipes']['create'];
 
-const defaultValues: FormInput = {
-  title: '',
-  author: undefined,
-  cookTime: '' as unknown as undefined,
-  prepTime: '' as unknown as undefined,
-  ingredientGroups: [
-    {
-      groupTitle: '',
-      description: '',
-      ingredients: [
-        {
-          qty: undefined,
-          uom: undefined,
-          description: '',
-        },
-      ],
-    },
-  ],
-  procedureGroups: [
-    {
-      groupTitle: '',
-      description: '',
-      procedureSteps: [
-        {
-          description: '',
-          timer: undefined,
-        },
-      ],
-    },
-  ],
-};
-
 export default function CreateRecipeView() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const utils = trpc.useContext();
+  const [selectedTags, setSelectedTags] = useState<Map<string, Tag>>();
   const { isLoggedIn, isLoading, username } = useUser();
+  const { recipes } = useRecipes();
+
+  const recipeId = searchParams.get('recipeId');
+  const recipe = recipeId ? recipes.find(({ id }) => id === recipeId) : null;
 
   useEffect(() => {
-    // cannot create recipes if not logged in
+    if (!isLoading && !isLoggedIn) navigate('/sign-in');
+  }, [isLoading, isLoggedIn]);
 
-    // TODO: come back & test this for not-logged-in state
-    if (!isLoggedIn && !isLoading) navigate('/sign-in');
-  }, [isLoggedIn]);
-
-  const mutation = trpc.recipes.create.useMutation({
+  const createMutation = trpc.recipes.create.useMutation({
     onSuccess: (data) => {
       utils.recipes.all.invalidate();
-      console.log(data);
       if (data?.id)
         utils.recipes.byRecipeId.prefetch(
           { recipeId: data.id },
           { staleTime: 1000 * 60 * 10 }
         );
-      navigate(`/recipes?selectedRecipeId=${data!.id}`);
+      navigate(`/recipes?recipeId=${data!.id}`);
     },
   });
 
-  const [selectedTags, setSelectedTags] = useState<Map<string, Tag>>();
+  const editMutation = trpc.recipes.edit.useMutation({
+    onSuccess() {
+      utils.recipes.all.invalidate();
+      utils.recipes.byRecipeId.invalidate({ recipeId: recipeId! });
+      navigate(`/recipes?recipeId=${recipeId}`);
+    },
+  });
+
+  const defaultFormValues: FormInput = {
+    title: recipe?.title || '',
+    author: username || undefined,
+    cookTime: recipe?.cookTime || '',
+    prepTime: recipe?.prepTime || '',
+    ingredientGroups: (recipe?.ingredientGroups.map((group) => ({
+      groupTitle: group.groupTitle || '',
+      description: group.description || '',
+      ingredients: group.ingredients.map((ingredient) => ({
+        qty: ingredient.qty || undefined,
+        uom: ingredient.uom || undefined,
+        description: ingredient.description,
+      })),
+    })) as Extract<FormInput, 'ingredientGroups'>) || [
+      {
+        groupTitle: '',
+        description: '',
+        ingredients: [
+          {
+            qty: undefined,
+            uom: undefined,
+            description: '',
+          },
+        ],
+      },
+    ],
+    procedureGroups: (recipe?.procedureGroups.map((group) => ({
+      groupTitle: group.groupTitle || '',
+      description: group.description || '',
+      procedureSteps: group.procedureSteps.map((step) => ({
+        description: step.description || '',
+        timer: step.timer || undefined,
+      })),
+    })) as Extract<FormInput, 'procedureGroups'>) || [
+      {
+        groupTitle: '',
+        description: '',
+        procedureSteps: [
+          {
+            description: '',
+            timer: undefined,
+          },
+        ],
+      },
+    ],
+  };
 
   const methods = useForm<FormInput>({
-    defaultValues,
+    defaultValues: defaultFormValues,
     resolver: zodResolver(newRecipeFormInputSchema),
   });
 
-  const { handleSubmit, reset, watch } = methods;
+  const {
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors },
+  } = methods;
+
+  useEffect(() => {
+    if (recipe?.id) {
+      reset(
+        {
+          ...defaultFormValues,
+          author: recipe.author.username,
+        },
+        { keepDirtyValues: true }
+      );
+      setSelectedTags(new Map(recipe.tags.map((tag) => [tag.id, tag])));
+    }
+  }, [recipe?.id]);
 
   // package up the form submission to make it easier to pass to left pane
   const submitForm = handleSubmit(onSubmit);
 
   function resetForm() {
-    setSelectedTags(undefined);
-    reset(defaultValues);
+    setSelectedTags(
+      recipe?.id ? new Map(recipe?.tags.map((tag) => [tag.id, tag])) : undefined
+    );
+    reset(defaultFormValues);
   }
 
   function toggleTag(tag: Tag) {
@@ -100,20 +144,26 @@ export default function CreateRecipeView() {
     setSelectedTags(tempTags);
   }
 
-  async function onSubmit(data: FormInput) {
+  function onSubmit(data: FormInput) {
     data.author = username!;
 
-    if (selectedTags?.size && selectedTags.size > 0) {
-      data.tags = Array.from(selectedTags.values()) as typeof data.tags;
+    if (selectedTags?.size ?? -1 > 0) {
+      data.tags = Array.from(selectedTags!.values()) as typeof data.tags;
     }
 
-    mutation.mutate(data);
+    if (recipeId && recipe?.id) {
+      editMutation.mutate({ ...data, recipeId });
+    } else {
+      createMutation.mutate(data);
+    }
   }
 
   return (
-    <div className='flex flex-col w-full h-full pb-6'>
-      <header className='w-full flex justify-between items-center h-fit shrink-0'>
-        <h1 className='display-medium'>{watch('title') || 'New Recipe'}</h1>
+    <div className='flex flex-col w-full h-full pb-6 overflow-x-hidden'>
+      <header className='flex justify-between items-center h-fit shrink-0 gap-6 w-full'>
+        <h1 className='display-medium whitespace-nowrap text-ellipsis overflow-x-hidden basis-auto'>
+          {watch('title') || (recipeId && 'Edit Recipe') || 'New Recipe'}
+        </h1>
         <Button icon={<SaveIcon />} onClick={handleSubmit(onSubmit)}>
           Save
         </Button>
@@ -154,7 +204,7 @@ export default function CreateRecipeView() {
               <IngredientsSection />
 
               <ProcedureSection />
-              <Button icon={<SaveIcon />} onClick={handleSubmit(onSubmit)}>
+              <Button icon={<SaveIcon />} onClick={submitForm}>
                 Save
               </Button>
             </form>

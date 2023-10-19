@@ -38,7 +38,7 @@ export default function FormLeftPane({
           variant='danger'
           onClick={() => resetForm()}
         >
-          Clear Form
+          Reset Form
         </Button>
       </div>
     </section>

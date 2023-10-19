@@ -73,6 +73,9 @@ export default function UserContextProvider({
         isLoggedIn: true,
       }));
     },
+    onSettled() {
+      setUserContext((prev) => ({ ...prev, isLoading: false }));
+    },
   });
 
   const addToFavoritesMutation = trpc.users.addToFavorites.useMutation({
@@ -94,9 +97,9 @@ export default function UserContextProvider({
       },
     });
 
-  useEffect(() => {
-    setUserContext((prev) => ({ ...prev, isLoading: false }));
-  }, [authenticateUser.isLoading]);
+  // useEffect(() => {
+  //   setUserContext((prev) => ({ ...prev, isLoading: false }));
+  // }, [authenticateUser.isLoading]);
 
   function login({ username, password }: AuthenticateUserInput) {
     authenticateUser.mutate({ username, password });
@@ -114,6 +117,7 @@ export default function UserContextProvider({
     utils.users.invalidate();
     setUserContext((prev) => ({
       ...initialUserState,
+      isLoading: false,
       login: prev.login,
       logout: prev.logout,
       createUser: prev.createUser,
@@ -182,9 +186,10 @@ export default function UserContextProvider({
         ...prev,
         isLoggedIn: true,
         username: tokenCheck.data!,
+        isLoading: false,
       }));
     }
-  }, [tokenCheck.data]);
+  }, [tokenCheck.data, tokenCheck.isLoading]);
 
   useEffect(() => {
     if (userInfo.isSuccess) {
