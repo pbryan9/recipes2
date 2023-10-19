@@ -40,14 +40,10 @@ export default function SearchCard() {
       </div>
       {/* <div className=''>{filterIsActive ? <ClearIcon /> : <SearchIcon />}</div> */}
       {filterIsActive ? (
-        <Button
-          disabled={searchTerm === ''}
-          variant='text'
-          icon={<ClearIcon />}
-          onClick={resetFilter}
-        />
+        <Button variant='text' icon={<ClearIcon />} onClick={resetFilter} />
       ) : (
         <Button
+          disabled={searchTerm === ''}
           variant='text'
           icon={<SearchIcon />}
           onClick={() => setFilter(searchTerm)}
