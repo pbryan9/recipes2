@@ -3,7 +3,7 @@ import prisma from '../prismaSingleton';
 export async function getAllRecipes() {
   const allRecipes = await prisma.recipe.findMany({
     include: {
-      author: true,
+      author: { select: { id: true, username: true } },
       ingredientGroups: { include: { ingredients: true } },
       procedureGroups: { include: { procedureSteps: true } },
       notes: true,
