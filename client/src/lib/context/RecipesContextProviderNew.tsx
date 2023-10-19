@@ -82,7 +82,10 @@ export default function RecipesContextProvider({
       !recipesQuery.isFetching &&
       !recipesQuery.isError
     ) {
-      setRecipesContext((prev) => ({ ...prev, recipes: recipesQuery.data }));
+      setRecipesContext((prev) => ({
+        ...prev,
+        recipes: recipesQuery.data.sort((a, b) => (a.title < b.title ? -1 : 1)),
+      }));
     }
   }, [recipesQuery.isLoading, recipesQuery.isFetching]);
 
