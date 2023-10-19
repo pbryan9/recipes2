@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import HamburgerIcon from '../../assets/icons/HamburgerIcon';
 import SearchIcon from '../../assets/icons/SearchIcon';
 import useRecipes from '../../lib/hooks/useRecipesNew';
@@ -19,6 +19,10 @@ export default function SearchCard() {
     clearFilter();
     setSearchTerm('');
   }
+
+  useEffect(() => {
+    if (searchTerm !== '') setFilter(searchTerm);
+  }, [searchTerm]);
 
   return (
     <div
