@@ -38,7 +38,7 @@ export default function SignInView() {
   }
 
   useEffect(() => {
-    if (userCtx.isLoggedIn) navigate('/');
+    if (userCtx.isLoggedIn) navigate('/recipes');
   }, [userCtx.isLoggedIn]);
 
   return (
