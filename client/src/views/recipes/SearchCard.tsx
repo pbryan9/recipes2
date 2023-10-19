@@ -3,7 +3,7 @@ import HamburgerIcon from '../../assets/icons/HamburgerIcon';
 import SearchIcon from '../../assets/icons/SearchIcon';
 import useRecipes from '../../lib/hooks/useRecipesNew';
 import ClearIcon from '../../assets/icons/ClearIcon';
-import Button from '../create-recipe/_components/Button';
+import Button from '../../components/Button';
 
 export default function SearchCard() {
   const inputRef = useRef<HTMLInputElement>(null);

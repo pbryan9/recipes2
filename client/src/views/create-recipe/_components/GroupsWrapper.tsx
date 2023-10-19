@@ -2,7 +2,7 @@ import React from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import GroupContainer from './GroupContainer';
-import Button from './Button';
+import Button from '../../../components/Button';
 
 import { RouterInputs } from '../../../lib/trpc/trpc';
 import FormInput from './FormInput';

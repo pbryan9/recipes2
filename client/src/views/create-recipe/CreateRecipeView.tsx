@@ -12,7 +12,7 @@ import useUser from '../../lib/hooks/useUser';
 import FormInput from './_components/FormInput';
 import IngredientsSection from './_components/IngredientsSection';
 import ProcedureSection from './_components/ProcedureSection';
-import Button from './_components/Button';
+import Button from '../../components/Button';
 import SaveIcon from '../../assets/icons/SaveIcon';
 
 type FormInput = RouterInputs['recipes']['create'];

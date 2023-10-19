@@ -7,7 +7,7 @@ import IngredientItem from './IngredientItem';
 import ProcedureStepItem from './ProcedureStepItem';
 import PlusIcon from '../../../assets/icons/PlusIcon';
 import TrashIcon from '../../../assets/icons/TrashIcon';
-import Button from './Button';
+import Button from '../../../components/Button';
 
 type GroupContainerProps = {
   groupIndex: number;

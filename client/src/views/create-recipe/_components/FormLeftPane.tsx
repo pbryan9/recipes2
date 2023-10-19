@@ -1,7 +1,7 @@
 import { type BaseSyntheticEvent } from 'react';
 import CreateTagsContainer from './Create_TagsContainer';
 import { Tag } from '../../../../../api-server/db/tags/getAllTags';
-import Button from './Button';
+import Button from '../../../components/Button';
 import SaveIcon from '../../../assets/icons/SaveIcon';
 import TrashIcon from '../../../assets/icons/TrashIcon';
 
