@@ -3,12 +3,12 @@ import IngredientsSection from './IngredientsSection';
 import RecipeSummaryCard from './RecipeSummaryCard';
 import SearchCard from './SearchCard';
 import ProcedureSection from './ProcedureSection';
-import useRecipes from '../../lib/hooks/useRecipesNew';
+import useRecipes from '../../lib/hooks/useRecipes';
 import React, { useState } from 'react';
 import Button from '../../components/Button';
 import CollapseIcon from '../../assets/icons/CollapseIcon';
 import ExpandIcon from '../../assets/icons/ExpandIcon';
-import { FilterResult } from '../../lib/context/RecipesContextProviderNew';
+import { FilterResult } from '../../lib/context/RecipesContextProvider';
 import StarIcon_Hollow from '../../assets/icons/StarIcon_Hollow';
 import useUser from '../../lib/hooks/useUser';
 import StarIcon_Filled from '../../assets/icons/StarIcon_Filled';
@@ -20,7 +20,7 @@ export default function BrowseRecipesView() {
   const { isLoggedIn, removeFromFavorites, addToFavorites, favorites } =
     useUser();
 
-  const selectedRecipeId = searchParams.get('selectedRecipeId');
+  const selectedRecipeId = searchParams.get('recipeId');
   const activeRecipe =
     recipes?.find(({ id }) => id === selectedRecipeId) || null;
 
@@ -47,9 +47,7 @@ export default function BrowseRecipesView() {
                   key={recipe.id}
                   recipe={recipe}
                   isSelected={selectedRecipeId === recipe.id}
-                  onClick={() =>
-                    setSearchParams({ selectedRecipeId: recipe.id })
-                  }
+                  onClick={() => setSearchParams({ recipeId: recipe.id })}
                 />
               ))}
         </div>
@@ -129,7 +127,7 @@ export default function BrowseRecipesView() {
             key={recipe.id}
             recipe={recipe}
             isSelected={selectedRecipeId === recipe.id}
-            onClick={() => setSearchParams({ selectedRecipeId: recipe.id })}
+            onClick={() => setSearchParams({ recipeId: recipe.id })}
           />
         ))}
       </React.Fragment>
