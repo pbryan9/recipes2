@@ -18,13 +18,11 @@ export default function ProcedureSection({ recipe }: ProcedureSectionProps) {
   }, [recipe.id]);
 
   return (
-    <section
-      className={`w-full h-fit relative z-0 overflow-hidden transition-all`}
-    >
+    <section className={`h-fit basis-full relative z-0 overflow-hidden`}>
       <RecipeSectionHeader {...{ toggle, isExpanded }} heading='Procedure' />
 
       <div
-        className={`grid w-full h-fit transition-all ${
+        className={`grid h-fit transition-all ${
           isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
         }`}
       >

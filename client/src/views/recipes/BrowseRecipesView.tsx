@@ -53,10 +53,10 @@ export default function BrowseRecipesView() {
         </div>
       </section>
 
-      <main className='w-full overflow-hidden h-full flex flex-col gap-4'>
+      <main className='w-full h-full flex flex-col items-stretch gap-4'>
         {activeRecipe && (
           <>
-            <header className='h-fit w-full shrink-0 flex justify-between items-center gap-6'>
+            <header className='h-fit shrink-0 flex justify-between items-center gap-6'>
               <div className='flex gap-4 items-center overflow-hidden'>
                 <Button
                   icon={expanded ? <ExitFullScreenIcon /> : <FullScreenIcon />}
@@ -92,13 +92,15 @@ export default function BrowseRecipesView() {
                 />
               )}
             </header>
-            <div
-              className={`overflow-y-auto w-full flex gap-6 group ${
-                expanded ? 'expanded' : 'flex-col'
-              }`}
-            >
-              <IngredientsSection recipe={activeRecipe!} />
-              <ProcedureSection recipe={activeRecipe!} />
+            <div className={`overflow-y-auto`}>
+              <div
+                className={`flex gap-6 group ${
+                  expanded ? 'expanded' : 'flex-col'
+                }`}
+              >
+                <IngredientsSection recipe={activeRecipe!} />
+                <ProcedureSection recipe={activeRecipe!} />
+              </div>
             </div>
           </>
         )}

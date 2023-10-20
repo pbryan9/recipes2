@@ -22,7 +22,7 @@ export default function IngredientsSection({
 
   return (
     <section
-      className={`w-full h-fit relative z-0 overflow-hidden group-[.expanded]:w-[360px] transition-[width] ease-in-out`}
+      className={`h-fit relative z-0 overflow-hidden group-[.expanded]:w-[360px] transition-[width] ease-in-out`}
     >
       <RecipeSectionHeader {...{ toggle, isExpanded }} heading='Ingredients' />
       <div
