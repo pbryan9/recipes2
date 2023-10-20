@@ -6,12 +6,12 @@ import ProcedureSection from './ProcedureSection';
 import useRecipes from '../../lib/hooks/useRecipes';
 import React, { useState } from 'react';
 import Button from '../../components/Button';
-import CollapseIcon from '../../assets/icons/CollapseIcon';
-import ExpandIcon from '../../assets/icons/ExpandIcon';
 import { FilterResult } from '../../lib/context/RecipesContextProvider';
 import StarIcon_Hollow from '../../assets/icons/StarIcon_Hollow';
 import useUser from '../../lib/hooks/useUser';
 import StarIcon_Filled from '../../assets/icons/StarIcon_Filled';
+import ExitFullScreenIcon from '../../assets/icons/ExitFullscreenIcon';
+import FullScreenIcon from '../../assets/icons/FullscreenIcon';
 
 export default function BrowseRecipesView() {
   const [expanded, setExpanded] = useState(false);
@@ -59,7 +59,7 @@ export default function BrowseRecipesView() {
             <header className='h-fit w-full shrink-0 flex justify-between items-center gap-6'>
               <div className='flex gap-4 items-center overflow-hidden'>
                 <Button
-                  icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
+                  icon={expanded ? <ExitFullScreenIcon /> : <FullScreenIcon />}
                   variant='text'
                   rotate={true}
                   onClick={() => setExpanded((prev) => !prev)}

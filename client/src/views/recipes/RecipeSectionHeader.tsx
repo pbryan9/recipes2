@@ -1,5 +1,5 @@
-import CollapseIcon from '../../assets/icons/CollapseIcon';
-import ExpandIcon from '../../assets/icons/ExpandIcon';
+import MinusIcon from '../../assets/icons/MinusIcon';
+import PlusIcon from '../../assets/icons/PlusIcon';
 
 type RecipeSectionHeaderProps = {
   heading: string;
@@ -20,7 +20,7 @@ export default function RecipeSectionHeader({
       >
         <h2 className='title-large text-on-surface'>{heading}</h2>
         <div className='print:hidden'>
-          {isExpanded ? <CollapseIcon /> : <ExpandIcon />}
+          {isExpanded ? <MinusIcon /> : <PlusIcon />}
         </div>
       </button>
     </header>

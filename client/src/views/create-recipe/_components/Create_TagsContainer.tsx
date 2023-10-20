@@ -4,8 +4,8 @@ import { type Tag } from '../../../../../api-server/db/tags/getAllTags';
 import { trpc } from '../../../lib/trpc/trpc';
 // import CreateNewTag from './CreateNewTag';
 import TagChip from './TagChip';
-import CollapseIcon from '../../../assets/icons/CollapseIcon';
-import ExpandIcon from '../../../assets/icons/ExpandIcon';
+import MinusIcon from '../../../assets/icons/MinusIcon';
+import PlusIcon from '../../../assets/icons/PlusIcon';
 
 type CreateTagsContainerProps = {
   toggleTag: (tag: Tag) => void;
@@ -31,7 +31,7 @@ export default function CreateTagsContainer({
         onClick={() => setExpanded((prev) => !prev)}
       >
         <header className='title-large h-14 w-full px-4 flex items-center gap-4 bg-surface-container-high rounded-full shadow-md'>
-          {expanded ? <CollapseIcon /> : <ExpandIcon />}
+          {expanded ? <MinusIcon /> : <PlusIcon />}
           Tags
         </header>
       </button>
