@@ -11,7 +11,7 @@ import editRecipe from '../db/recipes/editRecipe';
 import 'dotenv/config';
 
 import z from 'zod';
-import newUserFormSchema from '../validators/newUserFormValidator';
+import newUserFormValidator from '../validators/newUserFormValidator';
 import createUser from '../db/users/createUser';
 import authenticateUserValidator from '../validators/authenticateUserValidator';
 import authenticateUser from '../db/users/authenticateUser';
@@ -92,7 +92,7 @@ export const appRouter = t.router({
   }),
   users: t.router({
     create: publicProcedure
-      .input(newUserFormSchema)
+      .input(newUserFormValidator)
       .mutation(async ({ input }) => {
         return await createUser(input);
       }),
