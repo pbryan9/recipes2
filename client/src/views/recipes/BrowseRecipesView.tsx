@@ -53,7 +53,7 @@ export default function BrowseRecipesView() {
         </div>
       </section>
 
-      <main className='w-full h-full flex flex-col items-stretch gap-4'>
+      <main className='w-full h-full flex flex-col items-stretch gap-4 overflow-hidden'>
         {activeRecipe && (
           <>
             <header className='h-fit shrink-0 flex justify-between items-center gap-6'>
