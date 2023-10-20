@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client';
 import prisma from '../prismaSingleton';
 
 const include = {
-  author: { select: { username: true, id: true } },
+  author: { select: { username: true, id: true, avatarColor: true } },
   ingredientGroups: { include: { ingredients: true } },
   procedureGroups: { include: { procedureSteps: true } },
   notes: true,
