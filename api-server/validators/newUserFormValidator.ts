@@ -1,6 +1,6 @@
 import z from 'zod';
 
-const newUserFormSchema = z
+const newUserFormValidator = z
   .object({
     username: z
       .string()
@@ -15,5 +15,5 @@ const newUserFormSchema = z
     path: ['confirmPassword'],
   });
 
-export default newUserFormSchema;
-export type NewUserInput = z.infer<typeof newUserFormSchema>;
+export default newUserFormValidator;
+export type NewUserInput = z.infer<typeof newUserFormValidator>;
