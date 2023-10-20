@@ -22,6 +22,8 @@ import addToFavoritesValidator from '../validators/addToFavoritesValidator';
 import addToFavorites from '../db/users/addToFavorites';
 import removeFromFavorites from '../db/users/removeFromFavorites';
 import getUserInfo from '../db/users/getUserInfo';
+import changeAvatarColorValidator from '../validators/changeAvatarColorValidator';
+import changeAvatarColor from '../db/users/changeAvatarColor';
 
 /**
  * Initialization of tRPC backend
@@ -95,6 +97,14 @@ export const appRouter = t.router({
       .input(newUserFormValidator)
       .mutation(async ({ input }) => {
         return await createUser(input);
+      }),
+    changeAvatarColor: protectedProcedure
+      .input(changeAvatarColorValidator)
+      .mutation(async ({ input, ctx }) => {
+        return await changeAvatarColor({
+          colorCode: input.colorCode,
+          userId: ctx.user.userId!,
+        });
       }),
     authenticateUser: publicProcedure
       .input(authenticateUserValidator)

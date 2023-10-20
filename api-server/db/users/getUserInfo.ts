@@ -6,6 +6,7 @@ export default async function getUserInfo(userId: string) {
     select: {
       id: true,
       username: true,
+      avatarColor: true,
       favorites: { select: { id: true } },
     },
   });

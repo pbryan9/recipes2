@@ -13,12 +13,10 @@ import LoginIcon from '../assets/icons/LoginIcon';
 import Modal from './Modal';
 
 type SignInModalProps = {
-  setShowModal: React.Dispatch<
-    React.SetStateAction<false | 'signIn' | 'signUp'>
-  >;
+  dismissModal: () => void;
 };
 
-export default function SignInModal({ setShowModal }: SignInModalProps) {
+export default function SignInModal({ dismissModal }: SignInModalProps) {
   const { isLoggedIn, isLoading, login } = useUser();
   const methods = useForm<AuthenticateUserInput>({
     resolver: zodResolver(authenticateUserValidator),
@@ -27,7 +25,7 @@ export default function SignInModal({ setShowModal }: SignInModalProps) {
   const { handleSubmit } = methods;
 
   useEffect(() => {
-    if (isLoggedIn) setShowModal(false);
+    if (isLoggedIn) dismissModal();
   }, [isLoggedIn]);
 
   function onSubmit(formInput: AuthenticateUserInput) {
@@ -53,7 +51,7 @@ export default function SignInModal({ setShowModal }: SignInModalProps) {
 
   const modalButtons = (
     <>
-      <Button onClick={() => setShowModal(false)} variant='text'>
+      <Button onClick={dismissModal} variant='text'>
         Cancel
       </Button>
       <Button

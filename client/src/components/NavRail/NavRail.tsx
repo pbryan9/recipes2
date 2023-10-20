@@ -13,15 +13,21 @@ import TrashIcon from '../../assets/icons/TrashIcon';
 import SignInModal from '../SignInModal';
 import SignUpIcon from '../../assets/icons/SignUpIcon';
 import SignUpModal from '../SignUpModal';
+import SettingsIcon from '../../assets/icons/SettingsIcon';
+import AvatarModal from '../AvatarModal';
+
+type Modal = false | 'signIn' | 'signUp' | 'colorChange';
 
 export default function NavRail() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { isLoggedIn, logout, username } = useUser();
   const { recipes, deleteRecipe } = useRecipes();
-  const [showModal, setShowModal] = useState<false | 'signIn' | 'signUp'>(
-    false
-  );
+  const [showModal, setShowModal] = useState<Modal>(false);
+
+  function dismissModal() {
+    setShowModal(false);
+  }
 
   const { pathname } = useLocation();
 
@@ -39,14 +45,19 @@ export default function NavRail() {
 
   return (
     <nav className='w-20 mt-20 left-0 top-20 flex flex-col items-center gap-3 on-background-text shrink-0 print:hidden'>
-      {showModal === 'signIn' && <SignInModal setShowModal={setShowModal} />}
-      {showModal === 'signUp' && <SignUpModal setShowModal={setShowModal} />}
+      {showModal === 'signIn' && <SignInModal dismissModal={dismissModal} />}
+      {showModal === 'signUp' && <SignUpModal dismissModal={dismissModal} />}
+      {showModal === 'colorChange' && (
+        <AvatarModal dismissModal={dismissModal} />
+      )}
+
       <NavRailButton
         icon={<RecipePotIcon />}
         label='Recipes'
         onClick={() => navigate('/recipes')}
         disabled={!!selectedRecipe && pathname !== '/recipes/edit'}
       />
+
       {isLoggedIn && (
         <NavRailButton
           icon={<CreateRecipeIcon />}
@@ -55,6 +66,7 @@ export default function NavRail() {
           onClick={() => navigate('/recipes/create-new-recipe')}
         />
       )}
+
       {ownedRecipe && (
         <>
           <NavRailButton
@@ -70,6 +82,15 @@ export default function NavRail() {
           />
         </>
       )}
+
+      {isLoggedIn && (
+        <NavRailButton
+          icon={<SettingsIcon />}
+          label='Change color'
+          onClick={() => setShowModal('colorChange')}
+        />
+      )}
+
       {isLoggedIn && (
         <NavRailButton
           icon={<LogoutIcon />}
@@ -77,6 +98,7 @@ export default function NavRail() {
           onClick={() => logout()}
         />
       )}
+
       {!isLoggedIn && (
         <>
           <NavRailButton

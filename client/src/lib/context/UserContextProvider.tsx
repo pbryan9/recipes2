@@ -5,6 +5,7 @@ import { NewUserInput } from '../../../../api-server/validators/newUserFormValid
 
 const initialUserState: UserContext = {
   username: null,
+  avatarColor: '#3A4D00',
   isLoggedIn: false,
   isLoading: true,
   favorites: [],
@@ -13,10 +14,12 @@ const initialUserState: UserContext = {
   createUser: () => null,
   addToFavorites: () => null,
   removeFromFavorites: () => null,
+  changeAvatarColor: () => null,
 };
 
 type UserContext = {
   username: string | null;
+  avatarColor: string;
   isLoggedIn: boolean;
   isLoading: boolean;
   favorites: string[];
@@ -31,6 +34,7 @@ type UserContext = {
   createUser: (input: NewUserInput) => void;
   addToFavorites: (recipeId: string) => void;
   removeFromFavorites: (recipeId: string) => void;
+  changeAvatarColor: (colorCode: string) => void;
 };
 
 export const UserContext = createContext<UserContext>(initialUserState);
@@ -65,7 +69,7 @@ export default function UserContextProvider({
     },
   });
 
-  const authenticateUser = trpc.users.authenticateUser.useMutation({
+  const authenticateUserMutation = trpc.users.authenticateUser.useMutation({
     onSuccess(data, ctx) {
       localStorage.setItem('token', data);
       setUserContext((prev) => ({
@@ -98,15 +102,26 @@ export default function UserContextProvider({
       },
     });
 
+  const changeAvatarColorMutation = trpc.users.changeAvatarColor.useMutation({
+    onSuccess(_, { colorCode }) {
+      setUserContext((prev) => ({
+        ...prev,
+        avatarColor: colorCode,
+      }));
+
+      utils.recipes.all.refetch();
+    },
+  });
+
   useEffect(() => {
     setUserContext((prev) => ({
       ...prev,
-      isLoading: authenticateUser.isLoading,
+      isLoading: authenticateUserMutation.isLoading,
     }));
-  }, [authenticateUser.isLoading]);
+  }, [authenticateUserMutation.isLoading]);
 
   function login({ username, password }: AuthenticateUserInput) {
-    authenticateUser.mutate({ username, password });
+    authenticateUserMutation.mutate({ username, password });
   }
 
   function createUser(input: NewUserInput) {
@@ -149,6 +164,10 @@ export default function UserContextProvider({
     removeFromFavoritesMutation.mutate({ recipeId });
   }
 
+  function changeAvatarColor(colorCode: string) {
+    changeAvatarColorMutation.mutate({ colorCode });
+  }
+
   /**
    *
    * Set up user management functions
@@ -164,6 +183,7 @@ export default function UserContextProvider({
       createUser,
       addToFavorites,
       removeFromFavorites,
+      changeAvatarColor,
     }));
   }, []);
 
@@ -200,6 +220,7 @@ export default function UserContextProvider({
     if (userInfo.isSuccess) {
       setUserContext((prev) => ({
         ...prev,
+        avatarColor: userInfo.data.avatarColor || initialUserState.avatarColor,
         favorites: userInfo.data.favorites.map(({ id }) => id),
       }));
     }
