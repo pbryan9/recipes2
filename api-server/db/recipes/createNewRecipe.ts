@@ -86,8 +86,8 @@ export default async function createNewRecipe(formInputs: FormInputs) {
         data: {
           ingredientGroups: {
             create: {
-              description: group.description,
-              groupTitle: group.groupTitle,
+              description: group.description || '',
+              groupTitle: group.groupTitle || '',
               ingredients: {
                 createMany: {
                   data: group.ingredients,
@@ -106,8 +106,8 @@ export default async function createNewRecipe(formInputs: FormInputs) {
         data: {
           procedureGroups: {
             create: {
-              description: group.description,
-              groupTitle: group.groupTitle,
+              description: group.description || '',
+              groupTitle: group.groupTitle || '',
               procedureSteps: {
                 createMany: {
                   data: group.procedureSteps,
