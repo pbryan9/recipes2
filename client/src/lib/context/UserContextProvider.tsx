@@ -60,6 +60,7 @@ export default function UserContextProvider({
         ...prev,
         isLoggedIn: true,
         username: res.user.username,
+        isLoading: false,
       }));
     },
   });
@@ -97,9 +98,12 @@ export default function UserContextProvider({
       },
     });
 
-  // useEffect(() => {
-  //   setUserContext((prev) => ({ ...prev, isLoading: false }));
-  // }, [authenticateUser.isLoading]);
+  useEffect(() => {
+    setUserContext((prev) => ({
+      ...prev,
+      isLoading: authenticateUser.isLoading,
+    }));
+  }, [authenticateUser.isLoading]);
 
   function login({ username, password }: AuthenticateUserInput) {
     authenticateUser.mutate({ username, password });
@@ -113,7 +117,8 @@ export default function UserContextProvider({
   function logout() {
     // * remember to add any new functions here so they're not removed on logout
     localStorage.removeItem('token');
-    utils.users.getUserInfo.cancel();
+    utils.users.getUserInfo.cancel(undefined, { silent: true });
+    userInfo.remove();
     utils.users.invalidate();
     setUserContext((prev) => ({
       ...initialUserState,

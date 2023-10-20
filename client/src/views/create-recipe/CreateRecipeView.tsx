@@ -30,7 +30,7 @@ export default function CreateRecipeView() {
   const recipe = recipeId ? recipes.find(({ id }) => id === recipeId) : null;
 
   useEffect(() => {
-    if (!isLoading && !isLoggedIn) navigate('/sign-in');
+    if (!isLoading && !isLoggedIn) navigate('/recipes');
   }, [isLoading, isLoggedIn]);
 
   const createMutation = trpc.recipes.create.useMutation({
