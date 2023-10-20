@@ -13,6 +13,7 @@ type FormInputProps = {
   fieldName: string;
   fieldLabel: string;
 
+  type?: 'text' | 'password';
   supportingText?: string;
   inputWidth?: FormInputWidth;
   variant?: FormInputVariants;
@@ -23,6 +24,7 @@ export default function FormInput({
   fieldName,
   fieldLabel,
 
+  type = 'text',
   supportingText = '',
   variant = 'standard',
   inputWidth = 'full',
@@ -91,7 +93,7 @@ export default function FormInput({
           {fieldLabel}
         </label>
         <input
-          type='text'
+          type={type}
           id={fieldName}
           {...register(fieldName as keyof FormInput)}
           className={`w-full h-fit body-large bg-transparent text-on-surface leading-none focus:outline-none`}
