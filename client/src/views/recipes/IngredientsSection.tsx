@@ -10,7 +10,6 @@ export default function IngredientsSection({
   recipe,
 }: IngredientsSectionProps) {
   const [isExpanded, setIsExpanded] = useState(true);
-  const [prevExpanded, setPrevExpanded] = useState(true);
 
   function toggle() {
     setIsExpanded((prev) => !prev);
