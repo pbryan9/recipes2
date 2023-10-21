@@ -86,7 +86,7 @@ export default function NavRail() {
       {isLoggedIn && (
         <NavRailButton
           icon={<SettingsIcon />}
-          label='Change color'
+          label='Color'
           onClick={() => setShowModal('colorChange')}
         />
       )}

@@ -61,6 +61,9 @@ export default function RecipesContextProvider({
     staleTime: 1000 * 60 * 10,
   });
 
+  // TODO: this is just here for convenience - should probably offload it to a tags ctx at some point
+  trpc.tags.all.useQuery(undefined, { staleTime: 1000 * 60 * 10 });
+
   const deleteRecipeMutation = trpc.recipes.delete.useMutation({
     onSuccess(_, { recipeId }) {
       setRecipesContext((prev) => ({
