@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import useUser from '../lib/hooks/useUser';
+import useUser from '../../lib/hooks/useUser';
 import Modal from './Modal';
-import Button from './Button';
-import CheckIcon from '../assets/icons/CheckIcon';
-import { calculateLabelColor } from '../lib/utils';
+import Button from '../Button';
+import CheckIcon from '../../assets/icons/CheckIcon';
+import { calculateLabelColor } from '../../lib/utils';
 
 type AvatarModalProps = {
   dismissModal: () => void;

@@ -2,38 +2,38 @@ import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import useUser from '../lib/hooks/useUser';
-import authenticateUserValidator, {
-  type AuthenticateUserInput,
-} from '../../../api-server/validators/authenticateUserValidator';
+import useUser from '../../lib/hooks/useUser';
+import newUserFormValidator, {
+  type NewUserInput,
+} from '../../../../api-server/validators/newUserFormValidator';
 
-import Button from './Button';
-import FormInput from '../views/create-recipe/_components/FormInput';
-import LoginIcon from '../assets/icons/LoginIcon';
+import Button from '../Button';
+import FormInput from '../../views/create-recipe/_components/FormInput';
+import LoginIcon from '../../assets/icons/LoginIcon';
 import Modal from './Modal';
 
-type SignInModalProps = {
+type SignUpModalProps = {
   dismissModal: () => void;
 };
 
-export default function SignInModal({ dismissModal }: SignInModalProps) {
-  const { isLoggedIn, isLoading, login } = useUser();
-  const methods = useForm<AuthenticateUserInput>({
-    resolver: zodResolver(authenticateUserValidator),
+export default function SignUpModal({ dismissModal }: SignUpModalProps) {
+  const { isLoggedIn, isLoading, createUser } = useUser();
+  const methods = useForm<NewUserInput>({
+    resolver: zodResolver(newUserFormValidator),
   });
 
   const { handleSubmit, setFocus } = methods;
 
   useEffect(() => {
-    if (isLoggedIn) dismissModal();
-  }, [isLoggedIn]);
-
-  useEffect(() => {
     setFocus('username');
   }, []);
 
-  function onSubmit(formInput: AuthenticateUserInput) {
-    login(formInput);
+  useEffect(() => {
+    if (isLoggedIn) dismissModal();
+  }, [isLoggedIn]);
+
+  function onSubmit(formInput: NewUserInput) {
+    createUser(formInput);
   }
 
   const modalBody = (
@@ -44,6 +44,11 @@ export default function SignInModal({ dismissModal }: SignInModalProps) {
       >
         <FormInput fieldLabel='Username' fieldName='username' />
         <FormInput fieldLabel='Password' fieldName='password' type='password' />
+        <FormInput
+          fieldLabel='Confirm password'
+          fieldName='confirmPassword'
+          type='password'
+        />
         <button
           type='submit'
           className='invisible'
@@ -63,15 +68,15 @@ export default function SignInModal({ dismissModal }: SignInModalProps) {
         onClick={handleSubmit(onSubmit)}
         disabled={isLoading}
       >
-        {isLoading ? 'Loading...' : 'Sign In'}
+        {isLoading ? 'Loading...' : 'Create account'}
       </Button>
     </>
   );
 
   return (
     <Modal
-      headline='Sign in'
-      caption='Sign in to your account to create, edit & star recipes'
+      headline='Create account'
+      caption='Sign up to create & manage your own recipes'
       body={modalBody}
       buttons={modalButtons}
     />

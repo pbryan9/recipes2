@@ -1,14 +1,14 @@
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import Button from './Button';
-import FormInput from '../views/create-recipe/_components/FormInput';
+import Button from '../Button';
+import FormInput from '../../views/create-recipe/_components/FormInput';
 import Modal from './Modal';
 import newTagFormValidator, {
   type NewTagInput,
-} from '../../../api-server/validators/newTagFormValidator';
-import useTags from '../lib/hooks/useTags';
-import NewIcon from '../assets/icons/NewIcon';
+} from '../../../../api-server/validators/newTagFormValidator';
+import useTags from '../../lib/hooks/useTags';
+import NewIcon from '../../assets/icons/NewIcon';
 import { useEffect, useRef } from 'react';
 
 type NewTagModalProps = {
