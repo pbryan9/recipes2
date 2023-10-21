@@ -12,6 +12,7 @@ import useUser from '../../lib/hooks/useUser';
 import StarIcon_Filled from '../../assets/icons/StarIcon_Filled';
 import ExitFullScreenIcon from '../../assets/icons/ExitFullscreenIcon';
 import FullScreenIcon from '../../assets/icons/FullscreenIcon';
+import NotesSection from './NotesSection';
 
 export default function BrowseRecipesView() {
   const [expanded, setExpanded] = useState(false);
@@ -99,6 +100,9 @@ export default function BrowseRecipesView() {
                 }`}
               >
                 <IngredientsSection recipe={activeRecipe!} />
+                {activeRecipe.notes?.length > 0 && (
+                  <NotesSection recipe={activeRecipe!} />
+                )}
                 <ProcedureSection recipe={activeRecipe!} />
               </div>
             </div>
