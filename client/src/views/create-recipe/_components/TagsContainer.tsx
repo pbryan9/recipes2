@@ -1,28 +1,36 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { type Tag } from '../../../../../api-server/db/tags/getAllTags';
-import { trpc } from '../../../lib/trpc/trpc';
-// import CreateNewTag from './CreateNewTag';
 import TagChip from './TagChip';
 import MinusIcon from '../../../assets/icons/MinusIcon';
 import PlusIcon from '../../../assets/icons/PlusIcon';
+import useTags from '../../../lib/hooks/useTags';
+import CreateTagChip from './CreateTagChip';
 
 type CreateTagsContainerProps = {
   toggleTag: (tag: Tag) => void;
   selectedTags?: Map<string, Tag>;
 };
 
-// TODO: create new tag
-
-export default function CreateTagsContainer({
+export default function TagsContainer({
   toggleTag,
   selectedTags,
 }: CreateTagsContainerProps) {
   const [expanded, setExpanded] = useState(true);
 
-  const tagQuery = trpc.tags.all.useQuery(undefined, {
-    staleTime: 1000 * 60 * 10,
-  });
+  const { tags } = useTags();
+
+  useEffect(() => {
+    // upon new tag creation, a 'tagCreated' custom event will emit
+    // use this to append new tag to map of selected tags
+    function addTagToSelected({ detail: tag }: CustomEvent<Tag>) {
+      toggleTag(tag);
+    }
+
+    addEventListener('tagCreated', addTagToSelected);
+
+    return () => removeEventListener('tagCreated', addTagToSelected);
+  }, []);
 
   return (
     <article className='flex flex-col items-center w-full h-full'>
@@ -47,52 +55,15 @@ export default function CreateTagsContainer({
             expanded ? '' : 'py-0'
           }`}
         >
-          {tagQuery.data?.map((tag) => (
+          {tags.map((tag) => (
             <TagChip
               key={tag.id}
               {...{ tag, toggleTag, selected: selectedTags?.has(tag.id) }}
             />
           ))}
+          <CreateTagChip />
         </div>
       </section>
-      {/* <section
-        className={`w-full flex flex-wrap items-start justify-start gap-2 p-6 shadow-sm rounded-[12px] bg-surface-container-low ${
-          expanded ? '' : 'hidden'
-        }`}
-      >
-        {tagQuery.data?.map((tag) => (
-          <TagChip
-            key={tag.id}
-            {...{ tag, toggleTag, selected: selectedTags?.has(tag.id) }}
-          />
-        ))}
-      </section> */}
     </article>
   );
 }
-
-// function arrangeTagsByGroup(tags: Tag[]) {
-//   const groupedTagsMap = new Map<string, typeof tags>();
-
-//   groupedTagsMap.set('all', []);
-
-//   tags.forEach((tag) => {
-//     let groupName = tag.tagGroup || 'Uncategorized';
-
-//     if (groupedTagsMap.has(groupName)) {
-//       groupedTagsMap.get(groupName)?.push(tag);
-//     } else groupedTagsMap.set(groupName, [tag]);
-
-//     groupedTagsMap.get('all')?.push(tag);
-//   });
-
-//   // sort each group alphabetically
-//   const groups = Array.from(groupedTagsMap.entries());
-//   for (let [_, tags] of groups) {
-//     tags.sort((a, b) =>
-//       a.description.toLowerCase() > b.description.toLowerCase() ? 1 : -1
-//     );
-//   }
-
-//   return groups;
-// }

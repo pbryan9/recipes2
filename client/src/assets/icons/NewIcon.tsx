@@ -1,17 +1,17 @@
-type CreateRecipeIconProps = {
+type NewIconProps = {
   size?: number;
   pathFill?: string;
 };
 
-export default function CreateRecipeIcon({
+export default function NewIcon({
   size = 24,
   pathFill = 'var(--md-sys-color-on-surface-dark)',
-}: CreateRecipeIconProps) {
+}: NewIconProps) {
   return (
     <svg
       width={size}
       height={size}
-      viewBox={`0 0 ${size} ${size}`}
+      viewBox={`0 0 24 24`}
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
     >
