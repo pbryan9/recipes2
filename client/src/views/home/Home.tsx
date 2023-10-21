@@ -8,7 +8,7 @@ export default function Home() {
   const [showSignin, setShowSignin] = useState(false);
 
   return (
-    <main className='p-6 '>
+    <main className='p-6'>
       <h1 className='display-large'>Recipes</h1>
       {!isLoggedIn && (
         <Button onClick={() => setShowSignin(true)}>Sign in</Button>

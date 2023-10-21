@@ -1,5 +1,5 @@
 import { type BaseSyntheticEvent } from 'react';
-import CreateTagsContainer from './Create_TagsContainer';
+import TagsContainer from './TagsContainer';
 import { Tag } from '../../../../../api-server/db/tags/getAllTags';
 import Button from '../../../components/Button';
 import SaveIcon from '../../../assets/icons/SaveIcon';
@@ -24,7 +24,7 @@ export default function FormLeftPane({
 }: FormLeftPaneProps) {
   return (
     <section className='w-[360px] shrink-0 p-6 flex flex-col gap-6 justify-start items-center bg-surface-container rounded-[12px] shadow-sm h-fit max-h-full overflow-y-auto'>
-      <CreateTagsContainer {...{ toggleTag, selectedTags }} />
+      <TagsContainer {...{ toggleTag, selectedTags }} />
       <div className='flex gap-4 w-full justify-center'>
         <Button
           icon={<SaveIcon />}
