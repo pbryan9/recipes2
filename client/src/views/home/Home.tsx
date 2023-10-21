@@ -1,7 +1,7 @@
 import useUser from '../../lib/hooks/useUser';
 import { useState } from 'react';
 import Button from '../../components/Button';
-import SignInModal from '../../components/SignInModal';
+import SignInModal from '../../components/Modals/SignInModal';
 
 export default function Home() {
   const { isLoggedIn } = useUser();

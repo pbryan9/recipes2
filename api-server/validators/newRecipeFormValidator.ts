@@ -16,6 +16,10 @@ import z from 'zod';
 //   'OTHER',
 // ] as const;
 
+const noteInputSchema = z.object({
+  description: z.string(),
+});
+
 const ingredientGroupSchema = z
   .object({
     groupTitle: z.string().nullable(),
@@ -65,8 +69,7 @@ const newRecipeFormInputSchema = z
     author: z.string().min(1, { message: 'Username is missing.' }).optional(),
     prepTime: z.string().nullable().optional(),
     cookTime: z.string().nullable().optional(),
-    // prepTime: z.coerce.number().optional(),
-    // cookTime: z.coerce.number().optional(),
+    notes: noteInputSchema.array().optional(),
     ingredientGroups: ingredientGroupSchema,
     procedureGroups: procedureGroupSchema,
     tags: tagsSchema,
@@ -111,7 +114,9 @@ function refineGroupTitle(group: IngredientGroup | ProcedureGroup) {
 }
 
 export { newRecipeFormInputSchema };
+export { noteInputSchema };
 export type FormInputs = z.infer<typeof newRecipeFormInputSchema>;
+export type NoteInput = z.infer<typeof noteInputSchema>;
 type IngredientGroup = z.infer<typeof ingredientGroupSchema>;
 type ProcedureGroup = z.infer<typeof procedureGroupSchema>;
 export type tagSchema = z.infer<typeof tagsSchema>;

@@ -8,6 +8,7 @@ export default async function createNewRecipe(formInputs: FormInputs) {
   if (!formInputs.cookTime) delete formInputs.cookTime;
   if (!formInputs.prepTime) delete formInputs.prepTime;
   if (!formInputs.tags?.length) delete formInputs.tags;
+  if (!formInputs.notes?.length) delete formInputs.notes;
 
   for (let group of formInputs.ingredientGroups) {
     if (!group.description) delete group.description;
@@ -71,6 +72,14 @@ export default async function createNewRecipe(formInputs: FormInputs) {
     // use a flag to indicate whether we should re-fetch the recipe before returning it
 
     console.log('initial recipe created');
+
+    // TODO: should turn everything below into a transaction
+
+    if (formInputs.notes)
+      await prisma.recipe.update({
+        where: { id: newRecipe.id },
+        data: { notes: { createMany: { data: formInputs.notes } } },
+      });
 
     for (let group of formInputs.ingredientGroups.slice(1)) {
       console.log('adding an ingredient group');

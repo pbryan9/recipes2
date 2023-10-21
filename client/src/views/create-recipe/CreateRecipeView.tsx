@@ -3,7 +3,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { newRecipeFormInputSchema } from '../../../../api-server/validators/newRecipeFormValidator';
+import {
+  NoteInput,
+  newRecipeFormInputSchema,
+} from '../../../../api-server/validators/newRecipeFormValidator';
 
 import FormLeftPane from './_components/FormLeftPane';
 import { Tag } from '../../../../api-server/db/tags/getAllTags';
@@ -18,11 +21,14 @@ import useRecipes from '../../lib/hooks/useRecipes';
 
 type FormInput = RouterInputs['recipes']['create'];
 
+export type NewNote = NoteInput & { tempId: string };
+
 export default function CreateRecipeView() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const utils = trpc.useContext();
   const [selectedTags, setSelectedTags] = useState<Map<string, Tag>>();
+  const [notes, setNotes] = useState<NewNote[]>([]);
   const { isLoggedIn, isLoading, username } = useUser();
   const { recipes } = useRecipes();
 
@@ -150,6 +156,10 @@ export default function CreateRecipeView() {
       data.tags = Array.from(selectedTags!.values()) as typeof data.tags;
     }
 
+    if (notes.length > 0) {
+      data.notes = notes;
+    }
+
     if (recipeId && recipe?.id) {
       editMutation.mutate({ ...data, recipeId });
     } else {
@@ -168,7 +178,16 @@ export default function CreateRecipeView() {
         </Button>
       </header>
       <main className='flex justify-stretch items-start w-full gap-6 h-full overflow-hidden'>
-        <FormLeftPane {...{ resetForm, submitForm, toggleTag, selectedTags }} />
+        <FormLeftPane
+          {...{
+            resetForm,
+            submitForm,
+            toggleTag,
+            selectedTags,
+            notes,
+            setNotes,
+          }}
+        />
         <article className='w-full shrink flex flex-col gap-6 bg-surface-container shadow-sm rounded-[12px] p-6 h-fit max-h-full overflow-y-auto'>
           <FormProvider {...methods}>
             <form className='w-full flex flex-col justify-start gap-6 h-fit'>
