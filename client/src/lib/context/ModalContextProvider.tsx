@@ -1,10 +1,17 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import SignInModal from '../../components/SignInModal';
-import SignUpModal from '../../components/SignUpModal';
-import AvatarModal from '../../components/AvatarModal';
-import NewTagModal from '../../components/NewTagModal';
+import SignInModal from '../../components/Modals/SignInModal';
+import SignUpModal from '../../components/Modals/SignUpModal';
+import AvatarModal from '../../components/Modals/AvatarModal';
+import NewTagModal from '../../components/Modals/NewTagModal';
+import NewNoteModal from '../../components/Modals/NewNoteModal';
 
-type ModalName = false | 'signIn' | 'signUp' | 'colorChange' | 'createTag';
+type ModalName =
+  | false
+  | 'signIn'
+  | 'signUp'
+  | 'colorChange'
+  | 'createTag'
+  | 'createNote';
 
 export type ModalContext = {
   modalMode: ModalName;
@@ -53,6 +60,9 @@ export default function ModalContextProvider({
         <AvatarModal dismissModal={dismissModal} />
       )}
       {modalMode === 'createTag' && <NewTagModal dismissModal={dismissModal} />}
+      {modalMode === 'createNote' && (
+        <NewNoteModal dismissModal={dismissModal} />
+      )}
       {children}
     </ModalContext.Provider>
   );
