@@ -105,7 +105,11 @@ export default function CreateRecipeView() {
     resolver: zodResolver(newRecipeFormInputSchema),
   });
 
-  const { handleSubmit, reset, watch } = methods;
+  const { handleSubmit, reset, watch, setFocus } = methods;
+
+  useEffect(() => {
+    setFocus('title');
+  }, []);
 
   useEffect(() => {
     if (recipe?.id) {

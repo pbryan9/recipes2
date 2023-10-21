@@ -22,11 +22,15 @@ export default function SignInModal({ dismissModal }: SignInModalProps) {
     resolver: zodResolver(authenticateUserValidator),
   });
 
-  const { handleSubmit } = methods;
+  const { handleSubmit, setFocus } = methods;
 
   useEffect(() => {
     if (isLoggedIn) dismissModal();
   }, [isLoggedIn]);
+
+  useEffect(() => {
+    setFocus('username');
+  }, []);
 
   function onSubmit(formInput: AuthenticateUserInput) {
     login(formInput);

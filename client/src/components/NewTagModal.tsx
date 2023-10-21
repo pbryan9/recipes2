@@ -9,19 +9,26 @@ import newTagFormValidator, {
 } from '../../../api-server/validators/newTagFormValidator';
 import useTags from '../lib/hooks/useTags';
 import NewIcon from '../assets/icons/NewIcon';
+import { useEffect, useRef } from 'react';
 
 type NewTagModalProps = {
   dismissModal: () => void;
 };
 
 export default function NewTagModal({ dismissModal }: NewTagModalProps) {
+  const firstInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    firstInputRef.current?.focus();
+  }, []);
+
   const { tags, createTag } = useTags();
 
   const methods = useForm<NewTagInput>({
     resolver: zodResolver(newTagFormValidator),
   });
 
-  const { handleSubmit } = methods;
+  const { handleSubmit, setFocus } = methods;
 
   function onSubmit(formInput: NewTagInput) {
     if (tags.find((tag) => tag.description === formInput.tagName))
@@ -31,6 +38,10 @@ export default function NewTagModal({ dismissModal }: NewTagModalProps) {
 
     dismissModal();
   }
+
+  useEffect(() => {
+    setFocus('tagName');
+  }, []);
 
   const modalBody = (
     <FormProvider {...methods}>

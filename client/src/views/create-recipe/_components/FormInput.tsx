@@ -95,7 +95,7 @@ export default function FormInput({
         <input
           type={type}
           id={fieldName}
-          {...register(fieldName as keyof FormInput)}
+          {...register(fieldName)}
           className={`w-full h-fit body-large bg-transparent text-on-surface leading-none focus:outline-none`}
         />
       </div>

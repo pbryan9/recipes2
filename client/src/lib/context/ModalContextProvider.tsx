@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import SignInModal from '../../components/SignInModal';
 import SignUpModal from '../../components/SignUpModal';
 import AvatarModal from '../../components/AvatarModal';
@@ -24,6 +24,18 @@ export default function ModalContextProvider({
   children: React.ReactNode;
 }) {
   const [modalMode, setModalMode] = useState<ModalName>(false);
+
+  useEffect(() => {
+    function handleEscKey(e: KeyboardEvent) {
+      if (modalMode && e.code === 'Escape') {
+        dismissModal();
+      }
+    }
+
+    window.addEventListener('keydown', handleEscKey);
+
+    return () => window.removeEventListener('keydown', handleEscKey);
+  }, [modalMode]);
 
   function dismissModal() {
     setModalMode(false);

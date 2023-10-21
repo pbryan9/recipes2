@@ -22,7 +22,11 @@ export default function SignUpModal({ dismissModal }: SignUpModalProps) {
     resolver: zodResolver(newUserFormValidator),
   });
 
-  const { handleSubmit } = methods;
+  const { handleSubmit, setFocus } = methods;
+
+  useEffect(() => {
+    setFocus('username');
+  }, []);
 
   useEffect(() => {
     if (isLoggedIn) dismissModal();
