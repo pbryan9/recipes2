@@ -1,34 +1,19 @@
-import { Link } from 'react-router-dom';
 import useUser from '../../lib/hooks/useUser';
+import { useState } from 'react';
+import Button from '../../components/Button';
+import SignInModal from '../../components/SignInModal';
 
 export default function Home() {
-  const { isLoggedIn, logout } = useUser();
+  const { isLoggedIn } = useUser();
+  const [showSignin, setShowSignin] = useState(false);
 
   return (
-    <main className='p-6 basis-8/12 flex flex-col gap-5 overflow-y-auto min-h-[calc(100vh_-_80px)]'>
-      {isLoggedIn ? (
-        <button className='w-fit' onClick={() => logout!()}>
-          Sign Out
-        </button>
-      ) : (
-        <>
-          <Link className='w-fit' to='/sign-in'>
-            Sign In
-          </Link>
-          <Link className='w-fit' to='/sign-up'>
-            Sign Up
-          </Link>
-        </>
+    <main className='p-6 '>
+      <h1 className='display-large'>Recipes</h1>
+      {!isLoggedIn && (
+        <Button onClick={() => setShowSignin(true)}>Sign in</Button>
       )}
-
-      <Link className='w-fit' to='/recipes'>
-        Browse Recipes
-      </Link>
-      {isLoggedIn && (
-        <Link className='w-fit' to='/recipes/create-new-recipe'>
-          New Recipe Form
-        </Link>
-      )}
+      {showSignin && <SignInModal dismissModal={() => setShowSignin(false)} />}
     </main>
   );
 }
