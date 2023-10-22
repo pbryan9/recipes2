@@ -21,7 +21,7 @@ export default function IngredientsSection({
 
   return (
     <section
-      className={`h-fit relative z-0 overflow-hidden group-[.expanded]:w-[360px] transition-[width] ease-in-out order-1 group-[.expanded]:order-1 shrink-0`}
+      className={`h-fit relative z-0 overflow-hidden group-[.expanded]:w-[360px] transition-[width] ease-in-out order-2 group-[.expanded]:order-1 shrink-0`}
     >
       <RecipeSectionHeader {...{ toggle, isExpanded }} heading='Ingredients' />
       <div

@@ -19,7 +19,7 @@ export default function ProcedureSection({ recipe }: ProcedureSectionProps) {
 
   return (
     <section
-      className={`h-fit basis-full relative z-0 overflow-hidden group-[.expanded]:order-2`}
+      className={`h-fit basis-full relative z-0 overflow-hidden order-2 group-[.expanded]:order-2`}
     >
       <RecipeSectionHeader {...{ toggle, isExpanded }} heading='Procedure' />
 

@@ -19,7 +19,7 @@ export default function NotesSection({ recipe }: NotesSectionProps) {
 
   return (
     <section
-      className={`h-fit basis-auto relative z-0 overflow-hidden group-[.expanded]:order-3 group-[.expanded]:basis-[360px] transition-[width]`}
+      className={`h-fit basis-auto relative z-0 overflow-hidden order-1 group-[.expanded]:order-3 group-[.expanded]:basis-[360px] transition-[width]`}
     >
       <RecipeSectionHeader {...{ toggle, isExpanded }} heading='Notes' />
 
