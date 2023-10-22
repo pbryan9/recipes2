@@ -42,7 +42,7 @@ export default function RecipeSummaryCard({
             {recipe.title}
           </h2>
           {recipe.tags.length > 0 && (
-            <p className='title-small on-surface-variant-text whitespace-nowrap text-ellipsis overflow-hidden'>
+            <p className='title-small on-surface-variant-text whitespace-nowrap text-ellipsis overflow-hidden w-full'>
               {recipe.tags.map((tag) => tag.description).join(', ')}
             </p>
           )}
