@@ -5,6 +5,7 @@ const newUserFormValidator = z
     username: z
       .string()
       .min(5, { message: 'Username must contain at least 5 characters.' }),
+    email: z.string().email({ message: 'Valid email address is required.' }),
     password: z
       .string()
       .min(8, { message: 'Password must contain at least 8 characters.' }),

@@ -10,7 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) throw new Error('MISSING JWT SECRET');
 
 export default async function createUser(newUserInput: NewUserInput) {
-  const { username, password } = newUserInput;
+  const { username, password, email } = newUserInput;
 
   // throw error if username already exists
   const userExists = await prisma.user.findUnique({ where: { username } });
@@ -22,7 +22,7 @@ export default async function createUser(newUserInput: NewUserInput) {
 
   // store user in db
   const newUser = await prisma.user.create({
-    data: { username, password: hashedPassword },
+    data: { username, password: hashedPassword, email },
     select: { id: true, username: true },
   });
 

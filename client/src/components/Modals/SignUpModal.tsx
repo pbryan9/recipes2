@@ -25,7 +25,7 @@ export default function SignUpModal({ dismissModal }: SignUpModalProps) {
   const { handleSubmit, setFocus } = methods;
 
   useEffect(() => {
-    setFocus('username');
+    setFocus('email');
   }, []);
 
   useEffect(() => {
@@ -42,6 +42,7 @@ export default function SignUpModal({ dismissModal }: SignUpModalProps) {
         className='flex flex-col w-full gap-4'
         onSubmit={handleSubmit(onSubmit)}
       >
+        <FormInput fieldLabel='Email' fieldName='email' />
         <FormInput fieldLabel='Username' fieldName='username' />
         <FormInput fieldLabel='Password' fieldName='password' type='password' />
         <FormInput
