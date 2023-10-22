@@ -20,7 +20,7 @@ export default function AvatarModal({ dismissModal }: AvatarModalProps) {
 
   const colorChangeBody = (
     <div
-      className='relative w-10 aspect-square rounded-full flex items-center justify-center on-primary-container-text title-large shrink-0'
+      className='relative w-10 aspect-square rounded-full flex items-center justify-center self-center on-primary-container-text title-large shrink-0'
       style={{
         backgroundColor: selectedColor || '#3A4D00',
         color: calculateLabelColor(selectedColor),
@@ -52,7 +52,6 @@ export default function AvatarModal({ dismissModal }: AvatarModalProps) {
   return (
     <Modal
       headline='Change avatar color'
-      caption='Click to change the color of the icon that appears next to your recipes in the listing'
       body={colorChangeBody}
       buttons={colorChangeButtons}
     />
