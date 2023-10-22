@@ -51,7 +51,11 @@ export default function IngredientsSection({
                       group.groupTitle !== '' ? 'pl-4' : ''
                     } body-medium`}
                   >
-                    {ingredient.description}
+                    {[
+                      ingredient.qty,
+                      ingredient.uom,
+                      ingredient.description,
+                    ].join(' ')}
                   </li>
                 ))}
               </ul>
