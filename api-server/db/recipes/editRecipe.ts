@@ -12,6 +12,7 @@ export default async function editRecipe(
     where: { id: formInputs.recipeId },
     include: {
       tags: true,
+      notes: true,
     },
   });
 
@@ -24,6 +25,9 @@ export default async function editRecipe(
     delete formInputs.prepTime;
   if (!formInputs.tags?.length && !recipeToEdit.tags?.length)
     delete formInputs.tags;
+  if (!formInputs.notes?.length && !recipeToEdit.notes?.length) {
+    delete formInputs.notes;
+  }
 
   for (let group of formInputs.ingredientGroups) {
     if (!group.description) delete group.description;
@@ -136,6 +140,32 @@ export default async function editRecipe(
       });
 
       transactionQueries.push(createGroup);
+    }
+
+    if (recipeToEdit.notes) {
+      const deleteNotes = prisma.recipe.update({
+        where: { id: formInputs.recipeId },
+        data: { notes: { deleteMany: {} } },
+      });
+
+      transactionQueries.push(deleteNotes);
+    }
+
+    if (formInputs.notes) {
+      const createNotes = prisma.recipe.update({
+        where: { id: formInputs.recipeId },
+        data: {
+          notes: {
+            createMany: {
+              data: formInputs.notes.map((note) => ({
+                description: note.description,
+              })),
+            },
+          },
+        },
+      });
+
+      transactionQueries.push(createNotes);
     }
 
     // update top-level recipe info

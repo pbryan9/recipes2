@@ -118,6 +118,7 @@ export default function CreateRecipeView() {
   }, []);
 
   useEffect(() => {
+    // update form with existing values if we're editing rather than creating
     if (recipe?.id) {
       reset(
         {
@@ -126,7 +127,9 @@ export default function CreateRecipeView() {
         },
         { keepDirtyValues: true }
       );
+
       setSelectedTags(new Map(recipe.tags.map((tag) => [tag.id, tag])));
+      setNotes(recipe.notes.map((note) => ({ ...note, tempId: note.id })));
     }
   }, [recipe?.id]);
 
@@ -137,6 +140,7 @@ export default function CreateRecipeView() {
     setSelectedTags(
       recipe?.id ? new Map(recipe?.tags.map((tag) => [tag.id, tag])) : undefined
     );
+    setNotes(recipe?.notes.map((note) => ({ ...note, tempId: note.id })) ?? []);
     reset(defaultFormValues);
   }
 

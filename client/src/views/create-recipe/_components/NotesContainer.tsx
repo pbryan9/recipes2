@@ -5,6 +5,8 @@ import { useModal } from '../../../lib/context/ModalContextProvider';
 import Button from '../../../components/Button';
 import NewIcon from '../../../assets/icons/NewIcon';
 import { NewNote } from '../CreateRecipeView';
+import TrashIcon from '../../../assets/icons/TrashIcon';
+import React from 'react';
 
 declare global {
   interface WindowEventMap {
@@ -34,8 +36,12 @@ export default function NotesContainer({
     return () => window.removeEventListener('noteAdded', addNote);
   }, []);
 
+  function removeNote(noteId: string) {
+    setNotes((prev) => [...prev.filter((note) => note.tempId !== noteId)]);
+  }
+
   return (
-    <article className='flex flex-col items-center w-full h-full'>
+    <article className='flex flex-col items-center w-full'>
       <button
         className='z-10 w-full'
         onClick={() => setIsExpanded((prev) => !prev)}
@@ -45,31 +51,38 @@ export default function NotesContainer({
           Notes
         </header>
       </button>
-      <section
-        className={`w-full relative -top-7 z-0 shadow-sm rounded-[12px] transition-all duration-500 p-4 pt-0 bg-surface-container-low overflow-hidden grid ${
+      <div
+        className={`w-full relative z-0 shadow-sm rounded-[12px] transition-all duration-500 p-4 pt-12 bg-surface-container-low grid ${
           isExpanded
-            ? 'grid-rows-[1fr]'
-            : 'grid-rows-[0fr] -top-14 bg-transparent'
+            ? 'grid-rows-[1fr] -top-7 basis-auto'
+            : 'grid-rows-[0fr] bg-transparent -top-14 py-0'
         }`}
       >
-        <div
-          className={`flex flex-wrap items-start justify-start w-full gap-2 p-6 pt-14 overflow-hidden transition-all duration-200 ${
-            isExpanded ? '' : 'py-0'
-          }`}
+        <ul
+          className={`flex flex-col justify-start items-start h-full overflow-hidden`}
         >
           {!notes.length && <p>No notes yet. Click below to add one!</p>}
-          {notes.map((note) => (
-            <p className='w-full' key={note.tempId}>
-              {note.description}
-            </p>
+          {notes?.map((note) => (
+            <li
+              className='flex gap-2 items-center justify-start p-0'
+              key={note.tempId}
+            >
+              <Button
+                variant='text'
+                style={{ alignSelf: 'flex-start' }}
+                icon={<TrashIcon />}
+                onClick={() => removeNote(note.tempId)}
+              />
+              <p className=''>{note.description}</p>
+            </li>
           ))}
-        </div>
-        {isExpanded && (
-          <Button onClick={() => openModal('createNote')} icon={<NewIcon />}>
-            New note
-          </Button>
-        )}
-      </section>
+          <li className='flex gap-2 items-center justify-start p-0 pt-6'>
+            <Button onClick={() => openModal('createNote')} icon={<NewIcon />}>
+              New note
+            </Button>
+          </li>
+        </ul>
+      </div>
     </article>
   );
 }

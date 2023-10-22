@@ -33,7 +33,7 @@ export default function TagsContainer({
   }, []);
 
   return (
-    <article className='flex flex-col items-center w-full h-full'>
+    <article className='flex flex-col items-center w-full h-fit'>
       <button
         className='z-10 w-full'
         onClick={() => setExpanded((prev) => !prev)}
@@ -44,15 +44,15 @@ export default function TagsContainer({
         </header>
       </button>
       <section
-        className={`w-full relative -top-7 z-0 shadow-sm rounded-[12px] transition-all duration-500 bg-surface-container-low grid ${
+        className={`w-full relative z-0 shadow-sm rounded-[12px] transition-all duration-500 overflow-clip bg-surface-container-low grid ${
           expanded
-            ? 'grid-rows-[1fr]'
-            : 'grid-rows-[0fr] -top-14 bg-transparent'
+            ? 'grid-rows-[1fr] -top-7 opacity-1'
+            : 'grid-rows-[0fr] -top-14 bg-transparent opacity-0'
         }`}
       >
         <div
-          className={`flex flex-wrap items-start justify-start w-full gap-2 p-6 pt-14 overflow-hidden transition-all duration-200 ${
-            expanded ? '' : 'py-0'
+          className={`flex flex-wrap items-start justify-start w-full h-full gap-2 px-6 overflow-clip transition-all duration-200 ${
+            expanded ? 'pt-14 pb-6' : 'py-0'
           }`}
         >
           {tags.map((tag) => (
