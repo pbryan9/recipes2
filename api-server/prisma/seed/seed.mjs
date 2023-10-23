@@ -52,7 +52,7 @@ const prisma = new PrismaClient();
 
 export async function seed() {
   // await Promise.all([seedUsers(), seedTags()]);
-  await seedTags();
+  // await seedTags();
   // await seedRecipes();
 }
 
