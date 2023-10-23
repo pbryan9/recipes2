@@ -138,7 +138,6 @@ export default function CreateRecipeView() {
         },
         { keepDirtyValues: true }
       );
-
       setSelectedTags(new Map(recipe.tags.map((tag) => [tag.id, tag])));
       setNotes(recipe.notes.map((note) => ({ ...note, tempId: note.id })));
     }
@@ -156,15 +155,18 @@ export default function CreateRecipeView() {
   }
 
   function toggleTag(tag: Tag) {
-    let tempTags = new Map(selectedTags);
+    setSelectedTags((prev) => {
+      let tempTags = new Map(prev);
 
-    if (tempTags.has(tag.id)) tempTags.delete(tag.id);
-    else tempTags.set(tag.id, tag);
+      if (tempTags.has(tag.id)) tempTags.delete(tag.id);
+      else tempTags.set(tag.id, tag);
 
-    setSelectedTags(tempTags);
+      return tempTags;
+    });
   }
 
   function onSubmit(data: FormInput) {
+    // append info not directly collected by the form
     data.author = username!;
 
     if (selectedTags?.size ?? -1 > 0) {
@@ -175,6 +177,7 @@ export default function CreateRecipeView() {
       data.notes = notes;
     }
 
+    // determine whether we're in edit mode (i.e., recipeId exists) and send correct mutation
     if (recipeId && recipe?.id) {
       editMutation.mutate({ ...data, recipeId });
     } else {
