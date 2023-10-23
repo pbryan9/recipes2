@@ -1,5 +1,5 @@
 import useUser from '../../lib/hooks/useUser';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '../../components/Button';
 import SignInModal from '../../components/Modals/SignInModal';
 import LoginIcon from '../../assets/icons/LoginIcon';
@@ -10,6 +10,10 @@ export default function Home() {
   const { isLoggedIn } = useUser();
   const [showSignin, setShowSignin] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = 'Recipes';
+  }, []);
 
   return (
     <main className='p-6 flex flex-col gap-6'>

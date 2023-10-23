@@ -39,6 +39,10 @@ export default function CreateRecipeView() {
     if (!isLoading && !isLoggedIn) navigate('/recipes');
   }, [isLoading, isLoggedIn]);
 
+  useEffect(() => {
+    document.title = recipeId ? 'Editing Recipe' : 'New Recipe Form';
+  }, []);
+
   const createMutation = trpc.recipes.create.useMutation({
     onSuccess: (data) => {
       utils.recipes.all.invalidate();
