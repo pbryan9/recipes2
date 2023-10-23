@@ -4,11 +4,13 @@ import SearchIcon from '../../assets/icons/SearchIcon';
 import useRecipes from '../../lib/hooks/useRecipes';
 import ClearIcon from '../../assets/icons/ClearIcon';
 import Button from '../../components/Button';
+import { useModal } from '../../lib/context/ModalContextProvider';
 
 export default function SearchCard() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const { setFilter, filterIsActive, clearFilter } = useRecipes();
+  const { modalMode } = useModal();
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -19,6 +21,19 @@ export default function SearchCard() {
     clearFilter();
     setSearchTerm('');
   }
+
+  useEffect(() => {
+    function handleEsc(e: KeyboardEvent) {
+      if (e.code === 'Escape' && !modalMode) {
+        setSearchTerm('');
+        clearFilter();
+      }
+    }
+
+    window.addEventListener('keydown', handleEsc);
+
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [modalMode]);
 
   useEffect(() => {
     if (searchTerm !== '') setFilter(searchTerm);
