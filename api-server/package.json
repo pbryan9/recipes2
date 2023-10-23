@@ -7,7 +7,7 @@
     "start-prod-api": "ts-node index.ts"
   },
   "prisma": {
-    "seed": "node prisma/seed/seed.mjs"
+    "seed": "ts-node prisma/seed/restoreData.ts"
   },
   "main": "index.ts",
   "dependencies": {

@@ -4,6 +4,8 @@ import prisma from '../../db/prismaSingleton';
 
 import bcrypt from 'bcrypt';
 
+const DIRNAME = path.join('prisma', 'seed', 'stored-data');
+
 type StoredProcedureStep = {
   description: string;
   timer: number | null;
@@ -75,7 +77,7 @@ function readData(absoluteFilename: string) {
 }
 
 async function restoreUserData() {
-  let absPath = path.resolve('./stored-data', 'users.json');
+  let absPath = path.resolve(DIRNAME, 'users.json');
 
   const data = JSON.parse(await readData(absPath));
 
@@ -94,7 +96,7 @@ async function restoreUserData() {
 }
 
 async function restoreTagData() {
-  let absPath = path.resolve('./stored-data', 'tags.json');
+  let absPath = path.resolve(DIRNAME, 'tags.json');
 
   const data = JSON.parse(await readData(absPath));
 
@@ -109,7 +111,7 @@ async function restoreTagData() {
 }
 
 async function restoreRecipeData() {
-  let absPath = path.resolve('./stored-data', 'recipes.json');
+  let absPath = path.resolve(DIRNAME, 'recipes.json');
 
   const data: StoredRecipe[] = JSON.parse(await readData(absPath));
 
