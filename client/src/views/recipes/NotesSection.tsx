@@ -7,14 +7,14 @@ type NotesSectionProps = {
 };
 
 export default function NotesSection({ recipe }: NotesSectionProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   function toggle() {
     setIsExpanded((prev) => !prev);
   }
 
   useEffect(() => {
-    setIsExpanded(false);
+    setIsExpanded(true);
   }, [recipe.id]);
 
   return (
