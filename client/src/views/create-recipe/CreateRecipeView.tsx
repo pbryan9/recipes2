@@ -41,7 +41,7 @@ export default function CreateRecipeView() {
 
   useEffect(() => {
     document.title = recipeId ? 'Editing Recipe' : 'New Recipe Form';
-  }, []);
+  }, [recipeId]);
 
   const createMutation = trpc.recipes.create.useMutation({
     onSuccess: (data) => {
@@ -120,6 +120,13 @@ export default function CreateRecipeView() {
   useEffect(() => {
     setFocus('title');
   }, []);
+
+  useEffect(() => {
+    // clear form when switching from 'edit' to 'new'
+    if (!recipeId) {
+      resetForm();
+    }
+  }, [recipeId]);
 
   useEffect(() => {
     // update form with existing values if we're editing rather than creating
