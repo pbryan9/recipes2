@@ -1,26 +1,27 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 
 import HamburgerIcon from '../../assets/icons/HamburgerIcon';
 import SearchIcon from '../../assets/icons/SearchIcon';
-import useRecipes from '../../lib/hooks/useRecipes';
 import ClearIcon from '../../assets/icons/ClearIcon';
 import Button from '../../components/Button';
 import SearchOptionsMenu from '../../components/Menu/SearchOptionsMenu';
+import useFilter from '../../lib/hooks/useFilter';
 
 export default function SearchCard() {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const { setFilter, filterIsActive, clearFilter } = useRecipes();
+  // const [searchTerm, setSearchTerm] = useState('');
+  // const { setFilter, filterIsActive, clearFilter } = useRecipes();
+  const { searchTerm, updateFilter, clearFilter } = useFilter();
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setFilter(searchTerm);
+    updateFilter(searchTerm);
   }
 
-  function resetFilter() {
-    clearFilter();
-    setSearchTerm('');
-  }
+  // function resetFilter() {
+  //   clearFilter();
+  //   setSearchTerm('');
+  // }
 
   // useEffect(() => {
   //   function handleEsc(e: KeyboardEvent) {
@@ -34,9 +35,11 @@ export default function SearchCard() {
   //   return () => window.removeEventListener('keydown', handleEsc);
   // }, [modalMode, inputRef]);
 
-  useEffect(() => {
-    if (searchTerm !== '') setFilter(searchTerm);
-  }, [searchTerm]);
+  // useEffect(() => {
+  //   if (searchTerm !== '') setFilter(searchTerm);
+  // }, [searchTerm]);
+
+  const filterIsActive = searchTerm !== '';
 
   return (
     <div
@@ -47,13 +50,13 @@ export default function SearchCard() {
         {/* <HamburgerIcon /> */}
         <SearchOptionsMenu
           label={<HamburgerIcon />}
-          resetFilter={resetFilter}
+          resetFilter={clearFilter}
         />
         <form onSubmit={handleSubmit}>
           <input
             ref={inputRef}
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => updateFilter(e.target.value)}
             className='surface-container-highest placeholder:text-on-surface-variant placeholder:opacity-25 text-on-surface focus-visible:outline-none'
             type='text'
             placeholder='blueberry muffins'
@@ -62,13 +65,13 @@ export default function SearchCard() {
       </div>
       {/* <div className=''>{filterIsActive ? <ClearIcon /> : <SearchIcon />}</div> */}
       {filterIsActive ? (
-        <Button variant='text' icon={<ClearIcon />} onClick={resetFilter} />
+        <Button variant='text' icon={<ClearIcon />} onClick={clearFilter} />
       ) : (
         <Button
           disabled={searchTerm === ''}
           variant='text'
           icon={<SearchIcon />}
-          onClick={() => setFilter(searchTerm)}
+          onClick={() => updateFilter(searchTerm)}
         />
       )}
     </div>

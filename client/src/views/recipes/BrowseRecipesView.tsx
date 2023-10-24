@@ -6,18 +6,20 @@ import ProcedureSection from './ProcedureSection';
 import useRecipes from '../../lib/hooks/useRecipes';
 import React, { useState } from 'react';
 import Button from '../../components/Button';
-import { FilterResult } from '../../lib/context/RecipesContextProvider';
 import StarIcon_Hollow from '../../assets/icons/StarIcon_Hollow';
 import useUser from '../../lib/hooks/useUser';
 import StarIcon_Filled from '../../assets/icons/StarIcon_Filled';
 import ExitFullScreenIcon from '../../assets/icons/ExitFullscreenIcon';
 import FullScreenIcon from '../../assets/icons/FullscreenIcon';
 import NotesSection from './NotesSection';
+import useFilter from '../../lib/hooks/useFilter';
+import { FilterResult } from '../../lib/context/FilterContextProvider';
 
 export default function BrowseRecipesView() {
   const [expanded, setExpanded] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const { recipes, filterResults, filterIsActive } = useRecipes();
+  const { recipes } = useRecipes();
+  const { filterResults } = useFilter();
   const { isLoggedIn, removeFromFavorites, addToFavorites, favorites } =
     useUser();
 
@@ -31,6 +33,8 @@ export default function BrowseRecipesView() {
   document.title = activeRecipe?.title || 'Browsing Recipes';
 
   if (!recipes) return <h1>hang on...</h1>;
+
+  const filterIsActive = false;
 
   return (
     <div className='w-full flex items-start justify-stretch gap-6 overflow-y-hidden h-full'>
@@ -114,6 +118,7 @@ export default function BrowseRecipesView() {
 
   function renderFilterResults(filterResults: FilterResult) {
     const captionMap: Record<keyof FilterResult, string> = {
+      allMatches: 'All Matches',
       titleMatches: 'Title Matches',
       authorMatches: 'Author Matches',
       ingredientMatches: 'Ingredient Matches',
