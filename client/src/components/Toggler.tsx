@@ -15,11 +15,11 @@ export default function Toggler({
   return (
     <Tag
       onClick={setIsOn ? () => setIsOn((prev) => !prev) : undefined}
-      className='h-[19px] w-[32px] relative rounded-full border border-outline bg-gray-800'
+      className='h-[19px] w-[32px] relative rounded-full border border-outline bg-black/20'
     >
       <div
         className={`h-[15px] absolute top-[1px] aspect-square rounded-full border border-outline ${
-          isOn ? 'bg-green-300 right-[2px]' : 'bg-gray-300 left-[2px]'
+          isOn ? 'bg-primary right-[2px]' : 'bg-on-surface-variant left-[2px]'
         }`}
       />
     </Tag>
