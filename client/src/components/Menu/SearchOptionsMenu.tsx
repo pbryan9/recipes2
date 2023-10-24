@@ -12,7 +12,7 @@ type SearchOptionsMenuProps = {
 
 type FilterOption = {
   label: string;
-  isOn: boolean;
+  enabled: boolean;
 };
 
 type FilterOptions = {
@@ -27,12 +27,12 @@ type FilterOptions = {
 type OptionKey = keyof typeof defaultFilterOptions;
 
 const defaultFilterOptions: FilterOptions = {
-  title: { label: 'Recipe title', isOn: true },
-  ingredient: { label: 'Ingredients', isOn: true },
-  procedure: { label: 'Procedure steps', isOn: true },
-  tag: { label: 'Tags', isOn: true },
-  owned: { label: 'Include my recipes', isOn: true },
-  favorites: { label: 'Include favorites', isOn: true },
+  title: { label: 'Recipe title', enabled: true },
+  ingredient: { label: 'Ingredients', enabled: true },
+  procedure: { label: 'Procedure steps', enabled: true },
+  tag: { label: 'Tags', enabled: true },
+  owned: { label: 'Include my recipes', enabled: true },
+  favorites: { label: 'Include favorites', enabled: true },
 };
 
 export default function SearchOptionsMenu({
@@ -73,13 +73,13 @@ export default function SearchOptionsMenu({
               ...prev,
               [opt]: {
                 ...prev[opt as OptionKey],
-                isOn: !prev[opt as OptionKey].isOn,
+                enabled: !prev[opt as OptionKey].enabled,
               },
             }))
           }
         >
           {filterOptions[opt as OptionKey].label}
-          <Toggler as='div' isOn={filterOptions[opt as OptionKey].isOn} />
+          <Toggler as='div' isOn={filterOptions[opt as OptionKey].enabled} />
         </MenuItem>
       ))}
 
