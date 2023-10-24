@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import MenuItem from './MenuItem';
 import MenuWrapper from './MenuWrapper';
 import MenuSeparator from './MenuSeparator';
-import useRecipes from '../../lib/hooks/useRecipes';
 import Toggler from '../Toggler';
 import useFilter from '../../lib/hooks/useFilter';
 import { FilterOptionKey } from '../../lib/context/FilterContextProvider';
