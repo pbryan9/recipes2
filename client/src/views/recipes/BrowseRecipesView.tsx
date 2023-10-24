@@ -19,7 +19,7 @@ export default function BrowseRecipesView() {
   const [expanded, setExpanded] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const { recipes } = useRecipes();
-  const { filterResults } = useFilter();
+  const { filterResults, searchTerm } = useFilter();
   const { isLoggedIn, removeFromFavorites, addToFavorites, favorites } =
     useUser();
 
@@ -34,7 +34,7 @@ export default function BrowseRecipesView() {
 
   if (!recipes) return <h1>hang on...</h1>;
 
-  const filterIsActive = false;
+  const filterIsActive = searchTerm !== '';
 
   return (
     <div className='w-full flex items-start justify-stretch gap-6 overflow-y-hidden h-full'>
