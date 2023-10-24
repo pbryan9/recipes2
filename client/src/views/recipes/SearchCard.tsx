@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
+
 import HamburgerIcon from '../../assets/icons/HamburgerIcon';
 import SearchIcon from '../../assets/icons/SearchIcon';
 import useRecipes from '../../lib/hooks/useRecipes';
 import ClearIcon from '../../assets/icons/ClearIcon';
 import Button from '../../components/Button';
-import { useModal } from '../../lib/context/ModalContextProvider';
+import SearchOptionsMenu from '../../components/Menu/SearchOptionsMenu';
 
 export default function SearchCard() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const { setFilter, filterIsActive, clearFilter } = useRecipes();
-  const { modalMode } = useModal();
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -22,18 +22,17 @@ export default function SearchCard() {
     setSearchTerm('');
   }
 
-  useEffect(() => {
-    function handleEsc(e: KeyboardEvent) {
-      if (e.code === 'Escape' && !modalMode) {
-        setSearchTerm('');
-        clearFilter();
-      }
-    }
+  // useEffect(() => {
+  //   function handleEsc(e: KeyboardEvent) {
+  //     if (e.code === 'Escape' && !modalMode) {
+  //       resetFilter();
+  //     }
+  //   }
 
-    window.addEventListener('keydown', handleEsc);
+  //   window.addEventListener('keydown', handleEsc);
 
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, [modalMode]);
+  //   return () => window.removeEventListener('keydown', handleEsc);
+  // }, [modalMode, inputRef]);
 
   useEffect(() => {
     if (searchTerm !== '') setFilter(searchTerm);
@@ -45,7 +44,11 @@ export default function SearchCard() {
       className='w-full h-14 shrink-0 surface-container-highest on-surface-variant-text rounded-full pl-4 gap-4 flex items-center justify-between body-large relative drop-shadow-level2 cursor-text'
     >
       <div className='flex items-center gap-4'>
-        <HamburgerIcon />
+        {/* <HamburgerIcon /> */}
+        <SearchOptionsMenu
+          label={<HamburgerIcon />}
+          resetFilter={resetFilter}
+        />
         <form onSubmit={handleSubmit}>
           <input
             ref={inputRef}
