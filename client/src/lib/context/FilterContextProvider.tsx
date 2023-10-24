@@ -7,18 +7,6 @@ import type {
 import useRecipes from '../hooks/useRecipes';
 import useUser from '../hooks/useUser';
 
-// const debounce = <T extends unknown>(
-//   fn: (...args: T[]) => any,
-//   delay: number = 200
-// ) => {
-//   let debounceTimer: NodeJS.Timeout | undefined;
-
-//   return (...args: T[]) => {
-//     clearTimeout(debounceTimer);
-//     debounceTimer = setTimeout(fn.apply(this, args), delay);
-//   };
-// };
-
 export type FilterContext = {
   filterOptions: FilterOptions;
   toggleFilterOption: (option: FilterOptionKey) => void;
@@ -52,13 +40,13 @@ export type FilterResultKey = keyof FilterResult;
 
 export const defaultFilterOptions = {
   title: { label: 'Recipe title', enabled: true },
-  author: { label: 'Recipe author', enabled: true },
-  ingredient: { label: 'Ingredients', enabled: true },
-  procedure: { label: 'Procedure steps', enabled: true },
-  tag: { label: 'Tags', enabled: true },
+  author: { label: 'Recipe author', enabled: false },
+  ingredient: { label: 'Ingredients', enabled: false },
+  procedure: { label: 'Procedure steps', enabled: false },
+  tag: { label: 'Tags', enabled: false },
   owned: { label: 'Include my recipes', enabled: true },
   favorites: { label: 'Include favorites', enabled: true },
-  matchAll: { label: 'Match all terms', enabled: false },
+  matchAll: { label: 'Match all words', enabled: false },
 };
 
 const filterResultTemplate: FilterResult = {
@@ -101,7 +89,7 @@ export default function FilterContextProvider({
     if (searchTerm !== '') {
       setFilterResults(postfilterRecipes(filterRecipes(prefilterRecipes())));
     }
-  }, [searchTerm]);
+  }, [searchTerm, filterOptions]);
 
   function toggleFilterOption(option: FilterOptionKey) {
     setFilterOptions((prev) => ({
