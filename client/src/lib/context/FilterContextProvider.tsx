@@ -44,8 +44,8 @@ export const defaultFilterOptions = {
   ingredient: { label: 'Ingredients', enabled: false },
   procedure: { label: 'Procedure steps', enabled: false },
   tag: { label: 'Tags', enabled: false },
-  owned: { label: 'Include my recipes', enabled: true },
-  favorites: { label: 'Include favorites', enabled: true },
+  owned: { label: 'My recipes only', enabled: false },
+  favorites: { label: 'Favorites only', enabled: false },
   matchAll: { label: 'Must match every word', enabled: false },
 };
 
@@ -140,16 +140,16 @@ export default function FilterContextProvider({
 
     let prefilteredRecipes = [];
 
-    const excludeFavorites =
-      isLoggedIn && filterOptions.favorites.enabled === false;
-    const excludeOwned = isLoggedIn && filterOptions.owned.enabled === false;
+    const favoritesOnly =
+      isLoggedIn && filterOptions.favorites.enabled === true;
+    const ownedOnly = isLoggedIn && filterOptions.owned.enabled === true;
 
     for (let recipe of recipes) {
-      if (excludeFavorites && favorites.includes(recipe.id)) {
+      if (favoritesOnly && !favorites.includes(recipe.id)) {
         continue;
       }
 
-      if (excludeOwned && username === recipe.author.username) {
+      if (ownedOnly && username !== recipe.author.username) {
         continue;
       }
 
