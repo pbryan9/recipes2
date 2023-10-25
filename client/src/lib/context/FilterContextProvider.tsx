@@ -85,7 +85,18 @@ export default function FilterContextProvider({
     let parsedFilterOptions: FilterOptions | undefined = undefined;
     if (storedFilterOptions)
       parsedFilterOptions = JSON.parse(storedFilterOptions) as FilterOptions;
-    return parsedFilterOptions ?? initialFilterContext.filterOptions;
+
+    // if we successfully pulled filter opts from storage, check that all properties are represented
+    if (
+      parsedFilterOptions &&
+      Object.keys(parsedFilterOptions).every((key) =>
+        Object.keys(defaultFilterOptions).includes(key)
+      )
+    )
+      return parsedFilterOptions;
+
+    // otherwise, just use the default
+    return defaultFilterOptions;
   });
   const [filterResults, setFilterResults] = useState<FilterResult>(
     initialFilterContext.filterResults
@@ -104,19 +115,6 @@ export default function FilterContextProvider({
     // save filter options to localstorage for persistence
     localStorage.setItem('filter-options', JSON.stringify(filterOptions));
   }, [filterOptions]);
-
-  // useEffect(() => {
-  //   // restore filter options on mount (if available)
-  //   let storedFilterOptions = localStorage.getItem('filter-options');
-  //   let parsedFilterOptions: FilterOptions | undefined = undefined;
-  //   if (storedFilterOptions)
-  //     parsedFilterOptions = JSON.parse(storedFilterOptions) as FilterOptions;
-
-  //   if (parsedFilterOptions) {
-  //     console.log({ parsedFilterOptions });
-  //     setFilterOptions(parsedFilterOptions);
-  //   }
-  // }, []);
 
   function toggleFilterOption(option: FilterOptionKey) {
     setFilterOptions((prev) => ({
