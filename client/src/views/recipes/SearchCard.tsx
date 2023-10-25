@@ -49,7 +49,11 @@ export default function SearchCard() {
       <div className='flex items-center gap-4'>
         {/* <HamburgerIcon /> */}
         <SearchOptionsMenu
-          label={<HamburgerIcon />}
+          label={
+            <div className='h-full aspect-square flex items-center'>
+              <HamburgerIcon />
+            </div>
+          }
           resetFilter={clearFilter}
         />
         <form onSubmit={handleSubmit}>

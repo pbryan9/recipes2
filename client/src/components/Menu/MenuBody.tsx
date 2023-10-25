@@ -15,7 +15,7 @@ function MenuBody(
     <div
       ref={ref}
       className={`bg-surface-container body-large text-on-surface rounded-[4px] grid w-fit min-w-[112px] max-w-[280px] absolute top-1/2 left-1/2 transition-all shadow-lg border border-black/10 ${
-        isOpen ? 'grid-rows-[1fr] py-2' : 'grid-rows-[0fr] opacity-0'
+        isOpen ? 'grid-rows-[1fr] py-2' : 'grid-rows-[0fr] opacity-0 border-0'
       }`}
     >
       <ul

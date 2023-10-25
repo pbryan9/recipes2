@@ -14,7 +14,10 @@ export default function MenuTrigger({
   const PolyTag = as;
 
   return (
-    <PolyTag className='w-full' onClick={toggleMenu}>
+    <PolyTag
+      className='w-8 p-2 flex items-center justify-center aspect-square cursor-pointer'
+      onClick={toggleMenu}
+    >
       {children}
     </PolyTag>
   );
