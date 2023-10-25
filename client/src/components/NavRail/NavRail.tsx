@@ -4,7 +4,6 @@ import CreateRecipeIcon from '../../assets/icons/NewIcon';
 import RecipePotIcon from '../../assets/icons/RecipePotIcon';
 import NavRailButton from './NavRailButton';
 import useUser from '../../lib/hooks/useUser';
-import LogoutIcon from '../../assets/icons/LogoutIcon';
 import LoginIcon from '../../assets/icons/LoginIcon';
 import EditIcon from '../../assets/icons/EditIcon';
 import useRecipes from '../../lib/hooks/useRecipes';
@@ -12,7 +11,6 @@ import TrashIcon from '../../assets/icons/TrashIcon';
 import SignUpIcon from '../../assets/icons/SignUpIcon';
 import { useModal } from '../../lib/context/ModalContextProvider';
 import UserOptionsMenu from '../Menu/UserOptionsMenu';
-import { useState } from 'react';
 
 export default function NavRail() {
   const navigate = useNavigate();
@@ -20,8 +18,6 @@ export default function NavRail() {
   const { isLoggedIn, username } = useUser();
   const { openModal } = useModal();
   const { recipes, deleteRecipe } = useRecipes();
-
-  const [accountMenuIsOpen, setAccountMenuIsOpen] = useState(false);
 
   const { pathname } = useLocation();
 
@@ -102,11 +98,13 @@ export default function NavRail() {
         </>
       )}
 
-      <NavRailButton
-        icon={<UserOptionsMenu outsideToggle={accountMenuIsOpen} />}
-        label=''
-        onClick={() => null}
-      />
+      {isLoggedIn && (
+        <NavRailButton
+          icon={<UserOptionsMenu />}
+          label=''
+          onClick={() => null}
+        />
+      )}
     </nav>
   );
 }
