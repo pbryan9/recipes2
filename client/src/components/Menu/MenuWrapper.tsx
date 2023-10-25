@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { ForwardedRef, useEffect, useRef } from 'react';
 import MenuTrigger from './MenuTrigger';
 import MenuBody from './MenuBody';
 import { useModal } from '../../lib/context/ModalContextProvider';
@@ -8,6 +8,7 @@ type MenuWrapperProps = {
   toggleMenu: () => void;
   isOpen: boolean;
   children: React.ReactNode;
+  as?: 'button' | 'div';
 };
 
 export default function MenuWrapper({
@@ -15,8 +16,10 @@ export default function MenuWrapper({
   toggleMenu,
   isOpen,
   children,
+  as = 'button',
 }: MenuWrapperProps) {
   const { modalMode } = useModal();
+  const menuBodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleEscape(e: KeyboardEvent) {
@@ -30,12 +33,54 @@ export default function MenuWrapper({
     return () => window.removeEventListener('keydown', handleEscape);
   }, [modalMode, isOpen]);
 
+  useEffect(() => {
+    // set up "click off" function
+
+    if (isOpen) {
+      // have to delay the measurement due to animation
+      // that makes removing the event listener tricky, hence the abort controller
+      let abortController = new AbortController();
+
+      setTimeout(() => {
+        let boxMeasurement = menuBodyRef.current?.getBoundingClientRect();
+
+        function clickOff(e: MouseEvent) {
+          if (!boxMeasurement) return;
+
+          let [x, y] = [e.clientX, e.clientY];
+          let { left, right, top, bottom } = boxMeasurement;
+
+          const clickIsInsideMenu =
+            x > left && x < right && y > top && y < bottom;
+
+          if (!clickIsInsideMenu) {
+            toggleMenu();
+          }
+        }
+
+        document.addEventListener('click', clickOff, {
+          signal: abortController.signal,
+        });
+      }, 500);
+      // document.addEventListener('click', (e) => null);
+
+      return () => abortController.abort();
+    }
+  }, [isOpen]);
+
+  // function clickOff(e: MouseEvent) {}
+
+  if (modalMode !== false && isOpen) toggleMenu();
   // TODO: figure out click-off
 
   return (
     <article className='relative w-fit z-0'>
-      <MenuTrigger toggleMenu={toggleMenu}>{triggerLabel}</MenuTrigger>
-      <MenuBody isOpen={isOpen}>{children}</MenuBody>
+      <MenuTrigger toggleMenu={toggleMenu} as={as}>
+        {triggerLabel}
+      </MenuTrigger>
+      <MenuBody ref={menuBodyRef} isOpen={isOpen}>
+        {children}
+      </MenuBody>
     </article>
   );
 }

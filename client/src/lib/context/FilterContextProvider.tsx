@@ -14,6 +14,7 @@ export type FilterContext = {
   filterResults: FilterResult;
   searchTerm: string;
   clearFilter: () => void;
+  prefilterRecipes: (recipes: FilledRecipe[]) => FilledRecipe[];
 };
 
 type FilterContextProviderProps = {
@@ -65,6 +66,7 @@ const initialFilterContext: FilterContext = {
   filterResults: filterResultTemplate,
   searchTerm: '',
   clearFilter: () => null,
+  prefilterRecipes: () => [],
 };
 
 export const FilterContext = createContext(initialFilterContext);
@@ -229,15 +231,6 @@ export default function FilterContextProvider({
     // builds up allMatches category & sorts by # of hits (max 1 per category, for now)
     // returns organized object of filter results
 
-    // let res: FilterResult = {
-    //   allMatches: [],
-    //   authorMatches: [],
-    //   ingredientMatches: [],
-    //   procedureMatches: [],
-    //   tagMatches: [],
-    //   titleMatches: [],
-    // };
-
     let tempAllMatches = new Set<FilledRecipe>();
     let hitCounter = new Map<string, { recipe: FilledRecipe; hits: number }>();
 
@@ -282,6 +275,7 @@ export default function FilterContextProvider({
         updateFilter,
         searchTerm,
         clearFilter,
+        prefilterRecipes,
       }}
     >
       {children}

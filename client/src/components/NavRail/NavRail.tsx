@@ -10,15 +10,18 @@ import EditIcon from '../../assets/icons/EditIcon';
 import useRecipes from '../../lib/hooks/useRecipes';
 import TrashIcon from '../../assets/icons/TrashIcon';
 import SignUpIcon from '../../assets/icons/SignUpIcon';
-import SettingsIcon from '../../assets/icons/SettingsIcon';
 import { useModal } from '../../lib/context/ModalContextProvider';
+import UserOptionsMenu from '../Menu/UserOptionsMenu';
+import { useState } from 'react';
 
 export default function NavRail() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { isLoggedIn, logout, username } = useUser();
+  const { isLoggedIn, username } = useUser();
   const { openModal } = useModal();
   const { recipes, deleteRecipe } = useRecipes();
+
+  const [accountMenuIsOpen, setAccountMenuIsOpen] = useState(false);
 
   const { pathname } = useLocation();
 
@@ -68,7 +71,7 @@ export default function NavRail() {
         </>
       )}
 
-      {isLoggedIn && (
+      {/* {isLoggedIn && (
         <NavRailButton
           icon={<SettingsIcon />}
           label='Color'
@@ -82,7 +85,7 @@ export default function NavRail() {
           label='Sign out'
           onClick={() => logout()}
         />
-      )}
+      )} */}
 
       {!isLoggedIn && (
         <>
@@ -98,6 +101,12 @@ export default function NavRail() {
           />
         </>
       )}
+
+      <NavRailButton
+        icon={<UserOptionsMenu outsideToggle={accountMenuIsOpen} />}
+        label=''
+        onClick={() => null}
+      />
     </nav>
   );
 }

@@ -19,7 +19,7 @@ export default function BrowseRecipesView() {
   const [expanded, setExpanded] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const { recipes } = useRecipes();
-  const { filterResults, searchTerm } = useFilter();
+  const { filterResults, searchTerm, prefilterRecipes } = useFilter();
   const { isLoggedIn, removeFromFavorites, addToFavorites, favorites } =
     useUser();
 
@@ -47,7 +47,7 @@ export default function BrowseRecipesView() {
         <div className='flex flex-col justify-start items-stretch gap-2 overflow-y-auto w-full'>
           {filterIsActive
             ? renderFilterResults(filterResults)
-            : recipes.map((recipe) => (
+            : prefilterRecipes(recipes).map((recipe) => (
                 <RecipeSummaryCard
                   key={recipe.id}
                   recipe={recipe}
