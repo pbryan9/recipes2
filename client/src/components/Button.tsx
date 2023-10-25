@@ -36,12 +36,12 @@ export default function Button({
         ${rotate ? 'rotate-90' : ''}
       `}
     >
-      {tooltipText && (
+      {/* {tooltipText && (
         // TODO: tooltip is very much a rough draft -- needs lots of work
         <span className='hidden absolute group-hover:inline transition-all delay-200 bg-surface-container-highest w-fit top-0 right-1/2 -translate-y-full translate-x-1/2 z-20 border border-outline py-2 px-4 rounded-[3px]'>
           {tooltipText}
         </span>
-      )}
+      )} */}
       {icon}
       {children}
     </button>
