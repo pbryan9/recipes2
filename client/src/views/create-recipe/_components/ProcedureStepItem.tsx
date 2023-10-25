@@ -22,6 +22,7 @@ export default function ProcedureStepItem({
     <div className='procedure-step w-full h-full flex items-center gap-4'>
       <div className='w-full flex shrink gap-0'>
         <FormInput
+          as='textarea'
           fieldLabel='Description*'
           fieldName={`${registrationPath}.description`}
           // {...{ getFieldState, setFocus, errors, register }}

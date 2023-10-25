@@ -13,6 +13,7 @@ type FormInputProps = {
   fieldName: string;
   fieldLabel: string;
 
+  as?: 'input' | 'textarea';
   type?: 'text' | 'password';
   supportingText?: string;
   inputWidth?: FormInputWidth;
@@ -24,6 +25,7 @@ export default function FormInput({
   fieldName,
   fieldLabel,
 
+  as = 'input',
   type = 'text',
   supportingText = '',
   variant = 'standard',
@@ -60,6 +62,8 @@ export default function FormInput({
     right: 'rounded-tr-[5px]',
   };
 
+  const InputType = as;
+
   return (
     <div
       className={`h-fit flex flex-col items-stretch ${inputWidthLookup[inputWidth]}`}
@@ -68,7 +72,7 @@ export default function FormInput({
         onClick={() => {
           setFocus(fieldName as keyof FormInput);
         }}
-        className={`input-group cursor-text relative h-14 flex justify-start ${
+        className={`input-group cursor-text relative min-h-[56px] flex justify-start ${
           fieldValue ? 'items-end' : 'items-center'
         } ${
           variant === 'cluster'
@@ -92,11 +96,15 @@ export default function FormInput({
         >
           {fieldLabel}
         </label>
-        <input
-          type={type}
+        <InputType
+          type={as === 'input' ? type : undefined}
+          wrap={as === 'textarea' ? 'soft' : undefined}
+          rows={as === 'textarea' ? 1 : undefined}
           id={fieldName}
           {...register(fieldName)}
-          className={`w-full h-fit body-large bg-transparent text-on-surface leading-none focus:outline-none`}
+          className={`w-full h-fit body-large bg-transparent text-on-surface leading-none focus:outline-none ${
+            as === 'textarea' ? 'mt-3' : ''
+          }`}
         />
       </div>
       {invalid ? (
