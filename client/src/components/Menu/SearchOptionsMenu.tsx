@@ -7,6 +7,8 @@ import useFilter from '../../lib/hooks/useFilter';
 import { FilterOptionKey } from '../../lib/context/FilterContextProvider';
 import MenuLabel from './MenuLabel';
 import useUser from '../../lib/hooks/useUser';
+import Button from '../Button';
+import ResetIcon from '../../assets/icons/ResetIcon';
 
 type SearchOptionsMenuProps = {
   label: React.ReactNode;
@@ -19,7 +21,12 @@ export default function SearchOptionsMenu({
 }: SearchOptionsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { filterOptions, toggleFilterOption, searchTerm } = useFilter();
+  const {
+    filterOptions,
+    toggleFilterOption,
+    restoreDefaultFilterOptions,
+    searchTerm,
+  } = useFilter();
   const { isLoggedIn } = useUser();
 
   function toggleMenu() {
@@ -40,7 +47,16 @@ export default function SearchOptionsMenu({
 
   return (
     <MenuWrapper triggerLabel={label} toggleMenu={toggleMenu} isOpen={isOpen}>
-      <MenuLabel>Search options:</MenuLabel>
+      <MenuLabel>
+        Search options:
+        <Button
+          variant='text'
+          icon={<ResetIcon />}
+          onClick={restoreDefaultFilterOptions}
+          style={{ paddingRight: '4px' }}
+          tooltipText='Restore default options'
+        />
+      </MenuLabel>
       {searchSegment.map((opt) => (
         <MenuItem
           key={opt}

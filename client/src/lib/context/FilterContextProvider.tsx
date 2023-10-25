@@ -10,6 +10,7 @@ import useUser from '../hooks/useUser';
 export type FilterContext = {
   filterOptions: FilterOptions;
   toggleFilterOption: (option: FilterOptionKey) => void;
+  restoreDefaultFilterOptions: () => void;
   updateFilter: (searchTerm: string) => void;
   filterResults: FilterResult;
   searchTerm: string;
@@ -25,8 +26,6 @@ export type FilterOption = {
   label: string;
   enabled: boolean;
 };
-export type FilterOptions = typeof defaultFilterOptions;
-export type FilterOptionKey = keyof typeof defaultFilterOptions;
 
 export type FilterResult = {
   allMatches: FilledRecipe[];
@@ -47,8 +46,11 @@ export const defaultFilterOptions = {
   tag: { label: 'Tags', enabled: false },
   owned: { label: 'Include my recipes', enabled: true },
   favorites: { label: 'Include favorites', enabled: true },
-  matchAll: { label: 'Match all words', enabled: false },
+  matchAll: { label: 'Must match every word', enabled: false },
 };
+
+export type FilterOptions = typeof defaultFilterOptions;
+export type FilterOptionKey = keyof typeof defaultFilterOptions;
 
 const filterResultTemplate: FilterResult = {
   allMatches: [],
@@ -62,6 +64,7 @@ const filterResultTemplate: FilterResult = {
 const initialFilterContext: FilterContext = {
   filterOptions: defaultFilterOptions,
   toggleFilterOption: () => null,
+  restoreDefaultFilterOptions: () => null,
   updateFilter: () => null,
   filterResults: filterResultTemplate,
   searchTerm: '',
@@ -77,9 +80,13 @@ export default function FilterContextProvider({
   children,
 }: FilterContextProviderProps) {
   const [searchTerm, setSearchTerm] = useState(initialFilterContext.searchTerm);
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>(
-    initialFilterContext.filterOptions
-  );
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>(() => {
+    let storedFilterOptions = localStorage.getItem('filter-options');
+    let parsedFilterOptions: FilterOptions | undefined = undefined;
+    if (storedFilterOptions)
+      parsedFilterOptions = JSON.parse(storedFilterOptions) as FilterOptions;
+    return parsedFilterOptions ?? initialFilterContext.filterOptions;
+  });
   const [filterResults, setFilterResults] = useState<FilterResult>(
     initialFilterContext.filterResults
   );
@@ -93,11 +100,33 @@ export default function FilterContextProvider({
     }
   }, [searchTerm, filterOptions]);
 
+  useEffect(() => {
+    // save filter options to localstorage for persistence
+    localStorage.setItem('filter-options', JSON.stringify(filterOptions));
+  }, [filterOptions]);
+
+  // useEffect(() => {
+  //   // restore filter options on mount (if available)
+  //   let storedFilterOptions = localStorage.getItem('filter-options');
+  //   let parsedFilterOptions: FilterOptions | undefined = undefined;
+  //   if (storedFilterOptions)
+  //     parsedFilterOptions = JSON.parse(storedFilterOptions) as FilterOptions;
+
+  //   if (parsedFilterOptions) {
+  //     console.log({ parsedFilterOptions });
+  //     setFilterOptions(parsedFilterOptions);
+  //   }
+  // }, []);
+
   function toggleFilterOption(option: FilterOptionKey) {
     setFilterOptions((prev) => ({
       ...prev,
       [option]: { label: prev[option].label, enabled: !prev[option].enabled },
     }));
+  }
+
+  function restoreDefaultFilterOptions() {
+    setFilterOptions(initialFilterContext.filterOptions);
   }
 
   function updateFilter(searchTerm: string) {
@@ -272,6 +301,7 @@ export default function FilterContextProvider({
         filterOptions,
         filterResults,
         toggleFilterOption,
+        restoreDefaultFilterOptions,
         updateFilter,
         searchTerm,
         clearFilter,

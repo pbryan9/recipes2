@@ -18,9 +18,7 @@ function MenuBody(
         isOpen ? 'grid-rows-[1fr] py-2' : 'grid-rows-[0fr] opacity-0 border-0'
       }`}
     >
-      <ul
-        className={`h-full w-fit min-w-full overflow-hidden flex flex-col gap-0`}
-      >
+      <ul className={`h-full w-fit min-w-full flex flex-col gap-0`}>
         {children}
       </ul>
     </div>
