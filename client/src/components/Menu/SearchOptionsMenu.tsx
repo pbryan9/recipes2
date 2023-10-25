@@ -6,6 +6,7 @@ import Toggler from '../Toggler';
 import useFilter from '../../lib/hooks/useFilter';
 import { FilterOptionKey } from '../../lib/context/FilterContextProvider';
 import MenuLabel from './MenuLabel';
+import useUser from '../../lib/hooks/useUser';
 
 type SearchOptionsMenuProps = {
   label: React.ReactNode;
@@ -19,6 +20,7 @@ export default function SearchOptionsMenu({
   const [isOpen, setIsOpen] = useState(false);
 
   const { filterOptions, toggleFilterOption, searchTerm } = useFilter();
+  const { isLoggedIn } = useUser();
 
   function toggleMenu() {
     setIsOpen((prev) => !prev);
@@ -52,21 +54,25 @@ export default function SearchOptionsMenu({
         </MenuItem>
       ))}
 
-      <MenuSeparator />
+      {isLoggedIn && (
+        <>
+          <MenuSeparator />
 
-      <MenuLabel>Filter recipes:</MenuLabel>
-      {filterSegment.map((opt) => (
-        <MenuItem
-          key={opt}
-          onClick={() => toggleFilterOption(opt as FilterOptionKey)}
-        >
-          {filterOptions[opt as FilterOptionKey].label}
-          <Toggler
-            as='div'
-            isOn={filterOptions[opt as FilterOptionKey].enabled}
-          />
-        </MenuItem>
-      ))}
+          <MenuLabel>Filter recipes:</MenuLabel>
+          {filterSegment.map((opt) => (
+            <MenuItem
+              key={opt}
+              onClick={() => toggleFilterOption(opt as FilterOptionKey)}
+            >
+              {filterOptions[opt as FilterOptionKey].label}
+              <Toggler
+                as='div'
+                isOn={filterOptions[opt as FilterOptionKey].enabled}
+              />
+            </MenuItem>
+          ))}
+        </>
+      )}
 
       <MenuSeparator />
 
