@@ -1,4 +1,4 @@
-import React, { ForwardedRef, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import MenuTrigger from './MenuTrigger';
 import MenuBody from './MenuBody';
 import { useModal } from '../../lib/context/ModalContextProvider';
@@ -62,16 +62,12 @@ export default function MenuWrapper({
           signal: abortController.signal,
         });
       }, 500);
-      // document.addEventListener('click', (e) => null);
 
       return () => abortController.abort();
     }
   }, [isOpen]);
 
-  // function clickOff(e: MouseEvent) {}
-
   if (modalMode !== false && isOpen) toggleMenu();
-  // TODO: figure out click-off
 
   return (
     <article className='relative w-fit z-0'>

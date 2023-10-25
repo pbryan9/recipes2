@@ -47,9 +47,9 @@ export default function IngredientsSection({
                 {group.ingredients.map((ingredient) => (
                   <li
                     key={ingredient.id}
-                    className={`${
-                      group.groupTitle !== '' ? 'pl-4' : ''
-                    } body-medium`}
+                    className={`
+                    list-outside list-disc pl-2 ml-4 body-medium
+                    ${group.groupTitle !== '' ? '' : ''}`}
                   >
                     {[
                       ingredient.qty,

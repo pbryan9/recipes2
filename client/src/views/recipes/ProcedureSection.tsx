@@ -46,9 +46,9 @@ export default function ProcedureSection({ recipe }: ProcedureSectionProps) {
                 {group.procedureSteps.map((step) => (
                   <li
                     key={step.id}
-                    className={`${
-                      group.groupTitle !== '' ? 'pl-4' : ''
-                    } body-medium`}
+                    className={`
+                    list-decimal list-outside pl-2 ml-4 body-medium
+                    ${group.groupTitle !== '' ? '' : ''}`}
                   >
                     {step.description}
                   </li>
