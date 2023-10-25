@@ -70,7 +70,7 @@ export default function MenuWrapper({
   if (modalMode !== false && isOpen) toggleMenu();
 
   return (
-    <article className='relative w-fit z-0'>
+    <article className='relative w-fit z-10'>
       <MenuTrigger toggleMenu={toggleMenu} as={as}>
         {triggerLabel}
       </MenuTrigger>

@@ -19,7 +19,7 @@ function MenuBody(
       }`}
     >
       <ul
-        className={`h-full w-fit min-w-full overflow-hidden flex flex-col gap-0`}
+        className={`h-full w-max min-w-full overflow-hidden flex flex-col gap-0`}
       >
         {children}
       </ul>

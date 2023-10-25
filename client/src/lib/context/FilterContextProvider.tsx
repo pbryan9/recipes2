@@ -40,12 +40,12 @@ export type FilterResultKey = keyof FilterResult;
 
 export const defaultFilterOptions = {
   title: { label: 'Recipe title', enabled: true },
-  author: { label: 'Recipe author', enabled: false },
-  ingredient: { label: 'Ingredients', enabled: false },
-  procedure: { label: 'Procedure steps', enabled: false },
-  tag: { label: 'Tags', enabled: false },
-  owned: { label: 'Include my recipes', enabled: true },
-  favorites: { label: 'Include favorites', enabled: true },
+  author: { label: 'Recipe author', enabled: true },
+  ingredient: { label: 'Ingredients', enabled: true },
+  procedure: { label: 'Procedure steps', enabled: true },
+  tag: { label: 'Tags', enabled: true },
+  owned: { label: 'My recipes only', enabled: false },
+  favorites: { label: 'Favorites only', enabled: false },
   matchAll: { label: 'Must match every word', enabled: false },
 };
 
@@ -85,7 +85,18 @@ export default function FilterContextProvider({
     let parsedFilterOptions: FilterOptions | undefined = undefined;
     if (storedFilterOptions)
       parsedFilterOptions = JSON.parse(storedFilterOptions) as FilterOptions;
-    return parsedFilterOptions ?? initialFilterContext.filterOptions;
+
+    // if we successfully pulled filter opts from storage, check that all properties are represented
+    if (
+      parsedFilterOptions &&
+      Object.keys(parsedFilterOptions).every((key) =>
+        Object.keys(defaultFilterOptions).includes(key)
+      )
+    )
+      return parsedFilterOptions;
+
+    // otherwise, just use the default
+    return defaultFilterOptions;
   });
   const [filterResults, setFilterResults] = useState<FilterResult>(
     initialFilterContext.filterResults
@@ -104,19 +115,6 @@ export default function FilterContextProvider({
     // save filter options to localstorage for persistence
     localStorage.setItem('filter-options', JSON.stringify(filterOptions));
   }, [filterOptions]);
-
-  // useEffect(() => {
-  //   // restore filter options on mount (if available)
-  //   let storedFilterOptions = localStorage.getItem('filter-options');
-  //   let parsedFilterOptions: FilterOptions | undefined = undefined;
-  //   if (storedFilterOptions)
-  //     parsedFilterOptions = JSON.parse(storedFilterOptions) as FilterOptions;
-
-  //   if (parsedFilterOptions) {
-  //     console.log({ parsedFilterOptions });
-  //     setFilterOptions(parsedFilterOptions);
-  //   }
-  // }, []);
 
   function toggleFilterOption(option: FilterOptionKey) {
     setFilterOptions((prev) => ({
@@ -140,16 +138,16 @@ export default function FilterContextProvider({
 
     let prefilteredRecipes = [];
 
-    const excludeFavorites =
-      isLoggedIn && filterOptions.favorites.enabled === false;
-    const excludeOwned = isLoggedIn && filterOptions.owned.enabled === false;
+    const favoritesOnly =
+      isLoggedIn && filterOptions.favorites.enabled === true;
+    const ownedOnly = isLoggedIn && filterOptions.owned.enabled === true;
 
     for (let recipe of recipes) {
-      if (excludeFavorites && favorites.includes(recipe.id)) {
+      if (favoritesOnly && !favorites.includes(recipe.id)) {
         continue;
       }
 
-      if (excludeOwned && username === recipe.author.username) {
+      if (ownedOnly && username !== recipe.author.username) {
         continue;
       }
 
