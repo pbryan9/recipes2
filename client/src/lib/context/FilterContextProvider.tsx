@@ -40,10 +40,10 @@ export type FilterResultKey = keyof FilterResult;
 
 export const defaultFilterOptions = {
   title: { label: 'Recipe title', enabled: true },
-  author: { label: 'Recipe author', enabled: false },
-  ingredient: { label: 'Ingredients', enabled: false },
-  procedure: { label: 'Procedure steps', enabled: false },
-  tag: { label: 'Tags', enabled: false },
+  author: { label: 'Recipe author', enabled: true },
+  ingredient: { label: 'Ingredients', enabled: true },
+  procedure: { label: 'Procedure steps', enabled: true },
+  tag: { label: 'Tags', enabled: true },
   owned: { label: 'My recipes only', enabled: false },
   favorites: { label: 'Favorites only', enabled: false },
   matchAll: { label: 'Must match every word', enabled: false },
