@@ -11,13 +11,22 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  username    String   @unique
-  email       String?
-  password    String
-  avatarColor String?
-  recipes     Recipe[] @relation("OwnedRecipes")
-  favorites   Recipe[] @relation("FavoritedRecipes")
+  id            String          @id @default(uuid())
+  username      String          @unique
+  email         String?         @unique
+  password      String
+  avatarColor   String?
+  recipes       Recipe[]        @relation("OwnedRecipes")
+  favorites     Recipe[]        @relation("FavoritedRecipes")
+  PasswordReset PasswordReset[]
+}
+
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  resetCode Int
+  timestamp DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
 }
 
 model Recipe {
