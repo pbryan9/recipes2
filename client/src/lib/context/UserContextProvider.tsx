@@ -9,7 +9,7 @@ const initialUserState: UserContext = {
   username: null,
   avatarColor: '#3A4D00',
   isLoggedIn: false,
-  isLoading: true,
+  isLoading: false,
   favorites: [],
   login: () => null,
   logout: () => null,
@@ -40,9 +40,12 @@ type UserContext = {
   addToFavorites: (recipeId: string) => void;
   removeFromFavorites: (recipeId: string) => void;
   changeAvatarColor: (colorCode: string) => void;
-  requestRecoveryCode: (email: string) => void;
-  attemptPasswordRecovery: (input: RecoverPasswordInput) => void;
-  resetPassword: (input: ResetPasswordInput) => void;
+  requestRecoveryCode: (email: string, cb?: () => void) => void;
+  attemptPasswordRecovery: (
+    input: RecoverPasswordInput,
+    cb?: () => void
+  ) => void;
+  resetPassword: (input: ResetPasswordInput, cb?: () => void) => void;
 };
 
 export const UserContext = createContext<UserContext>(initialUserState);
@@ -53,6 +56,11 @@ export default function UserContextProvider({
   children: React.ReactNode;
 }) {
   const [userContext, setUserContext] = useState<UserContext>(initialUserState);
+
+  /**
+   * TRPC setup
+   */
+
   const utils = trpc.useContext();
 
   // on initial render, check for token
@@ -65,6 +73,14 @@ export default function UserContextProvider({
     staleTime: 1000 * 60 * 1,
   });
 
+  useEffect(() => {
+    if (tokenCheck.isFetching || userInfo.isFetching) {
+      startLoading();
+    } else {
+      finishLoading();
+    }
+  }, [tokenCheck.isFetching, userInfo.isFetching]);
+
   const newUserMutation = trpc.users.create.useMutation({
     onSuccess(res) {
       localStorage.setItem('token', res.token);
@@ -72,8 +88,13 @@ export default function UserContextProvider({
         ...prev,
         isLoggedIn: true,
         username: res.user.username,
-        isLoading: false,
       }));
+    },
+    onMutate() {
+      startLoading();
+    },
+    onSettled() {
+      finishLoading();
     },
   });
 
@@ -86,8 +107,11 @@ export default function UserContextProvider({
         isLoggedIn: true,
       }));
     },
+    onMutate() {
+      startLoading();
+    },
     onSettled() {
-      setUserContext((prev) => ({ ...prev, isLoading: false }));
+      finishLoading();
     },
   });
 
@@ -100,6 +124,12 @@ export default function UserContextProvider({
       utils.users.getUserInfo.invalidate();
       utils.users.getUserInfo.refetch();
     },
+    onMutate() {
+      startLoading();
+    },
+    onSettled() {
+      finishLoading();
+    },
   });
 
   const removeFromFavoritesMutation =
@@ -107,6 +137,12 @@ export default function UserContextProvider({
       onSuccess() {
         utils.users.getUserInfo.invalidate();
         utils.users.getUserInfo.refetch();
+      },
+      onMutate() {
+        startLoading();
+      },
+      onSettled() {
+        finishLoading();
       },
     });
 
@@ -119,12 +155,21 @@ export default function UserContextProvider({
 
       utils.recipes.all.refetch();
     },
+    onMutate() {
+      startLoading();
+    },
+    onSettled() {
+      finishLoading();
+    },
   });
 
   const requestRecoveryCodeMutation =
     trpc.users.requestRecoveryCode.useMutation({
-      onSuccess() {
-        console.log('ok did it');
+      onMutate() {
+        startLoading();
+      },
+      onSettled() {
+        finishLoading();
       },
     });
 
@@ -132,24 +177,50 @@ export default function UserContextProvider({
     trpc.users.attemptPasswordRecovery.useMutation({
       onSuccess(data) {
         localStorage.setItem('token', data);
-        console.log({ data, message: 'password reset' });
+      },
+      onMutate() {
+        startLoading();
+      },
+      onSettled() {
+        finishLoading();
       },
     });
 
-  // TODO: resume here setting up resetPassword function
   const resetPasswordMutation = trpc.users.resetPassword.useMutation({
     onSuccess(data) {
       localStorage.setItem('token', data);
-      console.log({ message: 'password reset successful' });
+    },
+    onMutate() {
+      startLoading();
+    },
+    onSettled() {
+      finishLoading();
     },
   });
 
-  useEffect(() => {
-    setUserContext((prev) => ({
-      ...prev,
-      isLoading: authenticateUserMutation.isLoading,
-    }));
-  }, [authenticateUserMutation.isLoading]);
+  /**
+   * Define user functions
+   */
+
+  const userContextFunctions = {
+    login,
+    logout,
+    createUser,
+    addToFavorites,
+    removeFromFavorites,
+    changeAvatarColor,
+    requestRecoveryCode,
+    attemptPasswordRecovery,
+    resetPassword,
+  };
+
+  function startLoading() {
+    setUserContext((prev) => ({ ...prev, isLoading: true }));
+  }
+
+  function finishLoading() {
+    setUserContext((prev) => ({ ...prev, isLoading: false }));
+  }
 
   function login({ username, password }: AuthenticateUserInput) {
     authenticateUserMutation.mutate({ username, password });
@@ -161,20 +232,16 @@ export default function UserContextProvider({
   }
 
   function logout() {
-    // * remember to add any new functions here so they're not removed on logout
     localStorage.removeItem('token');
     utils.users.getUserInfo.cancel(undefined, { silent: true });
     userInfo.remove();
+    tokenCheck.remove();
     utils.users.invalidate();
-    setUserContext((prev) => ({
+
+    setUserContext({
       ...initialUserState,
-      isLoading: false,
-      login: prev.login,
-      logout: prev.logout,
-      createUser: prev.createUser,
-      addToFavorites: prev.addToFavorites,
-      removeFromFavorites: prev.removeFromFavorites,
-    }));
+      ...userContextFunctions,
+    });
   }
 
   function addToFavorites(recipeId: string) {
@@ -199,36 +266,50 @@ export default function UserContextProvider({
     changeAvatarColorMutation.mutate({ colorCode });
   }
 
-  function requestRecoveryCode(email: string) {
-    requestRecoveryCodeMutation.mutate({ email });
+  function requestRecoveryCode(email: string, cb?: () => void) {
+    requestRecoveryCodeMutation.mutate(
+      { email },
+      {
+        onSuccess() {
+          if (cb) cb();
+        },
+      }
+    );
   }
 
-  function attemptPasswordRecovery(input: RecoverPasswordInput) {
-    attemptPasswordRecoveryMutation.mutate(input);
+  function attemptPasswordRecovery(
+    input: RecoverPasswordInput,
+    cb?: () => void
+  ) {
+    attemptPasswordRecoveryMutation.mutate(input, {
+      onSuccess() {
+        if (cb) cb();
+      },
+    });
+  }
+
+  function resetPassword(input: ResetPasswordInput, cb?: () => void) {
+    resetPasswordMutation.mutate(input, {
+      onSuccess() {
+        if (cb) cb();
+      },
+    });
   }
 
   /**
-   *
    * Set up user management functions
-   *
    */
 
   useEffect(() => {
     setUserContext((prev) => ({
       ...prev,
-      login,
-      logout,
-      createUser,
-      addToFavorites,
-      removeFromFavorites,
-      changeAvatarColor,
-      requestRecoveryCode,
-      attemptPasswordRecovery,
+      ...userContextFunctions,
     }));
   }, []);
 
   useEffect(() => {
-    if (!tokenCheck.isLoading && !tokenCheck.isError) {
+    // if (!tokenCheck.isLoading && !tokenCheck.isError) {
+    if (tokenCheck.isSuccess) {
       setUserContext((prev) => ({
         ...prev,
         isLoggedIn: true,

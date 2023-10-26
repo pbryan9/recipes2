@@ -7,7 +7,7 @@ import App from '../../App';
 import Home from '../../views/home/Home';
 import CreateRecipeView from '../../views/create-recipe/CreateRecipeView';
 import BrowseRecipesView from '../../views/recipes/BrowseRecipesView';
-import ForgotPasswordView from '../../views/forgot-password/ForgotPasswordView';
+import RecoverPasswordView from '../../views/forgot-password/RecoverPasswordView';
 
 /**
  * ROUTES
@@ -36,7 +36,7 @@ export default createBrowserRouter([
       },
       {
         path: '/recover-password',
-        element: <ForgotPasswordView />,
+        element: <RecoverPasswordView />,
       },
     ],
   },

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
 
@@ -9,12 +10,13 @@ import FormInput from '../create-recipe/_components/FormInput';
 import LoginIcon from '../../assets/icons/LoginIcon';
 import Button from '../../components/Button';
 import useUser from '../../lib/hooks/useUser';
-import { useEffect } from 'react';
+import { useModal } from '../../lib/context/ModalContextProvider';
 
-export default function ForgotPasswordView() {
+export default function RecoverPasswordView() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const { attemptPasswordRecovery, isLoading, isLoggedIn } = useUser();
+  const { openModal } = useModal();
 
   useEffect(() => {
     if (isLoggedIn) navigate('/');
@@ -37,18 +39,25 @@ export default function ForgotPasswordView() {
   const { handleSubmit } = methods;
 
   function onSubmit(input: RecoverPasswordInput) {
-    attemptPasswordRecovery(input);
+    attemptPasswordRecovery(input, () => openModal('passwordChangeSuccess'));
   }
 
   return (
     <main className='p-6 flex flex-col gap-6 justify-center items-center min-h-screen w-screen'>
-      <article className='bg-surface-container p-6 rounded-[12px] shadow-md'>
-        <h1 className='headline-medium flex flex-col gap-6 items-start'>
+      <article className='w-fit min-w-[280px] max-w-[560px] mx-auto flex flex-col gap-4 bg-surface-container-high max-h-[67vw] h-fit overflow-y-auto rounded-[28px] p-6 shadow-2xl'>
+        <h1 className='headline-small flex flex-col gap-6 items-start'>
           Recover password
         </h1>
         <FormProvider {...methods}>
-          <form className='flex flex-col gap-4'>
-            <FormInput fieldLabel='Email' fieldName='email' />
+          <form
+            className='flex flex-col gap-4'
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <FormInput
+              fieldLabel='Email'
+              fieldName='email'
+              inputWidth='medium'
+            />
             <FormInput fieldLabel='Recovery code' fieldName='resetCode' />
             <FormInput
               fieldLabel='New password'
@@ -60,7 +69,10 @@ export default function ForgotPasswordView() {
               fieldName='confirmPassword'
               type='password'
             />
+            <button type='submit' className='hidden' disabled={isLoading} />
           </form>
+        </FormProvider>
+        <div className='flex justify-end pt-6'>
           <Button
             icon={<LoginIcon />}
             onClick={handleSubmit(onSubmit)}
@@ -68,7 +80,7 @@ export default function ForgotPasswordView() {
           >
             {isLoading ? 'Loading...' : 'Set new password'}
           </Button>
-        </FormProvider>
+        </div>
       </article>
     </main>
   );
