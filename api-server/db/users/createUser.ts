@@ -22,7 +22,11 @@ export default async function createUser(newUserInput: NewUserInput) {
 
   // store user in db
   const newUser = await prisma.user.create({
-    data: { username, password: hashedPassword, email },
+    data: {
+      username,
+      password: hashedPassword,
+      email: email.trim().toLowerCase(),
+    },
     select: { id: true, username: true },
   });
 
