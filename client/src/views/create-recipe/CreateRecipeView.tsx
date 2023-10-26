@@ -18,6 +18,7 @@ import ProcedureSection from './_components/ProcedureSection';
 import Button from '../../components/Button';
 import SaveIcon from '../../assets/icons/SaveIcon';
 import useRecipes from '../../lib/hooks/useRecipes';
+import LoadingIcon from '../../assets/icons/LoadingIcon';
 
 type FormInput = RouterInputs['recipes']['create'];
 
@@ -28,16 +29,21 @@ export default function CreateRecipeView() {
   const [searchParams] = useSearchParams();
   const utils = trpc.useContext();
   const [selectedTags, setSelectedTags] = useState<Map<string, Tag>>();
+  const [recipeMutationIsLoading, setRecipeMutationIsLoading] = useState(false);
   const [notes, setNotes] = useState<NewNote[]>([]);
-  const { isLoggedIn, isLoading, username } = useUser();
+  const {
+    isLoggedIn: userIsLoggedIn,
+    isLoading: userIsLoading,
+    username,
+  } = useUser();
   const { recipes } = useRecipes();
 
   const recipeId = searchParams.get('recipeId');
   const recipe = recipeId ? recipes.find(({ id }) => id === recipeId) : null;
 
   useEffect(() => {
-    if (!isLoading && !isLoggedIn) navigate('/recipes');
-  }, [isLoading, isLoggedIn]);
+    if (!userIsLoading && !userIsLoggedIn) navigate('/recipes');
+  }, [userIsLoading, userIsLoggedIn]);
 
   useEffect(() => {
     document.title = recipeId ? 'Editing Recipe' : 'New Recipe Form';
@@ -53,6 +59,12 @@ export default function CreateRecipeView() {
         );
       navigate(`/recipes?recipeId=${data!.id}`);
     },
+    onMutate() {
+      startLoading();
+    },
+    onSettled() {
+      finishLoading();
+    },
   });
 
   const editMutation = trpc.recipes.edit.useMutation({
@@ -60,6 +72,12 @@ export default function CreateRecipeView() {
       utils.recipes.all.invalidate();
       utils.recipes.byRecipeId.invalidate({ recipeId: recipeId! });
       navigate(`/recipes?recipeId=${recipeId}`);
+    },
+    onMutate() {
+      startLoading();
+    },
+    onSettled() {
+      finishLoading();
     },
   });
 
@@ -185,14 +203,25 @@ export default function CreateRecipeView() {
     }
   }
 
+  function startLoading() {
+    setRecipeMutationIsLoading(true);
+  }
+
+  function finishLoading() {
+    setRecipeMutationIsLoading(false);
+  }
+
   return (
     <div className='flex flex-col w-full h-full pb-6 overflow-x-hidden'>
       <header className='flex justify-between items-center h-fit shrink-0 gap-6 w-full'>
         <h1 className='display-medium whitespace-nowrap text-ellipsis overflow-x-hidden basis-auto'>
           {watch('title') || (recipeId && 'Edit Recipe') || 'New Recipe'}
         </h1>
-        <Button icon={<SaveIcon />} onClick={handleSubmit(onSubmit)}>
-          Save
+        <Button
+          icon={recipeMutationIsLoading ? <LoadingIcon /> : <SaveIcon />}
+          onClick={handleSubmit(onSubmit)}
+        >
+          {recipeMutationIsLoading ? 'Saving...' : 'Save'}
         </Button>
       </header>
       <main className='flex justify-stretch items-start w-full gap-6 h-full overflow-hidden'>
@@ -204,6 +233,7 @@ export default function CreateRecipeView() {
             selectedTags,
             notes,
             setNotes,
+            recipeMutationIsLoading,
           }}
         />
         <article className='w-full shrink flex flex-col gap-6 bg-surface-container shadow-sm rounded-[12px] p-6 h-fit max-h-full overflow-y-auto'>
@@ -240,8 +270,11 @@ export default function CreateRecipeView() {
               <IngredientsSection />
 
               <ProcedureSection />
-              <Button icon={<SaveIcon />} onClick={submitForm}>
-                Save
+              <Button
+                icon={recipeMutationIsLoading ? <LoadingIcon /> : <SaveIcon />}
+                onClick={submitForm}
+              >
+                {recipeMutationIsLoading ? 'Saving...' : 'Save'}
               </Button>
             </form>
           </FormProvider>

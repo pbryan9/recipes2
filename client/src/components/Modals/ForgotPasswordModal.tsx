@@ -12,6 +12,7 @@ import FormInput from '../../views/create-recipe/_components/FormInput';
 import LoginIcon from '../../assets/icons/LoginIcon';
 import Modal from './Modal';
 import { useModal } from '../../lib/context/ModalContextProvider';
+import LoadingIcon from '../../assets/icons/LoadingIcon';
 
 type ForgotPasswordModalProps = {};
 
@@ -63,7 +64,7 @@ export default function ForgotPasswordModal({}: ForgotPasswordModalProps) {
         Cancel
       </Button>
       <Button
-        icon={<LoginIcon />}
+        icon={isLoading ? <LoadingIcon /> : <LoginIcon />}
         onClick={handleSubmit(onSubmit)}
         disabled={isLoading}
       >

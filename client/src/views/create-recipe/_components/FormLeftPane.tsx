@@ -6,6 +6,7 @@ import SaveIcon from '../../../assets/icons/SaveIcon';
 import TrashIcon from '../../../assets/icons/TrashIcon';
 import NotesContainer from './NotesContainer';
 import { NewNote } from '../CreateRecipeView';
+import LoadingIcon from '../../../assets/icons/LoadingIcon';
 
 type FormLeftPaneProps = {
   toggleTag: (tag: Tag) => void;
@@ -16,6 +17,7 @@ type FormLeftPaneProps = {
     e?: BaseSyntheticEvent<object, any, any> | undefined
   ) => Promise<void>;
   resetForm: () => void;
+  recipeMutationIsLoading: boolean;
 };
 
 // TODO: add references
@@ -27,6 +29,7 @@ export default function FormLeftPane({
   setNotes,
   submitForm,
   resetForm,
+  recipeMutationIsLoading,
 }: FormLeftPaneProps) {
   return (
     <section className='w-[360px] shrink-0 p-6 flex flex-col gap-6 justify-start items-center bg-surface-container rounded-[12px] shadow-sm h-fit max-h-full overflow-y-auto'>
@@ -34,11 +37,11 @@ export default function FormLeftPane({
       <NotesContainer {...{ notes, setNotes }} />
       <div className='flex gap-4 w-full justify-center'>
         <Button
-          icon={<SaveIcon />}
+          icon={recipeMutationIsLoading ? <LoadingIcon /> : <SaveIcon />}
           onClick={submitForm}
           style={{ alignSelf: 'start' }}
         >
-          Save
+          {recipeMutationIsLoading ? 'Saving...' : 'Save'}
         </Button>
         <Button
           icon={<TrashIcon color='#FFB4AB' />}

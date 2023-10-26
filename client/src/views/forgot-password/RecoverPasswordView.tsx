@@ -11,6 +11,7 @@ import LoginIcon from '../../assets/icons/LoginIcon';
 import Button from '../../components/Button';
 import useUser from '../../lib/hooks/useUser';
 import { useModal } from '../../lib/context/ModalContextProvider';
+import LoadingIcon from '../../assets/icons/LoadingIcon';
 
 export default function RecoverPasswordView() {
   const [params] = useSearchParams();
@@ -108,7 +109,7 @@ export default function RecoverPasswordView() {
             </Button>
           )}
           <Button
-            icon={<LoginIcon />}
+            icon={isLoading ? <LoadingIcon /> : <LoginIcon />}
             onClick={handleSubmit(onSubmit)}
             disabled={isLoading}
           >

@@ -11,6 +11,7 @@ import Button from '../Button';
 import FormInput from '../../views/create-recipe/_components/FormInput';
 import LoginIcon from '../../assets/icons/LoginIcon';
 import Modal from './Modal';
+import LoadingIcon from '../../assets/icons/LoadingIcon';
 
 type SignUpModalProps = {
   dismissModal: () => void;
@@ -65,7 +66,7 @@ export default function SignUpModal({ dismissModal }: SignUpModalProps) {
         Cancel
       </Button>
       <Button
-        icon={<LoginIcon />}
+        icon={isLoading ? <LoadingIcon /> : <LoginIcon />}
         onClick={handleSubmit(onSubmit)}
         disabled={isLoading}
       >
