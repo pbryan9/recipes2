@@ -13,6 +13,7 @@ import LoginIcon from '../../assets/icons/LoginIcon';
 import Modal from './Modal';
 import { useModal } from '../../lib/context/ModalContextProvider';
 import LoadingIcon from '../../assets/icons/LoadingIcon';
+import LinkIcon from '../../assets/icons/LinkIcon';
 
 type ForgotPasswordModalProps = {};
 
@@ -64,7 +65,7 @@ export default function ForgotPasswordModal({}: ForgotPasswordModalProps) {
         Cancel
       </Button>
       <Button
-        icon={isLoading ? <LoadingIcon /> : <LoginIcon />}
+        icon={isLoading ? <LoadingIcon /> : <LinkIcon />}
         onClick={handleSubmit(onSubmit)}
         disabled={isLoading}
       >
