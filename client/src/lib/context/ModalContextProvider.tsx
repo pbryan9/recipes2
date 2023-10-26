@@ -4,7 +4,10 @@ import SignUpModal from '../../components/Modals/SignUpModal';
 import AvatarModal from '../../components/Modals/AvatarModal';
 import NewTagModal from '../../components/Modals/NewTagModal';
 import NewNoteModal from '../../components/Modals/NewNoteModal';
-import PasswordResetModal from '../../components/Modals/PasswordResetModal';
+import ForgotPasswordModal from '../../components/Modals/ForgotPasswordModal';
+import UpdatePasswordModal from '../../components/Modals/UpdatePasswordModal';
+import PasswordChangeSuccessModal from '../../components/Modals/PasswordChangeSuccessModal';
+import RecoveryCodeRequestedModal from '../../components/Modals/RecoveryCodeRequestedModal';
 
 type ModalName =
   | false
@@ -14,7 +17,9 @@ type ModalName =
   | 'createTag'
   | 'createNote'
   | 'forgotPassword'
-  | 'resetPassword';
+  | 'resetPassword'
+  | 'passwordChangeSuccess'
+  | 'recoveryCodeRequested';
 
 export type ModalContext = {
   modalMode: ModalName;
@@ -66,9 +71,12 @@ export default function ModalContextProvider({
       {modalMode === 'createNote' && (
         <NewNoteModal dismissModal={dismissModal} />
       )}
-      {modalMode === 'forgotPassword' && (
-        <PasswordResetModal dismissModal={dismissModal} />
+      {modalMode === 'forgotPassword' && <ForgotPasswordModal />}
+      {modalMode === 'resetPassword' && <UpdatePasswordModal />}
+      {modalMode === 'passwordChangeSuccess' && (
+        <PasswordChangeSuccessModal dismissModal={dismissModal} />
       )}
+      {modalMode === 'recoveryCodeRequested' && <RecoveryCodeRequestedModal />}
       {children}
     </ModalContext.Provider>
   );

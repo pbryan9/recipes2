@@ -2,7 +2,6 @@ import z from 'zod';
 
 const resetPasswordValidator = z
   .object({
-    email: z.string().email({ message: 'Email is required' }),
     oldPassword: z.string(),
     newPassword: z
       .string()

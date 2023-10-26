@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import SettingsIcon from '../../assets/icons/SettingsIcon';
-import MenuWrapper from './MenuWrapper';
-import MenuItem from './MenuItem';
 import { useModal } from '../../lib/context/ModalContextProvider';
-import MenuSeparator from './MenuSeparator';
 import useUser from '../../lib/hooks/useUser';
 import { calculateLabelColor } from '../../lib/utils';
+
+import MenuWrapper from './MenuWrapper';
+import MenuItem from './MenuItem';
+import MenuSeparator from './MenuSeparator';
 import LogoutIcon from '../../assets/icons/LogoutIcon';
 import ClearIcon from '../../assets/icons/ClearIcon';
+import PasswordIcon from '../../assets/icons/PasswordIcon';
+import UserIcon from '../../assets/icons/UserIcon';
 
 type UserOptionsMenuProps = {};
 
@@ -25,6 +27,11 @@ export default function UserOptionsMenu({}: UserOptionsMenuProps) {
     openModal('colorChange');
   }
 
+  function clickPasswordReset() {
+    toggleMenu();
+    openModal('resetPassword');
+  }
+
   function clickSignOut() {
     toggleMenu();
     logout();
@@ -36,7 +43,7 @@ export default function UserOptionsMenu({}: UserOptionsMenuProps) {
 
   const triggerLabel = (
     <div className='flex flex-col items-center gap-2'>
-      <SettingsIcon />
+      <UserIcon />
       Account
     </div>
   );
@@ -47,24 +54,32 @@ export default function UserOptionsMenu({}: UserOptionsMenuProps) {
   return (
     <MenuWrapper {...{ triggerLabel, toggleMenu, isOpen }} as='div'>
       <MenuItem as='div' onClick={clickAvatar}>
-        <div
-          className='w-6 aspect-square rounded-full flex items-center justify-center self-center on-primary-container-text title-large'
-          style={{
-            backgroundColor: badgeColor,
-            color: labelColor,
-          }}
-        >
-          <p
-            className='cursor-default body-medium'
+        <div className='flex gap-3'>
+          <div
+            className='w-6 aspect-square rounded-full flex items-center justify-center self-center on-primary-container-text title-large'
             style={{
+              backgroundColor: badgeColor,
               color: labelColor,
-              opacity: 0.75,
             }}
           >
-            {username![0].toUpperCase()}
-          </p>
+            <p
+              className='cursor-default body-medium'
+              style={{
+                color: labelColor,
+                opacity: 0.75,
+              }}
+            >
+              {username![0].toUpperCase()}
+            </p>
+          </div>
+          Change icon color
         </div>
-        Avatar color
+      </MenuItem>
+      <MenuItem as='div' onClick={clickPasswordReset}>
+        <div className='flex gap-3'>
+          <PasswordIcon />
+          Reset password
+        </div>
       </MenuItem>
       <MenuItem as='div' onClick={clickSignOut}>
         <div className='flex gap-3'>

@@ -169,11 +169,16 @@ export const appRouter = t.router({
         return await recoverPassword(inputArgs);
       }),
 
-    resetPassword: protectedProcedure
-      .input(resetPasswordValidator)
-      .mutation(async ({ input: inputArgs }) => {
-        return await resetPassword(inputArgs);
-      }),
+    resetPassword: protectedProcedure.input(resetPasswordValidator).mutation(
+      async ({
+        input: inputArgs,
+        ctx: {
+          user: { userId },
+        },
+      }) => {
+        return await resetPassword(inputArgs.newPassword, userId!);
+      }
+    ),
   }),
   tags: t.router({
     all: publicProcedure.query(async () => await getAllTags()),
