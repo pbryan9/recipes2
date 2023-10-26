@@ -4,6 +4,7 @@ import SignUpModal from '../../components/Modals/SignUpModal';
 import AvatarModal from '../../components/Modals/AvatarModal';
 import NewTagModal from '../../components/Modals/NewTagModal';
 import NewNoteModal from '../../components/Modals/NewNoteModal';
+import PasswordResetModal from '../../components/Modals/PasswordResetModal';
 
 type ModalName =
   | false
@@ -11,7 +12,9 @@ type ModalName =
   | 'signUp'
   | 'colorChange'
   | 'createTag'
-  | 'createNote';
+  | 'createNote'
+  | 'forgotPassword'
+  | 'resetPassword';
 
 export type ModalContext = {
   modalMode: ModalName;
@@ -62,6 +65,9 @@ export default function ModalContextProvider({
       {modalMode === 'createTag' && <NewTagModal dismissModal={dismissModal} />}
       {modalMode === 'createNote' && (
         <NewNoteModal dismissModal={dismissModal} />
+      )}
+      {modalMode === 'forgotPassword' && (
+        <PasswordResetModal dismissModal={dismissModal} />
       )}
       {children}
     </ModalContext.Provider>

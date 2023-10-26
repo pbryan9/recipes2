@@ -2,6 +2,8 @@ import React, { useEffect, useState, createContext } from 'react';
 import { AuthenticateUserInput } from '../../../../api-server/validators/authenticateUserValidator';
 import { trpc } from '../trpc/trpc';
 import { NewUserInput } from '../../../../api-server/validators/newUserFormValidator';
+import { RecoverPasswordInput } from '../../../../api-server/validators/recoverPasswordValidator';
+import { ResetPasswordInput } from '../../../../api-server/validators/resetPasswordValidator';
 
 const initialUserState: UserContext = {
   username: null,
@@ -15,6 +17,9 @@ const initialUserState: UserContext = {
   addToFavorites: () => null,
   removeFromFavorites: () => null,
   changeAvatarColor: () => null,
+  requestRecoveryCode: () => null,
+  attemptPasswordRecovery: () => null,
+  resetPassword: () => null,
 };
 
 type UserContext = {
@@ -35,6 +40,9 @@ type UserContext = {
   addToFavorites: (recipeId: string) => void;
   removeFromFavorites: (recipeId: string) => void;
   changeAvatarColor: (colorCode: string) => void;
+  requestRecoveryCode: (email: string) => void;
+  attemptPasswordRecovery: (input: RecoverPasswordInput) => void;
+  resetPassword: (input: ResetPasswordInput) => void;
 };
 
 export const UserContext = createContext<UserContext>(initialUserState);
@@ -113,6 +121,29 @@ export default function UserContextProvider({
     },
   });
 
+  const requestRecoveryCodeMutation =
+    trpc.users.requestRecoveryCode.useMutation({
+      onSuccess() {
+        console.log('ok did it');
+      },
+    });
+
+  const attemptPasswordRecoveryMutation =
+    trpc.users.attemptPasswordRecovery.useMutation({
+      onSuccess(data) {
+        localStorage.setItem('token', data);
+        console.log({ data, message: 'password reset' });
+      },
+    });
+
+  // TODO: resume here setting up resetPassword function
+  const resetPasswordMutation = trpc.users.resetPassword.useMutation({
+    onSuccess(data) {
+      localStorage.setItem('token', data);
+      console.log({ message: 'password reset successful' });
+    },
+  });
+
   useEffect(() => {
     setUserContext((prev) => ({
       ...prev,
@@ -168,10 +199,17 @@ export default function UserContextProvider({
     changeAvatarColorMutation.mutate({ colorCode });
   }
 
+  function requestRecoveryCode(email: string) {
+    requestRecoveryCodeMutation.mutate({ email });
+  }
+
+  function attemptPasswordRecovery(input: RecoverPasswordInput) {
+    attemptPasswordRecoveryMutation.mutate(input);
+  }
+
   /**
    *
    * Set up user management functions
-   * ~~(and re-set them if ever they become undefined for some reason)~~
    *
    */
 
@@ -184,26 +222,10 @@ export default function UserContextProvider({
       addToFavorites,
       removeFromFavorites,
       changeAvatarColor,
+      requestRecoveryCode,
+      attemptPasswordRecovery,
     }));
   }, []);
-
-  // useEffect(() => {
-  //   if (!userContext.login) {
-  //     setUserContext((prev) => ({ ...prev, login }));
-  //   }
-  // }, [userContext.login]);
-
-  // useEffect(() => {
-  //   if (!userContext.logout) {
-  //     setUserContext((prev) => ({ ...prev, logout }));
-  //   }
-  // }, [userContext.logout]);
-
-  // useEffect(() => {
-  //   if (!userContext.createUser) {
-  //     setUserContext((prev) => ({ ...prev, createUser }));
-  //   }
-  // }, [userContext.createUser]);
 
   useEffect(() => {
     if (!tokenCheck.isLoading && !tokenCheck.isError) {

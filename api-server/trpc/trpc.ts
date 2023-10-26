@@ -24,6 +24,11 @@ import removeFromFavorites from '../db/users/removeFromFavorites';
 import getUserInfo from '../db/users/getUserInfo';
 import changeAvatarColorValidator from '../validators/changeAvatarColorValidator';
 import changeAvatarColor from '../db/users/changeAvatarColor';
+import sendPasswordReset from '../db/users/sendPasswordReset';
+import recoverPasswordValidator from '../validators/recoverPasswordValidator';
+import recoverPassword from '../db/users/recoverPassword';
+import resetPasswordValidator from '../validators/resetPasswordValidator';
+import resetPassword from '../db/users/resetPassword';
 
 /**
  * Initialization of tRPC backend
@@ -69,16 +74,19 @@ export const appRouter = t.router({
     all: publicProcedure.query(async () => {
       return await getAllRecipes();
     }),
+
     byRecipeId: publicProcedure
       .input(z.object({ recipeId: z.string().uuid() }))
       .query(async ({ input }) => {
         return await getRecipeById(input.recipeId);
       }),
+
     create: protectedProcedure
       .input(newRecipeFormInputSchema)
       .mutation(async ({ input }) => {
         return await createNewRecipe(input);
       }),
+
     edit: protectedProcedure
       .input(
         newRecipeFormInputSchema.and(z.object({ recipeId: z.string().uuid() }))
@@ -86,6 +94,7 @@ export const appRouter = t.router({
       .mutation(async ({ input }) => {
         return await editRecipe(input);
       }),
+
     delete: protectedProcedure
       .input(z.object({ recipeId: z.string().uuid() }))
       .mutation(async ({ input }) => {
@@ -98,6 +107,7 @@ export const appRouter = t.router({
       .mutation(async ({ input }) => {
         return await createUser(input);
       }),
+
     changeAvatarColor: protectedProcedure
       .input(changeAvatarColorValidator)
       .mutation(async ({ input, ctx }) => {
@@ -106,14 +116,17 @@ export const appRouter = t.router({
           userId: ctx.user.userId!,
         });
       }),
+
     authenticateUser: publicProcedure
       .input(authenticateUserValidator)
       .mutation(async ({ input }) => {
         return await authenticateUser(input);
       }),
+
     validateToken: protectedProcedure.query(({ ctx }) => {
       return ctx.user.username;
     }),
+
     getUserInfo: protectedProcedure.query(
       async ({
         ctx: {
@@ -123,27 +136,48 @@ export const appRouter = t.router({
         return await getUserInfo(userId!);
       }
     ),
+
     addToFavorites: protectedProcedure.input(addToFavoritesValidator).mutation(
-      ({
+      async ({
         input: { recipeId },
         ctx: {
           user: { userId },
         },
-      }) => addToFavorites({ recipeId }, userId!)
+      }) => await addToFavorites({ recipeId }, userId!)
     ),
+
     removeFromFavorites: protectedProcedure
       .input(addToFavoritesValidator)
       .mutation(
-        ({
+        async ({
           input: { recipeId },
           ctx: {
             user: { userId },
           },
-        }) => removeFromFavorites({ recipeId }, userId!)
+        }) => await removeFromFavorites({ recipeId }, userId!)
       ),
+
+    requestRecoveryCode: publicProcedure
+      .input(z.object({ email: z.string().email() }))
+      .mutation(async ({ input: { email } }) => {
+        return await sendPasswordReset({ email });
+      }),
+
+    attemptPasswordRecovery: publicProcedure
+      .input(recoverPasswordValidator)
+      .mutation(async ({ input: inputArgs }) => {
+        return await recoverPassword(inputArgs);
+      }),
+
+    resetPassword: protectedProcedure
+      .input(resetPasswordValidator)
+      .mutation(async ({ input: inputArgs }) => {
+        return await resetPassword(inputArgs);
+      }),
   }),
   tags: t.router({
     all: publicProcedure.query(async () => await getAllTags()),
+
     create: protectedProcedure
       .input(newTagFormValidator)
       .mutation(async ({ input }) => {
