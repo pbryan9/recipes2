@@ -6,17 +6,17 @@ import useUser from '../../lib/hooks/useUser';
 import resetPasswordValidator, {
   type ResetPasswordInput,
 } from '../../../../api-server/validators/resetPasswordValidator';
+import { useModal } from '../../lib/context/ModalContextProvider';
 
 import Button from '../Button';
 import FormInput from '../../views/create-recipe/_components/FormInput';
 import LoginIcon from '../../assets/icons/LoginIcon';
 import Modal from './Modal';
-import { useModal } from '../../lib/context/ModalContextProvider';
 
 type UpdatePasswordModalProps = {};
 
 export default function UpdatePasswordModal({}: UpdatePasswordModalProps) {
-  const { resetPassword, isLoading } = useUser();
+  const { resetPassword, isLoading, error, clearError } = useUser();
   const { dismissModal, openModal } = useModal();
   const methods = useForm<ResetPasswordInput>({
     resolver: zodResolver(resetPasswordValidator),
@@ -30,7 +30,33 @@ export default function UpdatePasswordModal({}: UpdatePasswordModalProps) {
 
   useEffect(() => {
     setFocus('oldPassword');
+
+    return () => clearError('resetPassword');
   }, []);
+
+  useEffect(() => {
+    if (error.resetPassword) {
+      switch (error.resetPassword) {
+        case 'userId': {
+          console.warn('Somehow the user id is messed up');
+          break;
+        }
+        case 'Error updating user password': {
+          console.warn('Somehow there was an issue updating the user');
+          break;
+        }
+        case 'oldPassword': {
+          methods.setError(
+            'oldPassword',
+            { message: 'Password is incorrect' },
+            { shouldFocus: true }
+          );
+          methods.resetField('oldPassword', { keepError: true });
+          break;
+        }
+      }
+    }
+  }, [error]);
 
   const modalBody = (
     <FormProvider {...methods}>
@@ -67,12 +93,8 @@ export default function UpdatePasswordModal({}: UpdatePasswordModalProps) {
       <Button onClick={dismissModal} variant='text'>
         Cancel
       </Button>
-      <Button
-        icon={<LoginIcon />}
-        onClick={handleSubmit(onSubmit)}
-        disabled={isLoading}
-      >
-        {isLoading ? 'Loading...' : 'Send reset link'}
+      <Button onClick={handleSubmit(onSubmit)} disabled={isLoading}>
+        {isLoading ? 'Loading...' : 'Update password'}
       </Button>
     </>
   );

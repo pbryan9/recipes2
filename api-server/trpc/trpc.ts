@@ -176,7 +176,7 @@ export const appRouter = t.router({
           user: { userId },
         },
       }) => {
-        return await resetPassword(inputArgs.newPassword, userId!);
+        return await resetPassword(inputArgs, userId!);
       }
     ),
   }),

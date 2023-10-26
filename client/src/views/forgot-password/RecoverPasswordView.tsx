@@ -15,8 +15,13 @@ import { useModal } from '../../lib/context/ModalContextProvider';
 export default function RecoverPasswordView() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
-  const { attemptPasswordRecovery, isLoading, isLoggedIn } = useUser();
+  const { attemptPasswordRecovery, isLoading, isLoggedIn, error, clearError } =
+    useUser();
   const { openModal } = useModal();
+
+  useEffect(() => {
+    return () => clearError('attemptPasswordRecovery');
+  }, []);
 
   useEffect(() => {
     if (isLoggedIn) navigate('/');
@@ -25,7 +30,6 @@ export default function RecoverPasswordView() {
   const email = params.get('email') || '';
   const resetCode = parseInt(params.get('code') ?? '-1');
 
-  // console.log({ email, resetCode });
   const methods = useForm<RecoverPasswordInput>({
     resolver: zodResolver(recoverPasswordValidator),
     defaultValues: {
@@ -35,6 +39,29 @@ export default function RecoverPasswordView() {
       confirmPassword: '',
     },
   });
+
+  useEffect(() => {
+    if (error.attemptPasswordRecovery) {
+      switch (error.attemptPasswordRecovery) {
+        case 'recoveryCode_mismatch': {
+          methods.setError('resetCode', { message: 'Invalid recovery code' });
+          break;
+        }
+        case 'recoveryCode_stale': {
+          methods.setError('resetCode', {
+            message: 'Recovery code has expired',
+          });
+          break;
+        }
+        case 'email_mismatch': {
+          methods.setError('email', {
+            message: 'Email address does not match',
+          });
+          break;
+        }
+      }
+    }
+  }, [error]);
 
   const { handleSubmit } = methods;
 
@@ -53,26 +80,33 @@ export default function RecoverPasswordView() {
             className='flex flex-col gap-4'
             onSubmit={handleSubmit(onSubmit)}
           >
+            <FormInput fieldLabel='Email' fieldName='email' inputWidth='full' />
             <FormInput
-              fieldLabel='Email'
-              fieldName='email'
-              inputWidth='medium'
+              fieldLabel='Recovery code'
+              fieldName='resetCode'
+              inputWidth='full'
             />
-            <FormInput fieldLabel='Recovery code' fieldName='resetCode' />
             <FormInput
               fieldLabel='New password'
               fieldName='password'
               type='password'
+              inputWidth='full'
             />
             <FormInput
               fieldLabel='Confirm password'
               fieldName='confirmPassword'
               type='password'
+              inputWidth='full'
             />
             <button type='submit' className='hidden' disabled={isLoading} />
           </form>
         </FormProvider>
-        <div className='flex justify-end pt-6'>
+        <div className='flex justify-end pt-6 gap-4'>
+          {error.attemptPasswordRecovery && (
+            <Button variant='text' onClick={() => openModal('forgotPassword')}>
+              Request another code
+            </Button>
+          )}
           <Button
             icon={<LoginIcon />}
             onClick={handleSubmit(onSubmit)}

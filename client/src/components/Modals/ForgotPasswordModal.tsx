@@ -16,7 +16,8 @@ import { useModal } from '../../lib/context/ModalContextProvider';
 type ForgotPasswordModalProps = {};
 
 export default function ForgotPasswordModal({}: ForgotPasswordModalProps) {
-  const { requestRecoveryCode, isLoggedIn, isLoading } = useUser();
+  const { requestRecoveryCode, isLoggedIn, isLoading, error, clearError } =
+    useUser();
   const { dismissModal, openModal } = useModal();
   const methods = useForm<RequestPasswordResetInput>({
     resolver: zodResolver(requestPasswordResetValidator),
@@ -26,14 +27,21 @@ export default function ForgotPasswordModal({}: ForgotPasswordModalProps) {
 
   useEffect(() => {
     setFocus('email');
+
+    return () => clearError('requestRecoveryCode');
   }, []);
+
+  useEffect(() => {
+    if (error.requestRecoveryCode) {
+      methods.setError('email', { message: 'Email address does not exist' });
+    }
+  }, [error]);
 
   useEffect(() => {
     if (isLoggedIn) dismissModal();
   }, [isLoggedIn]);
 
   function onSubmit({ email }: RequestPasswordResetInput) {
-    console.log('hello');
     requestRecoveryCode(email, () => openModal('recoveryCodeRequested'));
   }
 

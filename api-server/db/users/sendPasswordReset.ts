@@ -1,6 +1,7 @@
 import nodemailer, { SendMailOptions } from 'nodemailer';
 import prisma from '../prismaSingleton';
 import 'dotenv/config';
+import { TRPCError } from '@trpc/server';
 
 const {
   NODEMAILER_USER,
@@ -15,6 +16,12 @@ const RESTORE_URL =
   '/recover-password';
 
 export default async function sendPasswordReset({ email }: { email: string }) {
+  // check that email exists
+  const emailCheck = await prisma.user.findUnique({ where: { email } });
+  if (!emailCheck) {
+    throw new TRPCError({ code: 'NOT_FOUND', message: 'email' });
+  }
+
   const resetCode = await generateResetCode(email);
 
   const transporter = nodemailer.createTransport({

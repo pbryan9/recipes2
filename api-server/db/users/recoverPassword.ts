@@ -2,6 +2,7 @@ import { RecoverPasswordInput } from '../../validators/recoverPasswordValidator'
 import prisma from '../prismaSingleton';
 import bcrypt from 'bcrypt';
 import generateJwt from './generateJwt';
+import { TRPCError } from '@trpc/server';
 
 const VALIDITY_PERIOD = 1000 * 60 * 10; // 1000 * 60 * 10 === 10 minutes
 
@@ -15,14 +16,28 @@ export default async function recoverPassword({
     include: { user: { select: { email: true } } },
   });
 
-  if (recoveryCode?.user.email !== email)
-    throw new Error(`Invalid recovery code for email ${email}`);
+  if (!recoveryCode) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'recoveryCode_mismatch',
+    });
+  }
+
+  if (recoveryCode?.user.email !== email) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'email_mismatch',
+    });
+  }
 
   const codeIsFresh =
     Date.now() < recoveryCode.timestamp.getTime() + VALIDITY_PERIOD;
 
   if (!codeIsFresh) {
-    throw new Error(`Recovery code ${recoveryCode.resetCode} is stale`);
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'recoveryCode_stale',
+    });
   }
 
   const hashedPassword = await bcrypt.hash(password, 13);
@@ -32,7 +47,12 @@ export default async function recoverPassword({
     data: { password: hashedPassword },
   });
 
-  if (!updatedUser) throw new Error('Error updating user password');
+  if (!updatedUser) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'Unspecified error while updating password',
+    });
+  }
 
   await prisma.passwordReset.deleteMany({
     where: { userId: recoveryCode.userId },

@@ -20,7 +20,15 @@ const initialUserState: UserContext = {
   requestRecoveryCode: () => null,
   attemptPasswordRecovery: () => null,
   resetPassword: () => null,
+  clearError: () => null,
+  error: {},
 };
+
+type UserErrorItem = string;
+
+type UserError = Partial<
+  Record<Exclude<keyof UserContext, 'error'>, UserErrorItem>
+>;
 
 type UserContext = {
   username: string | null;
@@ -43,9 +51,11 @@ type UserContext = {
   requestRecoveryCode: (email: string, cb?: () => void) => void;
   attemptPasswordRecovery: (
     input: RecoverPasswordInput,
-    cb?: () => void
+    successCallback?: () => void
   ) => void;
   resetPassword: (input: ResetPasswordInput, cb?: () => void) => void;
+  clearError: (path: keyof UserError) => void;
+  error: UserError;
 };
 
 export const UserContext = createContext<UserContext>(initialUserState);
@@ -106,6 +116,10 @@ export default function UserContextProvider({
         username: ctx.username,
         isLoggedIn: true,
       }));
+      clearError('login');
+    },
+    onError(err) {
+      addErrorToContext(err.message, 'login');
     },
     onMutate() {
       startLoading();
@@ -123,6 +137,10 @@ export default function UserContextProvider({
       }));
       utils.users.getUserInfo.invalidate();
       utils.users.getUserInfo.refetch();
+      clearError('addToFavorites');
+    },
+    onError(err) {
+      addErrorToContext(err.message, 'addToFavorites');
     },
     onMutate() {
       startLoading();
@@ -137,6 +155,10 @@ export default function UserContextProvider({
       onSuccess() {
         utils.users.getUserInfo.invalidate();
         utils.users.getUserInfo.refetch();
+        clearError('removeFromFavorites');
+      },
+      onError(err) {
+        addErrorToContext(err.message, 'removeFromFavorites');
       },
       onMutate() {
         startLoading();
@@ -154,6 +176,10 @@ export default function UserContextProvider({
       }));
 
       utils.recipes.all.refetch();
+      clearError('changeAvatarColor');
+    },
+    onError(err) {
+      addErrorToContext(err.message, 'changeAvatarColor');
     },
     onMutate() {
       startLoading();
@@ -168,15 +194,46 @@ export default function UserContextProvider({
       onMutate() {
         startLoading();
       },
+      onSuccess() {
+        clearError('requestRecoveryCode');
+      },
+      onError(err) {
+        addErrorToContext(err.message, 'requestRecoveryCode');
+      },
       onSettled() {
         finishLoading();
       },
     });
 
+  function addErrorToContext(errMessage: string, path: keyof UserError) {
+    setUserContext((prev) => ({
+      ...prev,
+      error: {
+        ...prev.error,
+        [path]: errMessage,
+      },
+    }));
+  }
+
+  function clearError(path: keyof UserError) {
+    let newErrorContext = userContext.error;
+    delete newErrorContext[path];
+
+    setUserContext((prev) => ({ ...prev, error: newErrorContext }));
+    // setUserContext((prev) => ({
+    //   ...prev,
+    //   error: {
+    //     ...prev.error,
+    //     [path]: undefined,
+    //   },
+    // }));
+  }
+
   const attemptPasswordRecoveryMutation =
     trpc.users.attemptPasswordRecovery.useMutation({
       onSuccess(data) {
         localStorage.setItem('token', data);
+        clearError('attemptPasswordRecovery');
       },
       onMutate() {
         startLoading();
@@ -184,11 +241,18 @@ export default function UserContextProvider({
       onSettled() {
         finishLoading();
       },
+      onError(err) {
+        addErrorToContext(err.message, 'attemptPasswordRecovery');
+      },
     });
 
   const resetPasswordMutation = trpc.users.resetPassword.useMutation({
     onSuccess(data) {
       localStorage.setItem('token', data);
+      clearError('resetPassword');
+    },
+    onError(err) {
+      addErrorToContext(err.message, 'resetPassword');
     },
     onMutate() {
       startLoading();
@@ -212,6 +276,7 @@ export default function UserContextProvider({
     requestRecoveryCode,
     attemptPasswordRecovery,
     resetPassword,
+    clearError,
   };
 
   function startLoading() {
@@ -279,12 +344,10 @@ export default function UserContextProvider({
 
   function attemptPasswordRecovery(
     input: RecoverPasswordInput,
-    cb?: () => void
+    successCallback?: () => void
   ) {
     attemptPasswordRecoveryMutation.mutate(input, {
-      onSuccess() {
-        if (cb) cb();
-      },
+      onSuccess: successCallback,
     });
   }
 
