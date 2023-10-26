@@ -11,6 +11,7 @@ import Button from '../Button';
 import FormInput from '../../views/create-recipe/_components/FormInput';
 import LoginIcon from '../../assets/icons/LoginIcon';
 import Modal from './Modal';
+import { useModal } from '../../lib/context/ModalContextProvider';
 
 type SignInModalProps = {
   dismissModal: () => void;
@@ -21,6 +22,7 @@ export default function SignInModal({ dismissModal }: SignInModalProps) {
   const methods = useForm<AuthenticateUserInput>({
     resolver: zodResolver(authenticateUserValidator),
   });
+  const { openModal } = useModal();
 
   const { handleSubmit, setFocus } = methods;
 
@@ -55,6 +57,9 @@ export default function SignInModal({ dismissModal }: SignInModalProps) {
 
   const modalButtons = (
     <>
+      <Button variant='text' onClick={() => openModal('forgotPassword')}>
+        Forgot password
+      </Button>
       <Button onClick={dismissModal} variant='text'>
         Cancel
       </Button>
