@@ -8,6 +8,8 @@ import ForgotPasswordModal from '../../components/Modals/ForgotPasswordModal';
 import UpdatePasswordModal from '../../components/Modals/UpdatePasswordModal';
 import PasswordChangeSuccessModal from '../../components/Modals/PasswordChangeSuccessModal';
 import RecoveryCodeRequestedModal from '../../components/Modals/RecoveryCodeRequestedModal';
+import ConfirmToDeleteItemModal from '../../components/Modals/ConfirmToDeleteItem';
+import ConfirmToResetFormModal from '../../components/Modals/ConfirmToResetForm';
 
 type ModalName =
   | false
@@ -19,7 +21,9 @@ type ModalName =
   | 'forgotPassword'
   | 'resetPassword'
   | 'passwordChangeSuccess'
-  | 'recoveryCodeRequested';
+  | 'recoveryCodeRequested'
+  | 'confirmToDeleteItem'
+  | 'confirmToResetForm';
 
 export type ModalContext = {
   modalMode: ModalName;
@@ -44,6 +48,8 @@ export default function ModalContextProvider({
     function handleEscKey(e: KeyboardEvent) {
       if (modalMode && e.code === 'Escape') {
         dismissModal();
+        window.dispatchEvent(new CustomEvent('reset_cancelled'));
+        window.dispatchEvent(new CustomEvent('delete_cancelled'));
       }
     }
 
@@ -77,6 +83,8 @@ export default function ModalContextProvider({
         <PasswordChangeSuccessModal dismissModal={dismissModal} />
       )}
       {modalMode === 'recoveryCodeRequested' && <RecoveryCodeRequestedModal />}
+      {modalMode === 'confirmToDeleteItem' && <ConfirmToDeleteItemModal />}
+      {modalMode === 'confirmToResetForm' && <ConfirmToResetFormModal />}
       {children}
     </ModalContext.Provider>
   );

@@ -1,5 +1,8 @@
+import { useEffect } from 'react';
+import { useModal } from '../../../lib/context/ModalContextProvider';
 import type { UseFieldArrayRemove } from 'react-hook-form';
 import type { RouterInputs } from '../../../lib/trpc/trpc';
+
 import TrashIcon from '../../../assets/icons/TrashIcon';
 import FormInput from './FormInput';
 
@@ -16,6 +19,29 @@ export default function ProcedureStepItem({
   groupIndex,
   removeMember,
 }: ProcedureStepItemProps) {
+  const { openModal } = useModal();
+
+  function deleteConfirmed() {
+    removeMember(procedureIndex);
+  }
+
+  function deleteCancelled() {
+    window.removeEventListener('delete_confirmed', deleteConfirmed);
+    window.removeEventListener('delete_cancelled', deleteCancelled);
+  }
+
+  function deleteThisItem() {
+    window.addEventListener('delete_confirmed', deleteConfirmed);
+    window.addEventListener('delete_cancelled', deleteCancelled);
+
+    openModal('confirmToDeleteItem');
+  }
+
+  useEffect(() => {
+    // clean up event listeners
+    return deleteCancelled;
+  }, []);
+
   const registrationPath = `procedureGroups.${groupIndex}.procedureSteps.${procedureIndex}`;
 
   return (
@@ -32,7 +58,7 @@ export default function ProcedureStepItem({
         <button
           type='button'
           className={`h-14 aspect-square flex items-center justify-center`}
-          onClick={() => removeMember(procedureIndex)}
+          onClick={deleteThisItem}
         >
           <TrashIcon />
         </button>

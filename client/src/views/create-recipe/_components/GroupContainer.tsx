@@ -1,8 +1,12 @@
 import { useEffect } from 'react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
-
-import type { UseFieldArrayRemove } from 'react-hook-form';
+import {
+  useFieldArray,
+  useFormContext,
+  type UseFieldArrayRemove,
+} from 'react-hook-form';
 import type { GroupType } from './GroupsWrapper';
+import { useModal } from '../../../lib/context/ModalContextProvider';
+
 import IngredientItem from './IngredientItem';
 import ProcedureStepItem from './ProcedureStepItem';
 import PlusIcon from '../../../assets/icons/PlusIcon';
@@ -24,6 +28,29 @@ export default function GroupContainer({
   // set up field array
   const { control } = useFormContext();
 
+  const { openModal } = useModal();
+
+  function deleteConfirmed() {
+    removeGroup(groupIndex);
+  }
+
+  function deleteCancelled() {
+    window.removeEventListener('delete_confirmed', deleteConfirmed);
+    window.removeEventListener('delete_cancelled', deleteCancelled);
+  }
+
+  function deleteThisItem() {
+    window.addEventListener('delete_confirmed', deleteConfirmed);
+    window.addEventListener('delete_cancelled', deleteCancelled);
+
+    openModal('confirmToDeleteItem');
+  }
+
+  useEffect(() => {
+    // clean up event listeners
+    return deleteCancelled;
+  }, []);
+
   const {
     fields,
     remove: removeMember,
@@ -42,10 +69,6 @@ export default function GroupContainer({
             ingredientIndex: index,
             groupIndex,
             removeMember,
-            // getFieldState,
-            // setFocus,
-            // errors,
-            // register,
           }}
         />
       );
@@ -91,7 +114,7 @@ export default function GroupContainer({
           type='button'
           icon={<TrashIcon size={18} color='#FFB4AB' />}
           variant='danger'
-          onClick={() => removeGroup(groupIndex)}
+          onClick={deleteThisItem}
           // className='rounded-full flex items-center gap-2 pl-4 pr-6 h-10 label-large bg-transparent text-primary border border-outline'
         >
           Remove group

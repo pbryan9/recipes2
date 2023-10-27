@@ -2,6 +2,8 @@ import type { UseFieldArrayRemove } from 'react-hook-form';
 import { RouterInputs } from '../../../lib/trpc/trpc';
 import FormInput from './FormInput';
 import TrashIcon from '../../../assets/icons/TrashIcon';
+import { useEffect } from 'react';
+import { useModal } from '../../../lib/context/ModalContextProvider';
 
 type FormInput = RouterInputs['recipes']['create'];
 
@@ -16,6 +18,30 @@ export default function IngredientItem({
   groupIndex,
   removeMember,
 }: IngredientItemProps) {
+  const { openModal } = useModal();
+
+  function deleteConfirmed() {
+    removeMember(ingredientIndex);
+    clearListeners();
+  }
+
+  function clearListeners() {
+    window.removeEventListener('delete_confirmed', deleteConfirmed);
+    window.removeEventListener('delete_cancelled', clearListeners);
+  }
+
+  function deleteThisItem() {
+    window.addEventListener('delete_confirmed', deleteConfirmed);
+    window.addEventListener('delete_cancelled', clearListeners);
+
+    openModal('confirmToDeleteItem');
+  }
+
+  useEffect(() => {
+    // clean up event listeners
+    return clearListeners;
+  }, []);
+
   const registrationPath = `ingredientGroups.${groupIndex}.ingredients.${ingredientIndex}`;
 
   return (
@@ -49,7 +75,8 @@ export default function IngredientItem({
         <button
           type='button'
           className={`h-14 aspect-square flex items-center justify-center`}
-          onClick={() => removeMember(ingredientIndex)}
+          // onClick={() => removeMember(ingredientIndex)}
+          onClick={deleteThisItem}
         >
           <TrashIcon />
         </button>

@@ -1,10 +1,9 @@
 import React from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
+import { type RouterInputs } from '../../../lib/trpc/trpc';
 
 import GroupContainer from './GroupContainer';
 import Button from '../../../components/Button';
-
-import { RouterInputs } from '../../../lib/trpc/trpc';
 import FormInput from './FormInput';
 import PlusIcon from '../../../assets/icons/PlusIcon';
 
@@ -44,7 +43,7 @@ export default function GroupsWrapper({ groupType }: GroupsWrapperProps) {
       <GroupContainer
         {...{
           groupIndex,
-          groupTitle,
+          groupTitle: groupTitle || '',
           groupType,
           removeGroup,
         }}
