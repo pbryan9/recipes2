@@ -9,7 +9,6 @@ import requestPasswordResetValidator, {
 
 import Button from '../Button';
 import FormInput from '../../views/create-recipe/_components/FormInput';
-import LoginIcon from '../../assets/icons/LoginIcon';
 import Modal from './Modal';
 import { useModal } from '../../lib/context/ModalContextProvider';
 import LoadingIcon from '../../assets/icons/LoadingIcon';
