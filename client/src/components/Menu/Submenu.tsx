@@ -17,10 +17,12 @@ export default function Submenu({ children, caption = 'hello' }: SubmenuProps) {
     function showMenu() {
       if (timer) clearTimeout(timer);
 
-      setSubmenuIsOpen(true);
+      timer = setTimeout(() => setSubmenuIsOpen(true), 250);
     }
 
     function hideMenu() {
+      if (timer) clearTimeout(timer);
+
       timer = setTimeout(() => setSubmenuIsOpen(false), 300);
     }
 
