@@ -9,35 +9,12 @@ import useFilter from '../../lib/hooks/useFilter';
 
 export default function SearchCard() {
   const inputRef = useRef<HTMLInputElement>(null);
-  // const [searchTerm, setSearchTerm] = useState('');
-  // const { setFilter, filterIsActive, clearFilter } = useRecipes();
   const { searchTerm, updateFilter, clearFilter } = useFilter();
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     updateFilter(searchTerm);
   }
-
-  // function resetFilter() {
-  //   clearFilter();
-  //   setSearchTerm('');
-  // }
-
-  // useEffect(() => {
-  //   function handleEsc(e: KeyboardEvent) {
-  //     if (e.code === 'Escape' && !modalMode) {
-  //       resetFilter();
-  //     }
-  //   }
-
-  //   window.addEventListener('keydown', handleEsc);
-
-  //   return () => window.removeEventListener('keydown', handleEsc);
-  // }, [modalMode, inputRef]);
-
-  // useEffect(() => {
-  //   if (searchTerm !== '') setFilter(searchTerm);
-  // }, [searchTerm]);
 
   const filterIsActive = searchTerm !== '';
 

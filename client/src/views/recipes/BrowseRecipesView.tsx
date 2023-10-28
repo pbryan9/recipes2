@@ -37,14 +37,14 @@ export default function BrowseRecipesView() {
   const filterIsActive = searchTerm !== '';
 
   return (
-    <div className='w-full flex items-start justify-stretch gap-6 overflow-y-hidden h-full'>
+    <div className='w-full flex items-start justify-stretch gap-6 overflow-y-hidden overflow-x-visible h-full'>
       <section
-        className={`shrink-0 transition-all ease-in-out duration-300 flex overflow-y-hidden h-full flex-col items-center justify-start gap-6 pt-4 print:hidden ${
+        className={`shrink-0 transition-all ease-in-out duration-300 flex overflow-y-hidden overflow-x-visible h-full flex-col items-center justify-start gap-6 pt-4 print:hidden ${
           expanded ? 'shrink w-0' : 'w-[360px]'
         }`}
       >
         <SearchCard />
-        <div className='flex flex-col justify-start items-stretch gap-2 overflow-y-auto w-full'>
+        <div className='flex flex-col justify-start items-stretch gap-2 overflow-y-auto overflow-x-visible w-full'>
           {filterIsActive
             ? renderFilterResults(filterResults)
             : prefilterRecipes(recipes).map((recipe) => (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import MenuItem from './MenuItem';
 import MenuWrapper from './MenuWrapper';
 import MenuSeparator from './MenuSeparator';
@@ -9,6 +9,8 @@ import MenuLabel from './MenuLabel';
 import useUser from '../../lib/hooks/useUser';
 import Button from '../Button';
 import ResetIcon from '../../assets/icons/ResetIcon';
+import Submenu from './Submenu';
+import TagCollection from './TagCollection';
 
 type SearchOptionsMenuProps = {
   label: React.ReactNode;
@@ -20,6 +22,7 @@ export default function SearchOptionsMenu({
   resetFilter,
 }: SearchOptionsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   const {
     filterOptions,
@@ -29,8 +32,12 @@ export default function SearchOptionsMenu({
   } = useFilter();
   const { isLoggedIn } = useUser();
 
-  function toggleMenu() {
+  function toggleMenu(e?: MouseEvent) {
     setIsOpen((prev) => !prev);
+
+    if (e) {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    }
   }
 
   const filterIsActive = searchTerm !== '';
@@ -46,8 +53,36 @@ export default function SearchOptionsMenu({
   const filterSegment: FilterOptionKey[] = ['favorites', 'owned'];
 
   return (
-    <MenuWrapper triggerLabel={label} toggleMenu={toggleMenu} isOpen={isOpen}>
-      <MenuLabel>
+    <MenuWrapper
+      triggerLabel={label}
+      toggleMenu={toggleMenu}
+      isOpen={isOpen}
+      mousePos={mousePos}
+    >
+      <Submenu caption='Search options'>
+        <MenuItem onClick={restoreDefaultFilterOptions}>
+          Restore default options
+          <ResetIcon />
+        </MenuItem>
+
+        <MenuSeparator />
+
+        {searchSegment.map((opt) => (
+          <React.Fragment key={opt}>
+            {opt === 'matchAll' && <MenuSeparator />}
+            <MenuItem
+              onClick={() => toggleFilterOption(opt as FilterOptionKey)}
+            >
+              {filterOptions[opt as FilterOptionKey].label}
+              <Toggler
+                as='div'
+                isOn={filterOptions[opt as FilterOptionKey].enabled}
+              />
+            </MenuItem>
+          </React.Fragment>
+        ))}
+      </Submenu>
+      {/* <MenuLabel>
         Search options:
         <Button
           variant='text'
@@ -68,13 +103,18 @@ export default function SearchOptionsMenu({
             isOn={filterOptions[opt as FilterOptionKey].enabled}
           />
         </MenuItem>
-      ))}
+      ))} */}
+
+      <MenuSeparator />
+
+      <MenuLabel>Filter recipes:</MenuLabel>
+
+      <Submenu caption='Tags'>
+        <TagCollection />
+      </Submenu>
 
       {isLoggedIn && (
         <>
-          <MenuSeparator />
-
-          <MenuLabel>Filter recipes:</MenuLabel>
           {filterSegment.map((opt) => (
             <MenuItem
               key={opt}

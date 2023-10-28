@@ -9,6 +9,7 @@ type MenuWrapperProps = {
   isOpen: boolean;
   children: React.ReactNode;
   as?: 'button' | 'div';
+  mousePos?: { x: number; y: number };
 };
 
 export default function MenuWrapper({
@@ -17,6 +18,7 @@ export default function MenuWrapper({
   isOpen,
   children,
   as = 'button',
+  mousePos,
 }: MenuWrapperProps) {
   const { modalMode } = useModal();
   const menuBodyRef = useRef<HTMLDivElement>(null);
@@ -74,7 +76,7 @@ export default function MenuWrapper({
       <MenuTrigger toggleMenu={toggleMenu} as={as}>
         {triggerLabel}
       </MenuTrigger>
-      <MenuBody ref={menuBodyRef} isOpen={isOpen}>
+      <MenuBody ref={menuBodyRef} isOpen={isOpen} mousePos={mousePos}>
         {children}
       </MenuBody>
     </article>
