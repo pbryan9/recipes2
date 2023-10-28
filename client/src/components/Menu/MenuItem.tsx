@@ -20,7 +20,10 @@ export default function MenuItem({
     <li className='h-12 hover:bg-white/10 w-full cursor-pointer'>
       <PolyTag
         className='h-full w-full px-3 flex justify-between items-center gap-3 whitespace-nowrap'
-        onClick={onClick}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick();
+        }}
       >
         {children}
       </PolyTag>
