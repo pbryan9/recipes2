@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import MenuItem from './MenuItem';
 import MenuWrapper from './MenuWrapper';
 import MenuSeparator from './MenuSeparator';
@@ -7,7 +7,6 @@ import useFilter from '../../lib/hooks/useFilter';
 import { FilterOptionKey } from '../../lib/context/FilterContextProvider';
 import MenuLabel from './MenuLabel';
 import useUser from '../../lib/hooks/useUser';
-import Button from '../Button';
 import ResetIcon from '../../assets/icons/ResetIcon';
 import Submenu from './Submenu';
 import TagCollection from './TagCollection';

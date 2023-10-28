@@ -44,7 +44,6 @@ export default function SearchCard() {
           ></input>
         </form>
       </div>
-      {/* <div className=''>{filterIsActive ? <ClearIcon /> : <SearchIcon />}</div> */}
       {filterIsActive ? (
         <Button variant='text' icon={<ClearIcon />} onClick={clearFilter} />
       ) : (
