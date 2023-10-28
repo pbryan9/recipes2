@@ -15,7 +15,7 @@ export default function MenuTrigger({
 
   return (
     <PolyTag
-      className='w-8 p-2 flex items-center justify-center aspect-square cursor-pointer'
+      className='p-2 flex items-center justify-center aspect-square cursor-pointer'
       onClick={toggleMenu}
     >
       {children}

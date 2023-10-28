@@ -15,11 +15,19 @@ type UserOptionsMenuProps = {};
 
 export default function UserOptionsMenu({}: UserOptionsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [mousePos, setMousePos] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
   const { logout, avatarColor, username } = useUser();
   const { openModal } = useModal();
 
-  function toggleMenu() {
+  function toggleMenu(e?: MouseEvent) {
     setIsOpen((prev) => !prev);
+
+    if (e) {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    }
   }
 
   function clickAvatar() {
@@ -52,7 +60,7 @@ export default function UserOptionsMenu({}: UserOptionsMenuProps) {
   const labelColor = calculateLabelColor(badgeColor);
 
   return (
-    <MenuWrapper {...{ triggerLabel, toggleMenu, isOpen }} as='div'>
+    <MenuWrapper {...{ triggerLabel, toggleMenu, isOpen, mousePos }} as='div'>
       <MenuItem as='div' onClick={clickAvatar}>
         <div className='flex gap-3'>
           <div
