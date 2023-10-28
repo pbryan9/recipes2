@@ -43,12 +43,6 @@ export default function TagCollection() {
       className={`flex flex-wrap items-start justify-start w-[360px] max-w-full h-full gap-2 p-6 overflow-clip transition-all duration-200`}
       onClick={(e) => e.stopPropagation()}
     >
-      {/* {renderTags.map((tag) => (
-        <TagChip
-          key={tag.id}
-          {...{ tag, toggleTag, selected: selectedTags?.has(tag.id) }}
-        />
-      ))} */}
       {selectedTags.size > 0 &&
         Array.from(selectedTags.values()).map((tag) => (
           <TagChip
