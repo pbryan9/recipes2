@@ -6,6 +6,8 @@ import type {
 } from '../../../../api-server/db/recipes/getRecipeById';
 import useRecipes from '../hooks/useRecipes';
 import useUser from '../hooks/useUser';
+import { Tag } from '../../../../api-server/db/tags/getAllTags';
+import useTags from '../hooks/useTags';
 
 export type FilterContext = {
   filterOptions: FilterOptions;
@@ -16,6 +18,10 @@ export type FilterContext = {
   searchTerm: string;
   clearFilter: () => void;
   prefilterRecipes: (recipes: FilledRecipe[]) => FilledRecipe[];
+  tagFilterSelection: Map<string, Tag>;
+  toggleFilterTag: (tag: Tag) => void;
+  selectAllFilterTags: () => void;
+  clearFilterTags: () => void;
 };
 
 type FilterContextProviderProps = {
@@ -70,6 +76,10 @@ const initialFilterContext: FilterContext = {
   searchTerm: '',
   clearFilter: () => null,
   prefilterRecipes: () => [],
+  tagFilterSelection: new Map(),
+  toggleFilterTag: () => null,
+  selectAllFilterTags: () => null,
+  clearFilterTags: () => null,
 };
 
 export const FilterContext = createContext(initialFilterContext);
@@ -80,6 +90,9 @@ export default function FilterContextProvider({
   children,
 }: FilterContextProviderProps) {
   const [searchTerm, setSearchTerm] = useState(initialFilterContext.searchTerm);
+  const [tagFilterSelection, setTagFilterSelection] = useState<
+    Map<string, Tag>
+  >(new Map());
   const [filterOptions, setFilterOptions] = useState<FilterOptions>(() => {
     let storedFilterOptions = localStorage.getItem('filter-options');
     let parsedFilterOptions: FilterOptions | undefined = undefined;
@@ -103,6 +116,7 @@ export default function FilterContextProvider({
   );
 
   const { recipes } = useRecipes();
+  const { tags } = useTags();
   const { isLoggedIn, username, favorites } = useUser();
 
   useEffect(() => {
@@ -143,6 +157,16 @@ export default function FilterContextProvider({
     const ownedOnly = isLoggedIn && filterOptions.owned.enabled === true;
 
     for (let recipe of recipes) {
+      if (
+        // if user is filtering by tag & the included tags are not on this recipe, move on
+        tagFilterSelection.size > 0 &&
+        !Array.from(tagFilterSelection.keys()).every((tagId) =>
+          recipe.tags.find((tag) => tag.id === tagId)
+        )
+      ) {
+        continue;
+      }
+
       if (favoritesOnly && !favorites.includes(recipe.id)) {
         continue;
       }
@@ -293,6 +317,30 @@ export default function FilterContextProvider({
     setFilterResults(filterResultTemplate);
   }
 
+  function toggleFilterTag(tag: Tag) {
+    const selectedTagCopy = new Map(tagFilterSelection);
+
+    if (selectedTagCopy.has(tag.id)) {
+      selectedTagCopy.delete(tag.id);
+    } else {
+      selectedTagCopy.set(tag.id, tag);
+    }
+
+    setTagFilterSelection(selectedTagCopy);
+  }
+
+  function selectAllFilterTags() {
+    let newMap = new Map<string, Tag>();
+
+    tags.forEach((tag) => newMap.set(tag.id, tag));
+
+    setTagFilterSelection(newMap);
+  }
+
+  function clearFilterTags() {
+    setTagFilterSelection(new Map());
+  }
+
   return (
     <FilterContext.Provider
       value={{
@@ -304,6 +352,10 @@ export default function FilterContextProvider({
         searchTerm,
         clearFilter,
         prefilterRecipes,
+        tagFilterSelection,
+        toggleFilterTag,
+        selectAllFilterTags,
+        clearFilterTags,
       }}
     >
       {children}
