@@ -11,6 +11,7 @@ import TrashIcon from '../../assets/icons/TrashIcon';
 import SignUpIcon from '../../assets/icons/SignUpIcon';
 import { useModal } from '../../lib/context/ModalContextProvider';
 import UserOptionsMenu from '../Menu/UserOptionsMenu';
+import { useEffect } from 'react';
 
 export default function NavRail() {
   const navigate = useNavigate();
@@ -22,6 +23,29 @@ export default function NavRail() {
   const { pathname } = useLocation();
 
   const selectedRecipe = searchParams.get('recipeId');
+
+  function deleteConfirmed() {
+    if (!selectedRecipe) return;
+
+    deleteRecipe(selectedRecipe);
+  }
+
+  function deleteCancelled() {
+    window.removeEventListener('delete_confirmed', deleteConfirmed);
+    window.removeEventListener('delete_cancelled', deleteCancelled);
+  }
+
+  function deleteActiveRecipe() {
+    window.addEventListener('delete_confirmed', deleteConfirmed);
+    window.addEventListener('delete_cancelled', deleteCancelled);
+
+    openModal('confirmToDeleteItem');
+  }
+
+  useEffect(() => {
+    // clean up event listeners
+    return deleteCancelled;
+  }, []);
 
   // returns true if the currently-selected recipe was authored by the signed-in user
   const ownedRecipe =
@@ -62,7 +86,7 @@ export default function NavRail() {
           <NavRailButton
             icon={<TrashIcon />}
             label='Delete'
-            onClick={() => deleteRecipe(selectedRecipe!)}
+            onClick={() => deleteActiveRecipe()}
           />
         </>
       )}
