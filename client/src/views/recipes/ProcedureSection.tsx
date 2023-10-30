@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { FilledRecipe } from '../../../../api-server/db/recipes/getRecipeById';
 import RecipeSectionHeader from './RecipeSectionHeader';
+import React from 'react';
+import HorizontalDivider from '../../components/HorizontalDivider';
 
 type ProcedureSectionProps = {
   recipe: FilledRecipe;
@@ -34,27 +36,30 @@ export default function ProcedureSection({ recipe }: ProcedureSectionProps) {
           }`}
         >
           {recipe.procedureGroups.map((group) => (
-            <div key={group.id} className='h-fit'>
-              {group.groupTitle !== '' && (
-                <h3 className='title-medium'>
-                  {group.groupTitle[0].toUpperCase() +
-                    group.groupTitle.slice(1)}
-                </h3>
-              )}
+            <React.Fragment key={group.id}>
+              <div className='h-fit'>
+                {group.groupTitle !== '' && (
+                  <h3 className='title-medium'>
+                    {group.groupTitle[0].toUpperCase() +
+                      group.groupTitle.slice(1)}
+                  </h3>
+                )}
 
-              <ul className='flex flex-col w-full gap-2'>
-                {group.procedureSteps.map((step) => (
-                  <li
-                    key={step.id}
-                    className={`
+                <ol className='flex flex-col w-full gap-2'>
+                  {group.procedureSteps.map((step) => (
+                    <li
+                      key={step.id}
+                      className={`
                     list-decimal list-outside pl-2 ml-4 body-medium
                     ${group.groupTitle !== '' ? '' : ''}`}
-                  >
-                    {step.description}
-                  </li>
-                ))}
-              </ul>
-            </div>
+                    >
+                      {step.description}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+              <HorizontalDivider />
+            </React.Fragment>
           ))}
         </div>
       </div>
