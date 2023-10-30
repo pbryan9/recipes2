@@ -62,7 +62,7 @@ export default function FormInput({
     right: 'rounded-tr-[5px]',
   };
 
-  const InputType = as;
+  const InputPoly = as;
 
   return (
     <div
@@ -96,14 +96,14 @@ export default function FormInput({
         >
           {fieldLabel}
         </label>
-        <InputType
+        <InputPoly
           type={as === 'input' ? type : undefined}
           wrap={as === 'textarea' ? 'soft' : undefined}
-          rows={as === 'textarea' ? 1 : undefined}
+          rows={as === 'textarea' ? 2 : undefined}
           id={fieldName}
           {...register(fieldName)}
           className={`w-full h-fit body-large bg-transparent text-on-surface leading-none focus:outline-none ${
-            as === 'textarea' ? 'mt-3' : ''
+            as === 'textarea' ? 'mt-4' : ''
           }`}
         />
       </div>
