@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FilledRecipe } from '../../../../api-server/db/recipes/getRecipeById';
 import RecipeSectionHeader from './RecipeSectionHeader';
+import HorizontalDivider from '../../components/HorizontalDivider';
 
 type IngredientsSectionProps = {
   recipe: FilledRecipe;
@@ -35,31 +36,34 @@ export default function IngredientsSection({
           }`}
         >
           {recipe.ingredientGroups.map((group) => (
-            <div key={group.id} className='h-fit'>
-              {group.groupTitle !== '' && (
-                <h3 className='title-medium'>
-                  {group.groupTitle[0].toUpperCase() +
-                    group.groupTitle.slice(1)}
-                </h3>
-              )}
+            <React.Fragment key={group.id}>
+              <div className='h-fit'>
+                {group.groupTitle !== '' && (
+                  <h3 className='title-medium'>
+                    {group.groupTitle[0].toUpperCase() +
+                      group.groupTitle.slice(1)}
+                  </h3>
+                )}
 
-              <ul className='flex flex-col w-full gap-2'>
-                {group.ingredients.map((ingredient) => (
-                  <li
-                    key={ingredient.id}
-                    className={`
+                <ul className='flex flex-col w-full gap-2'>
+                  {group.ingredients.map((ingredient) => (
+                    <li
+                      key={ingredient.id}
+                      className={`
                     list-outside list-disc pl-2 ml-4 body-medium
                     ${group.groupTitle !== '' ? '' : ''}`}
-                  >
-                    {[
-                      ingredient.qty,
-                      ingredient.uom,
-                      ingredient.description,
-                    ].join(' ')}
-                  </li>
-                ))}
-              </ul>
-            </div>
+                    >
+                      {[
+                        ingredient.qty,
+                        ingredient.uom,
+                        ingredient.description,
+                      ].join(' ')}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <HorizontalDivider />
+            </React.Fragment>
           ))}
         </div>
       </div>

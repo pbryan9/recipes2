@@ -35,7 +35,7 @@ export default function NotesSection({ recipe }: NotesSectionProps) {
         >
           <ul className='flex flex-col w-full gap-2'>
             {recipe.notes.map((note) => (
-              <li key={note.id} className={`body-medium`}>
+              <li key={note.id} className={`body-medium list-disc pl-2 ml-4`}>
                 {note.description}
               </li>
             ))}
