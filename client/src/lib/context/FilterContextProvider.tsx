@@ -4,9 +4,9 @@ import type {
   Ingredient,
   ProcedureStep,
 } from '../../../../api-server/db/recipes/getRecipeById';
+import { type Tag } from '../../../../api-server/db/tags/getAllTags';
 import useRecipes from '../hooks/useRecipes';
 import useUser from '../hooks/useUser';
-import { Tag } from '../../../../api-server/db/tags/getAllTags';
 import useTags from '../hooks/useTags';
 
 export type FilterContext = {
@@ -139,6 +139,7 @@ export default function FilterContextProvider({
 
   function restoreDefaultFilterOptions() {
     setFilterOptions(initialFilterContext.filterOptions);
+    clearFilterTags();
   }
 
   function updateFilter(searchTerm: string) {
