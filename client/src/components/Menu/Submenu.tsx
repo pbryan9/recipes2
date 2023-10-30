@@ -38,7 +38,7 @@ export default function Submenu({ children, caption = 'hello' }: SubmenuProps) {
   }, [submenuIsOpen]);
 
   return (
-    <li className='h-12 hover:bg-white/10 w-full cursor-pointer relative z-10'>
+    <li className='h-12 hover:bg-white/10 w-full relative z-10 cursor-default'>
       <div
         ref={submenuRef}
         className='h-full w-full px-3 flex justify-between items-center gap-3 whitespace-nowrap'
