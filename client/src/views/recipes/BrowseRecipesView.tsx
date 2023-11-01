@@ -14,6 +14,7 @@ import FullScreenIcon from '../../assets/icons/FullscreenIcon';
 import NotesSection from './NotesSection';
 import useFilter from '../../lib/hooks/useFilter';
 import { FilterResult } from '../../lib/context/FilterContextProvider';
+import ShareIcon from '../../assets/icons/ShareIcon';
 
 export default function BrowseRecipesView() {
   const [expanded, setExpanded] = useState(false);
@@ -73,29 +74,39 @@ export default function BrowseRecipesView() {
                   {activeRecipe!.title}
                 </h1>
               </div>
-              {isLoggedIn && (
-                // <FavoritesButton recipeId={activeRecipe.id} />
-                <Button
-                  onClick={() =>
-                    isFavorited
-                      ? removeFromFavorites(activeRecipe.id)
-                      : addToFavorites(activeRecipe.id)
-                  }
-                  variant='text'
-                  icon={
-                    favorites.includes(activeRecipe.id) ? (
-                      <StarIcon_Filled size={40} />
-                    ) : (
-                      <StarIcon_Hollow size={24} />
-                    )
-                  }
-                  style={{
-                    transform: `scale(${isFavorited ? 1.2 : 1})`,
-                    translate: isFavorited ? '10%' : 'none',
-                    transition: 'transform 200ms',
-                  }}
-                />
-              )}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyItems: 'flex-end',
+                  gap: '0',
+                }}
+              >
+                <Button variant='text' icon={<ShareIcon />}></Button>
+                {isLoggedIn && (
+                  // Favorites button
+                  <Button
+                    onClick={() =>
+                      isFavorited
+                        ? removeFromFavorites(activeRecipe.id)
+                        : addToFavorites(activeRecipe.id)
+                    }
+                    variant='text'
+                    icon={
+                      favorites.includes(activeRecipe.id) ? (
+                        <StarIcon_Filled size={40} />
+                      ) : (
+                        <StarIcon_Hollow size={24} />
+                      )
+                    }
+                    style={{
+                      transform: `scale(${isFavorited ? 1.2 : 1})`,
+                      translate: isFavorited ? '10%' : 'none',
+                      transition: 'transform 200ms',
+                    }}
+                  />
+                )}
+              </div>
             </header>
             <div className={`overflow-y-auto`}>
               <div
