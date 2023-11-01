@@ -10,6 +10,7 @@ import PasswordChangeSuccessModal from '../../components/Modals/PasswordChangeSu
 import RecoveryCodeRequestedModal from '../../components/Modals/RecoveryCodeRequestedModal';
 import ConfirmToDeleteItemModal from '../../components/Modals/ConfirmToDeleteItem';
 import ConfirmToResetFormModal from '../../components/Modals/ConfirmToResetForm';
+import ShareRecipeModal from '../../components/Modals/ShareRecipeModal';
 
 type ModalName =
   | false
@@ -23,7 +24,8 @@ type ModalName =
   | 'passwordChangeSuccess'
   | 'recoveryCodeRequested'
   | 'confirmToDeleteItem'
-  | 'confirmToResetForm';
+  | 'confirmToResetForm'
+  | 'shareRecipe';
 
 export type ModalContext = {
   modalMode: ModalName;
@@ -85,6 +87,7 @@ export default function ModalContextProvider({
       {modalMode === 'recoveryCodeRequested' && <RecoveryCodeRequestedModal />}
       {modalMode === 'confirmToDeleteItem' && <ConfirmToDeleteItemModal />}
       {modalMode === 'confirmToResetForm' && <ConfirmToResetFormModal />}
+      {modalMode === 'shareRecipe' && <ShareRecipeModal />}
       {children}
     </ModalContext.Provider>
   );

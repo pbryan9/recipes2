@@ -15,12 +15,14 @@ import NotesSection from './NotesSection';
 import useFilter from '../../lib/hooks/useFilter';
 import { FilterResult } from '../../lib/context/FilterContextProvider';
 import ShareIcon from '../../assets/icons/ShareIcon';
+import { useModal } from '../../lib/context/ModalContextProvider';
 
 export default function BrowseRecipesView() {
   const [expanded, setExpanded] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const { recipes } = useRecipes();
   const { filterResults, searchTerm, prefilterRecipes } = useFilter();
+  const { openModal } = useModal();
   const { isLoggedIn, removeFromFavorites, addToFavorites, favorites } =
     useUser();
 
@@ -82,7 +84,11 @@ export default function BrowseRecipesView() {
                   gap: '0',
                 }}
               >
-                <Button variant='text' icon={<ShareIcon />}></Button>
+                <Button
+                  onClick={() => openModal('shareRecipe')}
+                  variant='text'
+                  icon={<ShareIcon />}
+                ></Button>
                 {isLoggedIn && (
                   // Favorites button
                   <Button
