@@ -3,7 +3,6 @@ import TagsContainer from './TagsContainer';
 import { Tag } from '../../../../../api-server/db/tags/getAllTags';
 import Button from '../../../components/Button';
 import SaveIcon from '../../../assets/icons/SaveIcon';
-import TrashIcon from '../../../assets/icons/TrashIcon';
 import NotesContainer from './NotesContainer';
 import { NewNote } from '../CreateRecipeView';
 import LoadingIcon from '../../../assets/icons/LoadingIcon';
