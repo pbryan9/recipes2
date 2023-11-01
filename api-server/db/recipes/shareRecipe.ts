@@ -102,11 +102,11 @@ export default async function shareRecipe(
 
     <h1>${recipe.title}</h1>
     
-    <h2>Ingredients<h2>
+    <h2>Ingredients</h2>
 
     ${ingredientGroups}
     
-    <h2>Procedure<h2>
+    <h2>Procedure</h2>
 
     ${procedureGroups}
 
