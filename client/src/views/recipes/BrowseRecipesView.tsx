@@ -76,21 +76,23 @@ export default function BrowseRecipesView() {
                   {activeRecipe!.title}
                 </h1>
               </div>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyItems: 'flex-end',
-                  gap: '0',
-                }}
-              >
-                <Button
-                  onClick={() => openModal('shareRecipe')}
-                  variant='text'
-                  icon={<ShareIcon />}
-                ></Button>
-                {isLoggedIn && (
-                  // Favorites button
+              {isLoggedIn && (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyItems: 'flex-end',
+                    gap: '0',
+                  }}
+                >
+                  {/* share button */}
+                  <Button
+                    onClick={() => openModal('shareRecipe')}
+                    variant='text'
+                    icon={<ShareIcon />}
+                  ></Button>
+
+                  {/* favorites button */}
                   <Button
                     onClick={() =>
                       isFavorited
@@ -111,8 +113,8 @@ export default function BrowseRecipesView() {
                       transition: 'transform 200ms',
                     }}
                   />
-                )}
-              </div>
+                </div>
+              )}
             </header>
             <div className={`overflow-y-auto`}>
               <div
