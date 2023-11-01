@@ -38,6 +38,9 @@ export default async function shareRecipe(
   let ingredientGroups = '';
 
   recipe.ingredientGroups.forEach((group) => {
+    if (ingredientGroups !== '' && group.groupTitle === '')
+      ingredientGroups += '<p>~~~~~</p>';
+
     let ingredients = '';
 
     if (group.groupTitle !== '') {
@@ -62,6 +65,9 @@ export default async function shareRecipe(
   let procedureGroups = '';
 
   recipe.procedureGroups.forEach((group) => {
+    if (procedureGroups !== '' && group.groupTitle === '')
+      procedureGroups += '<p>~~~~~</p>';
+
     let steps = '';
 
     if (group.groupTitle !== '') steps += `<h3>${group.groupTitle}</h3>`;
