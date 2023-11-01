@@ -220,13 +220,6 @@ export default function UserContextProvider({
     delete newErrorContext[path];
 
     setUserContext((prev) => ({ ...prev, error: newErrorContext }));
-    // setUserContext((prev) => ({
-    //   ...prev,
-    //   error: {
-    //     ...prev.error,
-    //     [path]: undefined,
-    //   },
-    // }));
   }
 
   const attemptPasswordRecoveryMutation =
