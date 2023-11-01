@@ -29,6 +29,8 @@ import recoverPasswordValidator from '../validators/recoverPasswordValidator';
 import recoverPassword from '../db/users/recoverPassword';
 import resetPasswordValidator from '../validators/resetPasswordValidator';
 import resetPassword from '../db/users/resetPassword';
+import shareRecipeValidator from '../validators/shareRecipeValidator';
+import shareRecipe from '../db/recipes/shareRecipe';
 
 /**
  * Initialization of tRPC backend
@@ -99,6 +101,11 @@ export const appRouter = t.router({
       .input(z.object({ recipeId: z.string().uuid() }))
       .mutation(async ({ input }) => {
         return await deleteRecipe(input.recipeId);
+      }),
+    share: protectedProcedure
+      .input(shareRecipeValidator)
+      .mutation(async ({ input, ctx }) => {
+        return await shareRecipe(input, ctx.user.userId!);
       }),
   }),
   users: t.router({
