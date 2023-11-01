@@ -41,7 +41,7 @@ export default function NotesContainer({
   }
 
   return (
-    <article className='flex flex-col items-center w-full'>
+    <article className='flex flex-col items-center w-full z-0'>
       <button
         className='z-10 w-full'
         onClick={() => setIsExpanded((prev) => !prev)}
@@ -51,7 +51,7 @@ export default function NotesContainer({
           Notes
         </header>
       </button>
-      <div
+      <section
         className={`w-full relative z-0 shadow-sm rounded-[12px] transition-all duration-500 p-4 pt-12 bg-surface-container-low grid ${
           isExpanded
             ? 'grid-rows-[1fr] -top-7 basis-auto'
@@ -82,7 +82,7 @@ export default function NotesContainer({
             </Button>
           </li>
         </ul>
-      </div>
+      </section>
     </article>
   );
 }
