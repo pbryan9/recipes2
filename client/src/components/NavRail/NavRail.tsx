@@ -12,11 +12,12 @@ import SignUpIcon from '../../assets/icons/SignUpIcon';
 import { useModal } from '../../lib/context/ModalContextProvider';
 import UserOptionsMenu from '../Menu/UserOptionsMenu';
 import { useEffect } from 'react';
+import Spinner from '../Spinner';
 
 export default function NavRail() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { isLoggedIn, username } = useUser();
+  const { isLoggedIn, username, isLoading } = useUser();
   const { openModal } = useModal();
   const { recipes, deleteRecipe } = useRecipes();
 
@@ -107,20 +108,23 @@ export default function NavRail() {
         />
       )} */}
 
-      {!isLoggedIn && (
-        <>
-          <NavRailButton
-            icon={<SignUpIcon />}
-            label='Sign up'
-            onClick={() => openModal('signUp')}
-          />
-          <NavRailButton
-            icon={<LoginIcon />}
-            label='Sign in'
-            onClick={() => openModal('signIn')}
-          />
-        </>
-      )}
+      {!isLoggedIn &&
+        (isLoading ? (
+          <Spinner />
+        ) : (
+          <>
+            <NavRailButton
+              icon={<SignUpIcon />}
+              label='Sign up'
+              onClick={() => openModal('signUp')}
+            />
+            <NavRailButton
+              icon={<LoginIcon />}
+              label='Sign in'
+              onClick={() => openModal('signIn')}
+            />
+          </>
+        ))}
 
       {isLoggedIn && (
         <NavRailButton
@@ -129,6 +133,8 @@ export default function NavRail() {
           onClick={() => null}
         />
       )}
+
+      {/* <NavRailButton icon={<Spinner />} label='' onClick={() => null} /> */}
     </nav>
   );
 }
