@@ -5,11 +5,13 @@ import { trpc } from '../trpc/trpc';
 type RecipesContext = {
   recipes: FilledRecipe[];
   deleteRecipe: (recipeId: string) => void;
+  isLoading: boolean;
 };
 
 const initialRecipesContext: RecipesContext = {
   recipes: [],
   deleteRecipe: () => null,
+  isLoading: false,
 };
 
 export const RecipesContext = createContext<RecipesContext>(
@@ -23,9 +25,8 @@ type RecipesContextProviderProps = {
 export default function RecipesContextProvider({
   children,
 }: RecipesContextProviderProps) {
-  const [recipesContext, setRecipesContext] = useState<RecipesContext>(
-    initialRecipesContext
-  );
+  // chose to use state var here for easy optimistic deletes
+  const [recipes, setRecipes] = useState<FilledRecipe[]>([]);
 
   const utils = trpc.useContext();
 
@@ -34,11 +35,13 @@ export default function RecipesContextProvider({
   });
 
   const deleteRecipeMutation = trpc.recipes.delete.useMutation({
+    onMutate({ recipeId }) {
+      // optimistic delete
+      setRecipes((prev) => [
+        ...prev.filter((recipe) => recipe.id !== recipeId),
+      ]);
+    },
     onSuccess(_, { recipeId }) {
-      setRecipesContext((prev) => ({
-        ...prev,
-        recipes: prev.recipes.filter(({ id }) => id !== recipeId),
-      }));
       utils.recipes.all.invalidate();
       utils.recipes.byRecipeId.invalidate({ recipeId });
     },
@@ -49,15 +52,6 @@ export default function RecipesContextProvider({
   }
 
   useEffect(() => {
-    // attach functions to context
-
-    setRecipesContext((prev) => ({
-      ...prev,
-      deleteRecipe,
-    }));
-  }, []);
-
-  useEffect(() => {
     // populate recipes in context when loading/fetching is complete
 
     if (
@@ -65,15 +59,20 @@ export default function RecipesContextProvider({
       !recipesQuery.isFetching &&
       !recipesQuery.isError
     ) {
-      setRecipesContext((prev) => ({
-        ...prev,
-        recipes: recipesQuery.data.sort((a, b) => (a.title < b.title ? -1 : 1)),
-      }));
+      setRecipes(
+        recipesQuery.data.sort((a, b) => (a.title < b.title ? -1 : 1))
+      );
     }
   }, [recipesQuery.isLoading, recipesQuery.isFetching]);
 
   return (
-    <RecipesContext.Provider value={{ ...recipesContext }}>
+    <RecipesContext.Provider
+      value={{
+        recipes,
+        isLoading: recipesQuery.isInitialLoading,
+        deleteRecipe,
+      }}
+    >
       {children}
     </RecipesContext.Provider>
   );
