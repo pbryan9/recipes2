@@ -16,11 +16,12 @@ import useFilter from '../../lib/hooks/useFilter';
 import { FilterResult } from '../../lib/context/FilterContextProvider';
 import ShareIcon from '../../assets/icons/ShareIcon';
 import { useModal } from '../../lib/context/ModalContextProvider';
+import RecipeSummaryCardSkeleton from './RecipeSummaryCardSkeleton';
 
 export default function BrowseRecipesView() {
   const [expanded, setExpanded] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const { recipes } = useRecipes();
+  const { recipes, isLoading } = useRecipes();
   const { filterResults, searchTerm, prefilterRecipes } = useFilter();
   const { openModal } = useModal();
   const { isLoggedIn, removeFromFavorites, addToFavorites, favorites } =
@@ -35,9 +36,13 @@ export default function BrowseRecipesView() {
 
   document.title = activeRecipe?.title || 'Browsing Recipes';
 
-  if (!recipes) return <h1>hang on...</h1>;
+  // if (!recipes) return <h1>hang on...</h1>;
 
   const filterIsActive = searchTerm !== '';
+
+  const loadingPlaceholder = Array.from({ length: 15 }, (_, idx) => (
+    <RecipeSummaryCardSkeleton key={idx} />
+  ));
 
   return (
     <div className='w-full flex items-start justify-stretch gap-6 overflow-y-hidden overflow-x-visible h-full'>
@@ -48,7 +53,10 @@ export default function BrowseRecipesView() {
       >
         <SearchCard />
         <div className='flex flex-col justify-start items-stretch gap-2 overflow-y-auto overflow-x-visible w-full'>
-          {filterIsActive
+          {/* {recipes} */}
+          {isLoading
+            ? loadingPlaceholder
+            : filterIsActive
             ? renderFilterResults(filterResults)
             : prefilterRecipes(recipes).map((recipe) => (
                 <RecipeSummaryCard

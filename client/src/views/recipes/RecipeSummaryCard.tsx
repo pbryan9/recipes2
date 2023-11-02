@@ -27,7 +27,6 @@ export default function RecipeSummaryCard({
       }`}
     >
       <div className='flex items-center gap-4 w-full overflow-x-hidden'>
-        {/* <div className='w-10 aspect-square rounded-full flex items-center justify-center primary-container on-primary-container-text title-large shrink-0'> */}
         <div
           className='w-10 aspect-square rounded-full flex items-center justify-center on-primary-container-text title-large shrink-0'
           style={{
