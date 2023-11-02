@@ -4,7 +4,7 @@ import styles from './Spinner.module.css';
 export default function Spinner() {
   return (
     <div className={styles.spinner}>
-      <SpinnerIcon />
+      <SpinnerIcon size={40} />
     </div>
   );
 }
