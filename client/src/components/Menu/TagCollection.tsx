@@ -37,6 +37,7 @@ export default function TagCollection() {
         </div>
       </button>
       <MenuSeparator />
+
       {tagFilterSelection.size > 0 &&
         Array.from(tagFilterSelection.values()).map((tag) => (
           <TagChip
@@ -64,10 +65,13 @@ export default function TagCollection() {
             }}
           />
         ))}
+
       <MenuSeparator />
+
       <Button variant='text' onClick={selectAllFilterTags}>
         Select all
       </Button>
+
       <Button
         variant='text'
         disabled={tagFilterSelection.size === 0}
