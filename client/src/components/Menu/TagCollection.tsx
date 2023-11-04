@@ -31,9 +31,9 @@ export default function TagCollection() {
       >
         Match mode:
         <div className={`flex gap-4 justify-end items-center`}>
-          Any
-          <Toggler as='div' isOn={matchEveryTag} />
-          Every
+          <p className={matchEveryTag ? '' : 'text-primary underline'}>Any</p>
+          <Toggler color={false} as='div' isOn={matchEveryTag} />
+          <p className={matchEveryTag ? 'text-primary underline' : ''}>Every</p>
         </div>
       </button>
       <MenuSeparator />
