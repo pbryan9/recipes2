@@ -22,6 +22,8 @@ export type FilterContext = {
   toggleFilterTag: (tag: Tag) => void;
   selectAllFilterTags: () => void;
   clearFilterTags: () => void;
+  matchEveryTag: boolean;
+  toggleMatchEveryTag: () => void;
 };
 
 type FilterContextProviderProps = {
@@ -80,6 +82,8 @@ const initialFilterContext: FilterContext = {
   toggleFilterTag: () => null,
   selectAllFilterTags: () => null,
   clearFilterTags: () => null,
+  matchEveryTag: false,
+  toggleMatchEveryTag: () => null,
 };
 
 export const FilterContext = createContext(initialFilterContext);
@@ -90,29 +94,21 @@ export default function FilterContextProvider({
   children,
 }: FilterContextProviderProps) {
   const [searchTerm, setSearchTerm] = useState(initialFilterContext.searchTerm);
+
   const [tagFilterSelection, setTagFilterSelection] = useState<
     Map<string, Tag>
   >(new Map());
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>(() => {
-    let storedFilterOptions = localStorage.getItem('filter-options');
-    let parsedFilterOptions: FilterOptions | undefined = undefined;
-    if (storedFilterOptions)
-      parsedFilterOptions = JSON.parse(storedFilterOptions) as FilterOptions;
 
-    // if we successfully pulled filter opts from storage, check that all properties are represented
-    if (
-      parsedFilterOptions &&
-      Object.keys(parsedFilterOptions).every((key) =>
-        Object.keys(defaultFilterOptions).includes(key)
-      )
-    )
-      return parsedFilterOptions;
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>(
+    initializeFilterOptions
+  );
 
-    // otherwise, just use the default
-    return defaultFilterOptions;
-  });
   const [filterResults, setFilterResults] = useState<FilterResult>(
     initialFilterContext.filterResults
+  );
+
+  const [matchEveryTag, setMatchEveryTag] = useState(
+    initialFilterContext.matchEveryTag
   );
 
   const { recipes } = useRecipes();
@@ -158,14 +154,32 @@ export default function FilterContextProvider({
     const ownedOnly = isLoggedIn && filterOptions.owned.enabled === true;
 
     for (let recipe of recipes) {
-      if (
-        // if user is filtering by tag & the included tags are not on this recipe, move on
-        tagFilterSelection.size > 0 &&
-        !Array.from(tagFilterSelection.keys()).every((tagId) =>
-          recipe.tags.find((tag) => tag.id === tagId)
-        )
-      ) {
-        continue;
+      // if (
+      //   // if user is filtering by tag & the included tags are not on this recipe, move on
+      //   tagFilterSelection.size > 0 &&
+      //   !Array.from(tagFilterSelection.keys()).every((tagId) =>
+      //     recipe.tags.find((tag) => tag.id === tagId)
+      //   )
+      // ) {
+      //   continue;
+      // }
+
+      if (tagFilterSelection.size > 0) {
+        if (matchEveryTag) {
+          if (
+            !Array.from(tagFilterSelection.keys()).every((tagId) =>
+              recipe.tags.find((tag) => tag.id === tagId)
+            )
+          )
+            continue;
+        } else {
+          if (
+            !Array.from(tagFilterSelection.keys()).some((tagId) =>
+              recipe.tags.find((tag) => tag.id === tagId)
+            )
+          )
+            continue;
+        }
       }
 
       if (favoritesOnly && !favorites.includes(recipe.id)) {
@@ -342,6 +356,10 @@ export default function FilterContextProvider({
     setTagFilterSelection(new Map());
   }
 
+  function toggleMatchEveryTag() {
+    setMatchEveryTag((prev) => !prev);
+  }
+
   return (
     <FilterContext.Provider
       value={{
@@ -357,6 +375,8 @@ export default function FilterContextProvider({
         toggleFilterTag,
         selectAllFilterTags,
         clearFilterTags,
+        matchEveryTag,
+        toggleMatchEveryTag,
       }}
     >
       {children}
@@ -421,4 +441,24 @@ function consolidateIngredients(recipe: FilledRecipe) {
   }
 
   return res;
+}
+
+function initializeFilterOptions() {
+  let storedFilterOptions = localStorage.getItem('filter-options');
+  let parsedFilterOptions: FilterOptions | undefined = undefined;
+
+  if (storedFilterOptions)
+    parsedFilterOptions = JSON.parse(storedFilterOptions) as FilterOptions;
+
+  // if we successfully pulled filter opts from storage, check that all properties are represented
+  if (
+    parsedFilterOptions &&
+    Object.keys(parsedFilterOptions).every((key) =>
+      Object.keys(defaultFilterOptions).includes(key)
+    )
+  )
+    return parsedFilterOptions;
+
+  // otherwise, just use the default
+  return defaultFilterOptions;
 }

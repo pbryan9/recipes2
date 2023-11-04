@@ -3,6 +3,7 @@ import TagChip from '../../views/create-recipe/_components/TagChip';
 import Button from '../Button';
 import MenuSeparator from './MenuSeparator';
 import useFilter from '../../lib/hooks/useFilter';
+import Toggler from '../Toggler';
 
 export default function TagCollection() {
   // use tag id as selectedTags map key
@@ -12,6 +13,8 @@ export default function TagCollection() {
     toggleFilterTag,
     selectAllFilterTags,
     clearFilterTags,
+    matchEveryTag,
+    toggleMatchEveryTag,
   } = useFilter();
 
   // group tags depending on whether or not they're selected
@@ -22,6 +25,18 @@ export default function TagCollection() {
       className={`flex flex-wrap items-start justify-start w-[360px] max-w-full h-full gap-2 p-6 overflow-clip transition-all duration-200 cursor-default`}
       onClick={(e) => e.stopPropagation()}
     >
+      <button
+        className={`flex justify-between items-center w-full`}
+        onClick={toggleMatchEveryTag}
+      >
+        Match mode:
+        <div className={`flex gap-4 justify-end items-center`}>
+          Any
+          <Toggler as='div' isOn={matchEveryTag} />
+          Every
+        </div>
+      </button>
+      <MenuSeparator />
       {tagFilterSelection.size > 0 &&
         Array.from(tagFilterSelection.values()).map((tag) => (
           <TagChip
